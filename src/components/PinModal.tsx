@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
+import { usePin } from '../db/hooks';
 
 interface PinModalProps {
   isOpen: boolean;
@@ -7,14 +8,13 @@ interface PinModalProps {
   title?: string;
 }
 
-const CORRECT_PIN = '1234';
-
 export default function PinModal({
   isOpen,
   onSuccess,
   onCancel,
   title = 'Enter PIN to Confirm',
 }: PinModalProps) {
+  const correctPin = usePin();
   const [digits, setDigits] = useState<string[]>(['', '', '', '']);
   const [error, setError] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -23,7 +23,6 @@ export default function PinModal({
     if (isOpen) {
       setDigits(['', '', '', '']);
       setError(false);
-      // Focus first input after modal opens
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
   }, [isOpen]);
@@ -34,7 +33,7 @@ export default function PinModal({
     if (!/^\d*$/.test(value)) return;
 
     const newDigits = [...digits];
-    newDigits[index] = value.slice(-1); // only last digit
+    newDigits[index] = value.slice(-1);
     setDigits(newDigits);
     setError(false);
 
@@ -45,7 +44,7 @@ export default function PinModal({
     // Auto-submit when all 4 digits entered
     if (index === 3 && value) {
       const pin = newDigits.join('');
-      if (pin === CORRECT_PIN) {
+      if (pin === correctPin) {
         onSuccess();
       } else {
         setError(true);
@@ -55,7 +54,7 @@ export default function PinModal({
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+  const handleKeyDown = (index: number, e: KeyboardEvent) => {
     if (e.key === 'Backspace' && !digits[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }

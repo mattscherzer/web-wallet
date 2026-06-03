@@ -45,7 +45,7 @@ export default function AddExpensePage() {
       type: 'outflow',
       amount: numAmount,
       date: expenseDate,
-      accountId: 'cash' as AccountId,
+      account_id: 'cash' as AccountId,
       category: category === 'other' ? customCategory || 'other' : category,
       notes,
       reason: category === 'other' ? customCategory : undefined,

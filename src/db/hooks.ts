@@ -1,30 +1,114 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, ACCOUNTS, type Transaction, type AccountId, type AuditEntry } from './database';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from './supabase';
+import {
+  ACCOUNTS,
+  MAIN_ACCOUNTS,
+  RESERVE_ACCOUNTS,
+  fetchPin,
+  type Transaction,
+  type AccountId,
+  type AuditEntry,
+} from './database';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-// ─── All active (non-deleted) transactions ──────────────
+// ─── Generic hook for Supabase queries with real-time ───
+function useSupabaseQuery<T>(
+  queryFn: () => Promise<T>,
+  deps: unknown[],
+  initialValue: T,
+  realtimeTable?: string
+): T {
+  const [data, setData] = useState<T>(initialValue);
+
+  const refresh = useCallback(async () => {
+    try {
+      const result = await queryFn();
+      setData(result);
+    } catch (err) {
+      console.error('Supabase query error:', err);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  useEffect(() => {
+    if (!realtimeTable) return;
+
+    const channel = supabase
+      .channel(`${realtimeTable}-changes-${Math.random()}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: realtimeTable },
+        (_payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+          refresh();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [realtimeTable, refresh]);
+
+  return data;
+}
+
+// ─── PIN from database ──────────────────────────────────
+export function usePin() {
+  const [pin, setPin] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPin().then(setPin);
+  }, []);
+
+  return pin;
+}
+
+// ─── All active transactions ────────────────────────────
 export function useTransactions() {
-  return useLiveQuery(
-    () => db.transactions.where('deleted').equals(0).sortBy('date'),
+  return useSupabaseQuery<Transaction[]>(
+    async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('deleted', false)
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data ?? []) as Transaction[];
+    },
     [],
-    [] as Transaction[]
+    [],
+    'transactions'
   );
 }
 
-// ─── Transactions filtered by type ──────────────────────
+// ─── Filtered transactions ──────────────────────────────
 export function useFilteredTransactions(
-  filter: 'all' | 'inflow' | 'outflow',
+  filter: 'all' | 'inflow' | 'outflow' | 'transfer',
   searchQuery: string
 ) {
-  return useLiveQuery(
+  return useSupabaseQuery<Transaction[]>(
     async () => {
-      let results = await db.transactions
-        .where('deleted')
-        .equals(0)
-        .toArray();
+      let query = supabase
+        .from('transactions')
+        .select('*')
+        .eq('deleted', false)
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false });
 
       if (filter !== 'all') {
-        results = results.filter((t) => t.type === filter);
+        query = query.eq('type', filter);
       }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      let results = (data ?? []) as Transaction[];
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -36,102 +120,127 @@ export function useFilteredTransactions(
         );
       }
 
-      // Sort by date descending
-      results.sort((a, b) => b.date.localeCompare(a.date));
       return results;
     },
     [filter, searchQuery],
-    [] as Transaction[]
+    [],
+    'transactions'
   );
 }
 
-// ─── Account balances ───────────────────────────────────
+// ─── Account balances (handles transfers correctly) ─────
 export function useAccountBalances() {
-  return useLiveQuery(
+  return useSupabaseQuery<Record<AccountId, number>>(
     async () => {
-      const transactions = await db.transactions
-        .where('deleted')
-        .equals(0)
-        .toArray();
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('type, amount, account_id, from_account_id')
+        .eq('deleted', false);
+
+      if (error) throw error;
 
       const balances: Record<AccountId, number> = {
         cash: 0,
         paypal: 0,
         bank: 0,
+        prudent_reserve: 0,
       };
 
-      for (const t of transactions) {
+      for (const t of data ?? []) {
+        const amount = Number(t.amount);
+        const accountId = t.account_id as AccountId;
+
         if (t.type === 'inflow') {
-          balances[t.accountId] += t.amount;
-        } else {
-          balances[t.accountId] -= t.amount;
+          balances[accountId] += amount;
+        } else if (t.type === 'outflow') {
+          balances[accountId] -= amount;
+        } else if (t.type === 'transfer') {
+          // Transfer: debit source, credit destination
+          balances[accountId] += amount; // destination (account_id)
+          if (t.from_account_id) {
+            balances[t.from_account_id as AccountId] -= amount; // source
+          }
         }
       }
 
       return balances;
     },
     [],
-    { cash: 0, paypal: 0, bank: 0 } as Record<AccountId, number>
+    { cash: 0, paypal: 0, bank: 0, prudent_reserve: 0 },
+    'transactions'
   );
 }
 
-// ─── Total balance ──────────────────────────────────────
+// ─── Total balance (excludes reserve) ───────────────────
 export function useTotalBalance() {
   const balances = useAccountBalances();
-  if (!balances) return 0;
-  return Object.values(balances).reduce((sum, b) => sum + b, 0);
+  return MAIN_ACCOUNTS.reduce((sum, a) => sum + (balances[a.id] ?? 0), 0);
 }
 
-// ─── Recent transactions (for dashboard) ────────────────
+// ─── Recent transactions ────────────────────────────────
 export function useRecentTransactions(limit = 5) {
-  return useLiveQuery(
+  return useSupabaseQuery<Transaction[]>(
     async () => {
-      const all = await db.transactions
-        .where('deleted')
-        .equals(0)
-        .toArray();
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('deleted', false)
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-      all.sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
-      return all.slice(0, limit);
+      if (error) throw error;
+      return (data ?? []) as Transaction[];
     },
     [limit],
-    [] as Transaction[]
+    [],
+    'transactions'
   );
 }
 
-// ─── Audit log for a specific transaction ───────────────
+// ─── Audit log for a transaction ────────────────────────
 export function useAuditLog(transactionId: string) {
-  return useLiveQuery(
-    () =>
-      db.auditLog
-        .where('transactionId')
-        .equals(transactionId)
-        .sortBy('timestamp'),
-    [transactionId],
-    [] as AuditEntry[]
-  );
-}
-
-// ─── Check if transaction was edited ────────────────────
-export function useIsEdited(transactionId: string) {
-  return useLiveQuery(
+  return useSupabaseQuery<AuditEntry[]>(
     async () => {
-      const entries = await db.auditLog
-        .where('transactionId')
-        .equals(transactionId)
-        .toArray();
-      return entries.some((e) => e.action === 'update');
+      if (!transactionId) return [];
+      const { data, error } = await supabase
+        .from('audit_log')
+        .select('*')
+        .eq('transaction_id', transactionId)
+        .order('timestamp', { ascending: true });
+
+      if (error) throw error;
+      return (data ?? []) as AuditEntry[];
     },
     [transactionId],
-    false
+    [],
+    'audit_log'
   );
 }
 
-// ─── Accounts with balances ─────────────────────────────
+// ─── Main accounts with balances ────────────────────────
+export function useMainAccountsWithBalances() {
+  const balances = useAccountBalances();
+  return MAIN_ACCOUNTS.map((account) => ({
+    ...account,
+    balance: balances[account.id] ?? 0,
+  }));
+}
+
+// ─── Reserve accounts with balances ─────────────────────
+export function useReserveAccountsWithBalances() {
+  const balances = useAccountBalances();
+  return RESERVE_ACCOUNTS.map((account) => ({
+    ...account,
+    balance: balances[account.id] ?? 0,
+  }));
+}
+
+// ─── All accounts with balances (for backwards compat) ──
 export function useAccountsWithBalances() {
   const balances = useAccountBalances();
   return ACCOUNTS.map((account) => ({
     ...account,
-    balance: balances?.[account.id] ?? 0,
+    balance: balances[account.id] ?? 0,
   }));
 }

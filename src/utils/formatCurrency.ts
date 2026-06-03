@@ -13,7 +13,8 @@ export function formatCurrency(amount: number): string {
 /**
  * Format with sign prefix: +€100.00 or -€100.00
  */
-export function formatSignedCurrency(amount: number, type: 'inflow' | 'outflow'): string {
+export function formatSignedCurrency(amount: number, type: 'inflow' | 'outflow' | 'transfer'): string {
   const formatted = formatCurrency(amount);
+  if (type === 'transfer') return formatted;
   return type === 'inflow' ? `+${formatted}` : `-${formatted}`;
 }

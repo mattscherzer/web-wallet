@@ -59,7 +59,7 @@ export default function AddMoneyPage() {
       type: 'inflow',
       amount: numAmount,
       date: operationDate,
-      accountId: paymentMethod,
+      account_id: paymentMethod,
       category: reason,
       notes: notesText,
       reason: reason === 'other' ? customReason : reasonText,

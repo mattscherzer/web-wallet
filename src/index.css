@@ -342,6 +342,11 @@ img {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.balance-hero__actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
 /* =============================================
    ACCOUNT CARD
    ============================================= */
@@ -407,6 +412,26 @@ img {
   color: var(--color-text-primary);
 }
 
+.account-card__icon--reserve {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.account-card--reserve {
+  border-left: 3px solid #f57f17;
+}
+
+.account-card__reserve-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: #f57f17;
+  background: #fff8e1;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* =============================================
    TRANSACTION ITEM
    ============================================= */
@@ -453,6 +478,11 @@ img {
   color: var(--color-danger);
 }
 
+.transaction-item__icon--transfer {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
 .transaction-item__info {
   flex: 1;
   min-width: 0;
@@ -485,6 +515,10 @@ img {
 
 .transaction-item__amount--outflow {
   color: var(--color-danger);
+}
+
+.transaction-item__amount--transfer {
+  color: #1565c0;
 }
 
 .transaction-item__chevron {
@@ -1391,6 +1425,79 @@ img {
 }
 
 /* =============================================
+   TRANSFER DIRECTION VISUAL
+   ============================================= */
+.transfer-direction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-lg);
+}
+
+.transfer-direction__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.transfer-direction__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e3f2fd;
+  color: #1565c0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transfer-direction__labels {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* =============================================
+   DISABLED PAYMENT CARD
+   ============================================= */
+.payment-card--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* =============================================
+   FORM ERROR
+   ============================================= */
+.form-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+/* =============================================
+   VIEW ALL LINK
+   ============================================= */
+.view-all-link {
+  text-align: center;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.view-all-link a {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+}
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (min-width: 481px) {
@@ -1403,3 +1510,4 @@ img {
     background: var(--color-bg);
   }
 }
+

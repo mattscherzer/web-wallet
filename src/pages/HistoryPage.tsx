@@ -4,6 +4,7 @@ import {
   Search,
   ArrowDownLeft,
   ArrowUpRight,
+  ArrowLeftRight,
   ChevronDown,
   ChevronUp,
   Pencil,
@@ -11,20 +12,26 @@ import {
   AlertCircle,
   History,
 } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { useFilteredTransactions } from '../db/hooks';
+import { useFilteredTransactions, useAuditLog } from '../db/hooks';
 import {
-  db,
   deleteTransaction,
   updateTransaction,
+  getAccountLabel,
   type Transaction,
-  type AuditEntry,
+  type AccountId,
 } from '../db/database';
 import { formatSignedCurrency, formatCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
 
-type FilterType = 'all' | 'inflow' | 'outflow';
+type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
+
+const FILTER_LABELS: Record<FilterType, string> = {
+  all: 'All',
+  inflow: 'Inflows',
+  outflow: 'Outflows',
+  transfer: 'Transfers',
+};
 
 export default function HistoryPage() {
   const [filter, setFilter] = useState<FilterType>('all');
@@ -105,14 +112,14 @@ export default function HistoryPage() {
 
       {/* Filter Pills */}
       <div className="filter-pills">
-        {(['all', 'inflow', 'outflow'] as FilterType[]).map((f) => (
+        {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
           <button
             key={f}
             className={`filter-pill${filter === f ? ' filter-pill--active' : ''}`}
             onClick={() => setFilter(f)}
             id={`filter-${f}`}
           >
-            {f === 'all' ? 'All' : f === 'inflow' ? 'Inflows' : 'Outflows'}
+            {FILTER_LABELS[f]}
           </button>
         ))}
       </div>
@@ -222,30 +229,28 @@ function HistoryTransactionItem({
   onEdit,
 }: HistoryTransactionItemProps) {
   const isInflow = tx.type === 'inflow';
-  const wasEdited = tx.createdAt !== tx.updatedAt;
+  const isTransfer = tx.type === 'transfer';
+  const wasEdited = tx.created_at !== tx.updated_at;
 
-  // Live-query audit log entries for this transaction when expanded
-  const auditEntries = useLiveQuery(
-    async () => {
-      if (!isExpanded) return [] as AuditEntry[];
-      return db.auditLog
-        .where('transactionId')
-        .equals(tx.id)
-        .sortBy('timestamp');
-    },
-    [tx.id, isExpanded],
-    [] as AuditEntry[]
-  );
+  const auditEntries = useAuditLog(isExpanded ? tx.id : '');
 
-  const displayName = tx.category
-    ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
-    : tx.notes || 'Transaction';
+  const displayName = isTransfer
+    ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
+    : tx.category
+      ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
+      : tx.notes || 'Transaction';
 
-  const accountLabel = tx.accountId === 'cash'
-    ? 'Cash'
-    : tx.accountId === 'paypal'
-    ? 'PayPal'
-    : 'Bank Transfer';
+  const iconClass = isTransfer
+    ? 'transaction-item__icon--transfer'
+    : isInflow
+      ? 'transaction-item__icon--inflow'
+      : 'transaction-item__icon--outflow';
+
+  const amountClass = isTransfer
+    ? 'transaction-item__amount--transfer'
+    : isInflow
+      ? 'transaction-item__amount--inflow'
+      : 'transaction-item__amount--outflow';
 
   const formatAuditAction = (action: string) => {
     switch (action) {
@@ -259,8 +264,12 @@ function HistoryTransactionItem({
   return (
     <div className="transaction-item">
       <div className="transaction-item__header" onClick={onToggle}>
-        <div className={`transaction-item__icon ${isInflow ? 'transaction-item__icon--inflow' : 'transaction-item__icon--outflow'}`}>
-          {isInflow ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+        <div className={`transaction-item__icon ${iconClass}`}>
+          {isTransfer
+            ? <ArrowLeftRight size={20} />
+            : isInflow
+              ? <ArrowDownLeft size={20} />
+              : <ArrowUpRight size={20} />}
         </div>
         <div className="transaction-item__info">
           <p className="transaction-item__name">
@@ -272,10 +281,10 @@ function HistoryTransactionItem({
               </span>
             )}
           </p>
-          <p className="transaction-item__time">{formatTime(tx.createdAt)}</p>
+          <p className="transaction-item__time">{formatTime(tx.created_at)}</p>
         </div>
-        <span className={`transaction-item__amount ${isInflow ? 'transaction-item__amount--inflow' : 'transaction-item__amount--outflow'}`}>
-          {formatSignedCurrency(tx.amount, tx.type)}
+        <span className={`transaction-item__amount ${amountClass}`}>
+          {isTransfer ? formatCurrency(tx.amount) : formatSignedCurrency(tx.amount, tx.type)}
         </span>
         <span className={`transaction-item__chevron${isExpanded ? ' transaction-item__chevron--open' : ''}`}>
           {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -285,9 +294,21 @@ function HistoryTransactionItem({
       {isExpanded && (
         <div className="transaction-item__details">
           <div className="transaction-item__detail-row">
-            <p className="transaction-item__detail-label">Payment Method</p>
-            <p className="transaction-item__detail-value">{accountLabel}</p>
+            <p className="transaction-item__detail-label">
+              {isTransfer ? 'Destination' : 'Payment Method'}
+            </p>
+            <p className="transaction-item__detail-value">
+              {getAccountLabel(tx.account_id)}
+            </p>
           </div>
+          {isTransfer && tx.from_account_id && (
+            <div className="transaction-item__detail-row">
+              <p className="transaction-item__detail-label">Source</p>
+              <p className="transaction-item__detail-value">
+                {getAccountLabel(tx.from_account_id as AccountId)}
+              </p>
+            </div>
+          )}
           {tx.notes && (
             <div className="transaction-item__detail-row">
               <p className="transaction-item__detail-label">Notes</p>
@@ -311,14 +332,14 @@ function HistoryTransactionItem({
                     <span className="audit-log__time">
                       {new Date(entry.timestamp).toLocaleString()}
                     </span>
-                    {entry.action === 'update' && entry.previousData && entry.newData && (
+                    {entry.action === 'update' && entry.previous_data && entry.new_data && (
                       <div className="audit-log__changes">
-                        {entry.previousData.amount !== entry.newData.amount && (
+                        {entry.previous_data.amount !== entry.new_data.amount && (
                           <span className="audit-log__change">
-                            Amount: {formatCurrency(entry.previousData.amount ?? 0)} → {formatCurrency(entry.newData.amount ?? 0)}
+                            Amount: {formatCurrency(entry.previous_data.amount ?? 0)} → {formatCurrency(entry.new_data.amount ?? 0)}
                           </span>
                         )}
-                        {entry.previousData.notes !== entry.newData.notes && (
+                        {entry.previous_data.notes !== entry.new_data.notes && (
                           <span className="audit-log__change">
                             Notes updated
                           </span>
