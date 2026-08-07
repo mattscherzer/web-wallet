@@ -26,7 +26,7 @@ function useSupabaseQuery<T>(
     } catch (err) {
       console.error('Supabase query error:', err);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo, react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
   }, deps);
 
   useEffect(() => {
