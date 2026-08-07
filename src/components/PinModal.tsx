@@ -21,6 +21,7 @@ export default function PinModal({
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDigits(['', '', '', '']);
       setError(false);
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
