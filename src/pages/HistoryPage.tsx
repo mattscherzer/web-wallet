@@ -11,6 +11,7 @@ import {
   Trash2,
   AlertCircle,
   History,
+  Download,
 } from 'lucide-react';
 import { useFilteredTransactions, useAuditLog } from '../db/hooks';
 import {
@@ -22,6 +23,7 @@ import {
 } from '../db/database';
 import { formatSignedCurrency, formatCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
+import { generateHistoryCsv } from '../utils/exportCsv';
 import PinModal from '../components/PinModal';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
@@ -95,6 +97,14 @@ export default function HistoryPage() {
       <div className="page-header">
         <Clock size={24} className="page-header__icon" />
         <h1 className="page-header__title">Transaction History</h1>
+        <button
+          className="btn btn--outline"
+          style={{ marginLeft: 'auto', padding: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}
+          onClick={generateHistoryCsv}
+          id="export-csv-btn"
+        >
+          <Download size={18} /> Export CSV
+        </button>
       </div>
 
       {/* Search */}

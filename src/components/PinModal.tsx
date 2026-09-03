@@ -21,8 +21,8 @@ export default function PinModal({
 
   useEffect(() => {
     if (isOpen) {
-      setDigits(['', '', '', '']);
-      setError(false);
+      setTimeout(() => setDigits(['', '', '', '']), 0);
+      setTimeout(() => setError(false), 0);
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
   }, [isOpen]);

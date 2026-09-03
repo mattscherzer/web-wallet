@@ -9,7 +9,6 @@ import {
   type AccountId,
   type AuditEntry,
 } from './database';
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 // ─── Generic hook for Supabase queries with real-time ───
 function useSupabaseQuery<T>(
@@ -27,8 +26,8 @@ function useSupabaseQuery<T>(
     } catch (err) {
       console.error('Supabase query error:', err);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
+  }, deps as readonly unknown[]);
 
   useEffect(() => {
     refresh();
@@ -42,7 +41,7 @@ function useSupabaseQuery<T>(
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: realtimeTable },
-        (_payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+        () => {
           refresh();
         }
       )
