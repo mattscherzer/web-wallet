@@ -42,7 +42,3 @@ The app is configured for **Vercel** deployment. Connect this repo to Vercel and
 ## Currency
 
 All amounts are in **EUR (€)**.
-
-## PIN Code
-
-The confirmation PIN is `1234`.
