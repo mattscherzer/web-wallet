@@ -9,6 +9,7 @@ import {
   type AccountId,
   type AuditEntry,
 } from './database';
+import { computeAccountBalances, emptyBalances, type BalanceInput } from './balances';
 
 // ─── Generic hook for Supabase queries with real-time ───
 function useSupabaseQuery<T>(
@@ -138,34 +139,10 @@ export function useAccountBalances() {
 
       if (error) throw error;
 
-      const balances: Record<AccountId, number> = {
-        cash: 0,
-        paypal: 0,
-        bank: 0,
-        prudent_reserve: 0,
-      };
-
-      for (const t of data ?? []) {
-        const amount = Number(t.amount);
-        const accountId = t.account_id as AccountId;
-
-        if (t.type === 'inflow') {
-          balances[accountId] += amount;
-        } else if (t.type === 'outflow') {
-          balances[accountId] -= amount;
-        } else if (t.type === 'transfer') {
-          // Transfer: debit source, credit destination
-          balances[accountId] += amount; // destination (account_id)
-          if (t.from_account_id) {
-            balances[t.from_account_id as AccountId] -= amount; // source
-          }
-        }
-      }
-
-      return balances;
+      return computeAccountBalances((data ?? []) as BalanceInput[]);
     },
     [],
-    { cash: 0, paypal: 0, bank: 0, prudent_reserve: 0 },
+    emptyBalances(),
     'transactions'
   );
 }
