@@ -260,8 +260,6 @@ function HistoryTransactionItem({
   const formatAuditAction = (action: string) => {
     switch (action) {
       case 'create': return 'Created';
-      case 'update': return 'Edited';
-      case 'delete': return 'Deleted';
       default: return action;
     }
   };
