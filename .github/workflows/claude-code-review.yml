@@ -1,0 +1,62 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+jobs:
+  claude-review:
+    # Skip draft PRs to conserve tokens and avoid reviewing WIP code
+    if: github.event.pull_request.draft == false
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # fetch-depth: 0 is required so git diff can trace the PR's base commit
+          fetch-depth: 0
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+          plugins: 'code-review@claude-code-plugins'
+          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
+          prompt: |
+            /code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+
+            Apply the following Review Rubric:
+
+            1. Standards & Context:
+               - Adhere strictly to the project's root `CLAUDE.md` and `.claude/skills/adversarial-review/SKILL.md`.
+
+            2. Architecture & Data Flow (Supabase & TanStack Query):
+               - Supabase / Auth: Ensure queries respect Row Level Security (RLS). Catch any exposed service-role keys (only anon key is allowed client-side). Ensure `.error` is handled on all Supabase calls.
+               - TanStack Query: Mutations must explicitly invalidate affected query keys (`queryClient.invalidateQueries`). Ensure loading and error states are rendered in the UI.
+
+            3. Testing Hygiene (Vitest):
+               - Flag tautological tests that only assert on mock calls instead of DOM state.
+               - Verify that tests with query hooks use `{ defaultOptions: { queries: { retry: false } } }`.
+               - Ensure React Router components are wrapped in `<MemoryRouter>`.
+               - Supabase calls must be mocked; no live network calls in unit tests.
+
+            4. TypeScript & UI (Vite / Tailwind v4):
+               - Prohibit 'any', loose casts ('as Type'), and non-null assertions ('!'). Require discriminated unions for async state.
+               - Flag dynamic string interpolations in Tailwind classes (e.g., `text-${color}-500`) that break the Tailwind scanner.
+
+            5. Output Requirements:
+               - Provide line-level actionable comments using the inline comment tool.
+               - Classify each issue strictly as:
+                 - `[CRITICAL]`: Security/RLS risks, unhandled network errors, broken cache invalidation, or false-positive tests.
+                 - `[BLOAT / YAGNI]`: Over-engineered abstractions, unused helpers, or dead code.
+                 - `[IMPROVEMENT]`: Minor idiomatic React or TypeScript cleanups.
+               - Conclude with a summary checklist of blocking `[CRITICAL]` issues before human sign-off. If none exist, output: "LGTM: No architectural flaws or security regressions detected."
