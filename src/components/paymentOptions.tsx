@@ -8,8 +8,9 @@ export interface PaymentOption {
   icon: ReactNode;
 }
 
-export const PAYMENT_OPTIONS: Partial<Record<AccountId, Omit<PaymentOption, 'id'>>> = {
-  cash: { label: 'Cash', icon: <Wallet size={24} /> },
-  paypal: { label: 'PayPal', icon: <CreditCard size={24} /> },
-  bank: { label: 'Bank', icon: <Landmark size={24} /> },
-};
+/** Accounts a payment can be made from or into. The prudent reserve is deliberately excluded. */
+export const PAYMENT_OPTIONS: PaymentOption[] = [
+  { id: 'cash', label: 'Cash', icon: <Wallet size={24} /> },
+  { id: 'paypal', label: 'PayPal', icon: <CreditCard size={24} /> },
+  { id: 'bank', label: 'Bank', icon: <Landmark size={24} /> },
+];

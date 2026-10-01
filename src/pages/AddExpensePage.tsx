@@ -10,23 +10,17 @@ import {
   CreditCard,
   AlertTriangle,
 } from 'lucide-react';
-import { createTransaction, getAccountLabel, type AccountId } from '../db/database';
+import { createTransaction, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
-import { useAccountBalances } from '../db/hooks';
+import { useLoadedAccountBalances } from '../db/hooks';
 import {
   DEFAULT_EXPENSE_ACCOUNT,
-  EXPENSE_ACCOUNT_IDS,
   buildExpenseInput,
   wouldOverdraw,
 } from '../utils/expense';
 import PinModal from '../components/PinModal';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
-import { PAYMENT_OPTIONS, type PaymentOption } from '../components/paymentOptions';
-
-const EXPENSE_METHODS: PaymentOption[] = EXPENSE_ACCOUNT_IDS.map((id) => ({
-  id,
-  ...PAYMENT_OPTIONS[id]!,
-}));
+import { PAYMENT_OPTIONS } from '../components/paymentOptions';
 
 const CATEGORIES = [
   { id: 'rent', label: 'Rent', icon: <Home size={16} /> },
@@ -46,8 +40,8 @@ export default function AddExpensePage() {
   const [notes, setNotes] = useState('');
   const [accountId, setAccountId] = useState<AccountId>(DEFAULT_EXPENSE_ACCOUNT);
   const [showPin, setShowPin] = useState(false);
-  const balances = useAccountBalances();
-  const overdraws = wouldOverdraw(balances[accountId] ?? 0, parseFloat(amount));
+  const balances = useLoadedAccountBalances();
+  const overdraws = wouldOverdraw(balances?.[accountId] ?? null, parseFloat(amount));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -79,17 +73,7 @@ export default function AddExpensePage() {
             <CreditCard size={16} />
             Paid From
           </label>
-          <PaymentMethodSelector options={EXPENSE_METHODS} value={accountId} onChange={setAccountId} />
-          {overdraws && (
-            <p
-              role="alert"
-              id="expense-overdraft-warning"
-              style={{ color: 'var(--color-warning)', display: 'flex', gap: '6px', alignItems: 'center', marginTop: '12px' }}
-            >
-              <AlertTriangle size={16} />
-              This will take {getAccountLabel(accountId)} below €0.
-            </p>
-          )}
+          <PaymentMethodSelector options={PAYMENT_OPTIONS} value={accountId} onChange={setAccountId} />
         </div>
 
         {/* Amount */}
@@ -109,6 +93,12 @@ export default function AddExpensePage() {
             />
           </div>
         </div>
+        {overdraws && (
+          <p role="alert" id="expense-overdraft-warning" className="form-warning">
+            <AlertTriangle size={16} />
+            This will take {PAYMENT_OPTIONS.find((o) => o.id === accountId)?.label} below €0.
+          </p>
+        )}
 
         {/* Expense Date */}
         <div className="form-section">

@@ -13,7 +13,7 @@ import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
 import CashCalculator from '../components/CashCalculator';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
-import { PAYMENT_OPTIONS, type PaymentOption } from '../components/paymentOptions';
+import { PAYMENT_OPTIONS } from '../components/paymentOptions';
 
 const REASONS = [
   { id: '7th-tradition', label: '7th Tradition' },
@@ -21,11 +21,9 @@ const REASONS = [
   { id: 'other', label: 'Other' },
 ];
 
-const PAYMENT_METHODS: PaymentOption[] = (['cash', 'paypal', 'bank'] as const).map((id) => ({
-  id,
-  ...PAYMENT_OPTIONS[id]!,
-  label: id === 'bank' ? 'Bank Transfer' : PAYMENT_OPTIONS[id]!.label,
-}));
+const PAYMENT_METHODS = PAYMENT_OPTIONS.map((o) =>
+  o.id === 'bank' ? { ...o, label: 'Bank Transfer' } : o
+);
 
 export default function AddMoneyPage() {
   const navigate = useNavigate();

@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_EXPENSE_ACCOUNT,
-  EXPENSE_ACCOUNT_IDS,
   buildExpenseInput,
   wouldOverdraw,
 } from './expense';
+import { PAYMENT_OPTIONS } from '../components/paymentOptions';
 
-describe('EXPENSE_ACCOUNT_IDS', () => {
+describe('expense account options', () => {
   it('offers cash, paypal and bank, and never the prudent reserve', () => {
-    expect(EXPENSE_ACCOUNT_IDS).toEqual(['cash', 'paypal', 'bank']);
-    expect(EXPENSE_ACCOUNT_IDS).not.toContain('prudent_reserve');
+    const ids = PAYMENT_OPTIONS.map((o) => o.id);
+    expect(ids).toEqual(['cash', 'paypal', 'bank']);
+    expect(ids).not.toContain('prudent_reserve');
   });
 
   it('defaults to cash', () => {
@@ -66,6 +67,10 @@ describe('wouldOverdraw', () => {
 
   it('ignores floating point noise', () => {
     expect(wouldOverdraw(0.3, 0.1 + 0.2)).toBe(false);
+  });
+
+  it('does not warn when the balance is unknown (not loaded or fetch failed)', () => {
+    expect(wouldOverdraw(null, 100)).toBe(false);
   });
 
   it('is false for an empty or invalid amount', () => {
