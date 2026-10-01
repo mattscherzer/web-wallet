@@ -21,7 +21,8 @@ import {
   useTotalBalance,
   useRecentTransactions,
 } from '../db/hooks';
-import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
+import Amount from '../components/Amount';
+import { formatCurrency } from '../utils/formatCurrency';
 import { getAccountLabel, type Transaction, type AccountId } from '../db/database';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
@@ -171,8 +172,8 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
         <div className="transaction-item__info">
           <p className="transaction-item__name">{displayName}</p>
         </div>
-        <span className={`transaction-item__amount ${isTransfer ? 'transaction-item__amount--transfer' : isInflow ? 'transaction-item__amount--inflow' : 'transaction-item__amount--outflow'}`}>
-          {isTransfer ? formatCurrency(tx.amount) : formatSignedCurrency(tx.amount, tx.type)}
+        <span className="transaction-item__amount">
+          <Amount type={tx.type} amount={tx.amount} />
         </span>
         <span className={`transaction-item__chevron${expanded ? ' transaction-item__chevron--open' : ''}`}>
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
