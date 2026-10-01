@@ -7,10 +7,26 @@ import {
   BookOpen,
   HeartHandshake,
   MessageCircle,
+  CreditCard,
+  AlertTriangle,
 } from 'lucide-react';
-import { createTransaction, type AccountId } from '../db/database';
+import { createTransaction, getAccountLabel, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
+import { useAccountBalances } from '../db/hooks';
+import {
+  DEFAULT_EXPENSE_ACCOUNT,
+  EXPENSE_ACCOUNT_IDS,
+  buildExpenseInput,
+  wouldOverdraw,
+} from '../utils/expense';
 import PinModal from '../components/PinModal';
+import PaymentMethodSelector from '../components/PaymentMethodSelector';
+import { PAYMENT_OPTIONS, type PaymentOption } from '../components/paymentOptions';
+
+const EXPENSE_METHODS: PaymentOption[] = EXPENSE_ACCOUNT_IDS.map((id) => ({
+  id,
+  ...PAYMENT_OPTIONS[id]!,
+}));
 
 const CATEGORIES = [
   { id: 'rent', label: 'Rent', icon: <Home size={16} /> },
@@ -28,7 +44,10 @@ export default function AddExpensePage() {
   const [category, setCategory] = useState('rent');
   const [customCategory, setCustomCategory] = useState('');
   const [notes, setNotes] = useState('');
+  const [accountId, setAccountId] = useState<AccountId>(DEFAULT_EXPENSE_ACCOUNT);
   const [showPin, setShowPin] = useState(false);
+  const balances = useAccountBalances();
+  const overdraws = wouldOverdraw(balances[accountId] ?? 0, parseFloat(amount));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -39,17 +58,9 @@ export default function AddExpensePage() {
 
   const handlePinSuccess = async () => {
     setShowPin(false);
-    const numAmount = parseFloat(amount);
-
-    await createTransaction({
-      type: 'outflow',
-      amount: numAmount,
-      date: expenseDate,
-      account_id: 'cash' as AccountId,
-      category: category === 'other' ? customCategory || 'other' : category,
-      notes,
-      reason: category === 'other' ? customCategory : undefined,
-    });
+    await createTransaction(
+      buildExpenseInput({ amount, date: expenseDate, accountId, category, customCategory, notes })
+    );
 
     navigate('/');
   };
@@ -62,6 +73,25 @@ export default function AddExpensePage() {
       </div>
 
       <form onSubmit={handleSubmit}>
+        {/* Paid From */}
+        <div className="form-section">
+          <label className="form-label">
+            <CreditCard size={16} />
+            Paid From
+          </label>
+          <PaymentMethodSelector options={EXPENSE_METHODS} value={accountId} onChange={setAccountId} />
+          {overdraws && (
+            <p
+              role="alert"
+              id="expense-overdraft-warning"
+              style={{ color: 'var(--color-warning)', display: 'flex', gap: '6px', alignItems: 'center', marginTop: '12px' }}
+            >
+              <AlertTriangle size={16} />
+              This will take {getAccountLabel(accountId)} below €0.
+            </p>
+          )}
+        </div>
+
         {/* Amount */}
         <div className="amount-input" style={{ marginBottom: '20px' }}>
           <p className="amount-input__label">Total Amount</p>

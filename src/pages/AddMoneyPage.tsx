@@ -1,10 +1,9 @@
-import React, { useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Landmark,
   Calendar,
   Home,
-  Wallet,
   CreditCard,
   Calculator,
   Euro,
@@ -13,6 +12,8 @@ import { createTransaction, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
 import CashCalculator from '../components/CashCalculator';
+import PaymentMethodSelector from '../components/PaymentMethodSelector';
+import { PAYMENT_OPTIONS, type PaymentOption } from '../components/paymentOptions';
 
 const REASONS = [
   { id: '7th-tradition', label: '7th Tradition' },
@@ -20,11 +21,11 @@ const REASONS = [
   { id: 'other', label: 'Other' },
 ];
 
-const PAYMENT_METHODS: { id: AccountId; label: string; icon: React.ReactNode }[] = [
-  { id: 'cash', label: 'Cash', icon: <Wallet size={24} /> },
-  { id: 'paypal', label: 'PayPal', icon: <CreditCard size={24} /> },
-  { id: 'bank', label: 'Bank Transfer', icon: <Landmark size={24} /> },
-];
+const PAYMENT_METHODS: PaymentOption[] = (['cash', 'paypal', 'bank'] as const).map((id) => ({
+  id,
+  ...PAYMENT_OPTIONS[id]!,
+  label: id === 'bank' ? 'Bank Transfer' : PAYMENT_OPTIONS[id]!.label,
+}));
 
 export default function AddMoneyPage() {
   const navigate = useNavigate();
@@ -152,20 +153,7 @@ export default function AddMoneyPage() {
             <CreditCard size={16} />
             Payment Method
           </label>
-          <div className="payment-card-group">
-            {PAYMENT_METHODS.map((pm) => (
-              <button
-                key={pm.id}
-                type="button"
-                className={`payment-card${paymentMethod === pm.id ? ' payment-card--active' : ''}`}
-                onClick={() => setPaymentMethod(pm.id)}
-                id={`payment-${pm.id}`}
-              >
-                <span className="payment-card__icon">{pm.icon}</span>
-                <span className="payment-card__label">{pm.label}</span>
-              </button>
-            ))}
-          </div>
+          <PaymentMethodSelector options={PAYMENT_METHODS} value={paymentMethod} onChange={setPaymentMethod} />
         </div>
 
         {/* Amount */}
