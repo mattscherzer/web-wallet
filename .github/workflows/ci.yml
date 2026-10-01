@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint, type-check, build
+    name: Lint, type-check, test, build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,9 +32,10 @@ jobs:
       - name: Type-check
         run: npm run typecheck
 
+      - name: Test
+        run: npm test
+
       # The Supabase credentials are only read at runtime, so the build
       # needs no secrets. See src/db/supabase.ts.
       - name: Build
         run: npm run build
-
-      # TODO: add `npm test` here once the Vitest suite lands (#5).

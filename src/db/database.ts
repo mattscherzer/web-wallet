@@ -1,17 +1,11 @@
 import { supabase } from './supabase';
+import { ACCOUNTS, type AccountId } from './accounts';
+
+export type { AccountId, Account } from './accounts';
 
 // ─── Types ──────────────────────────────────────────────
-export type AccountId = 'cash' | 'paypal' | 'bank' | 'prudent_reserve';
 export type TransactionType = 'inflow' | 'outflow' | 'transfer';
 export type AuditAction = 'create' | 'update' | 'delete';
-
-export interface Account {
-  id: AccountId;
-  name: string;
-  icon: string;
-  /** If true, balance is excluded from Total Available Balance */
-  isReserve?: boolean;
-}
 
 export interface Transaction {
   id: string;
@@ -38,15 +32,7 @@ export interface AuditEntry {
 }
 
 // ─── Static Account Data ────────────────────────────────
-export const ACCOUNTS: Account[] = [
-  { id: 'cash', name: 'Cash Balance', icon: 'wallet' },
-  { id: 'paypal', name: 'PayPal Balance', icon: 'credit-card' },
-  { id: 'bank', name: 'Bank Account', icon: 'landmark' },
-  { id: 'prudent_reserve', name: 'Prudent Reserve', icon: 'shield', isReserve: true },
-];
-
-export const MAIN_ACCOUNTS = ACCOUNTS.filter((a) => !a.isReserve);
-export const RESERVE_ACCOUNTS = ACCOUNTS.filter((a) => a.isReserve);
+export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from './accounts';
 
 // ─── Account label helper ───────────────────────────────
 export function getAccountLabel(id: AccountId): string {
