@@ -7,10 +7,20 @@ import {
   BookOpen,
   HeartHandshake,
   MessageCircle,
+  CreditCard,
+  AlertTriangle,
 } from 'lucide-react';
 import { createTransaction, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
+import { useLoadedAccountBalances } from '../db/hooks';
+import {
+  DEFAULT_EXPENSE_ACCOUNT,
+  buildExpenseInput,
+  wouldOverdraw,
+} from '../utils/expense';
 import PinModal from '../components/PinModal';
+import PaymentMethodSelector from '../components/PaymentMethodSelector';
+import { PAYMENT_OPTIONS } from '../components/paymentOptions';
 
 const CATEGORIES = [
   { id: 'rent', label: 'Rent', icon: <Home size={16} /> },
@@ -28,7 +38,10 @@ export default function AddExpensePage() {
   const [category, setCategory] = useState('rent');
   const [customCategory, setCustomCategory] = useState('');
   const [notes, setNotes] = useState('');
+  const [accountId, setAccountId] = useState<AccountId>(DEFAULT_EXPENSE_ACCOUNT);
   const [showPin, setShowPin] = useState(false);
+  const balances = useLoadedAccountBalances();
+  const overdraws = wouldOverdraw(balances?.[accountId] ?? null, parseFloat(amount));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -39,17 +52,9 @@ export default function AddExpensePage() {
 
   const handlePinSuccess = async () => {
     setShowPin(false);
-    const numAmount = parseFloat(amount);
-
-    await createTransaction({
-      type: 'outflow',
-      amount: numAmount,
-      date: expenseDate,
-      account_id: 'cash' as AccountId,
-      category: category === 'other' ? customCategory || 'other' : category,
-      notes,
-      reason: category === 'other' ? customCategory : undefined,
-    });
+    await createTransaction(
+      buildExpenseInput({ amount, date: expenseDate, accountId, category, customCategory, notes })
+    );
 
     navigate('/');
   };
@@ -62,6 +67,15 @@ export default function AddExpensePage() {
       </div>
 
       <form onSubmit={handleSubmit}>
+        {/* Paid From */}
+        <div className="form-section">
+          <label className="form-label">
+            <CreditCard size={16} />
+            Paid From
+          </label>
+          <PaymentMethodSelector options={PAYMENT_OPTIONS} value={accountId} onChange={setAccountId} />
+        </div>
+
         {/* Amount */}
         <div className="amount-input" style={{ marginBottom: '20px' }}>
           <p className="amount-input__label">Total Amount</p>
@@ -79,6 +93,12 @@ export default function AddExpensePage() {
             />
           </div>
         </div>
+        {overdraws && (
+          <p role="alert" id="expense-overdraft-warning" className="form-warning">
+            <AlertTriangle size={16} />
+            This will take {PAYMENT_OPTIONS.find((o) => o.id === accountId)?.label} below €0.
+          </p>
+        )}
 
         {/* Expense Date */}
         <div className="form-section">

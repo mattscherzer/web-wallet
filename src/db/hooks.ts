@@ -129,20 +129,32 @@ export function useFilteredTransactions(
 }
 
 // ─── Account balances (handles transfers correctly) ─────
+async function fetchAccountBalances(): Promise<Record<AccountId, number>> {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('type, amount, account_id, from_account_id')
+    .eq('deleted', false);
+
+  if (error) throw error;
+
+  return computeAccountBalances((data ?? []) as BalanceInput[]);
+}
+
 export function useAccountBalances() {
   return useSupabaseQuery<Record<AccountId, number>>(
-    async () => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('type, amount, account_id, from_account_id')
-        .eq('deleted', false);
-
-      if (error) throw error;
-
-      return computeAccountBalances((data ?? []) as BalanceInput[]);
-    },
+    fetchAccountBalances,
     [],
     emptyBalances(),
+    'transactions'
+  );
+}
+
+/** Like useAccountBalances, but `null` until balances have actually been fetched. */
+export function useLoadedAccountBalances() {
+  return useSupabaseQuery<Record<AccountId, number> | null>(
+    fetchAccountBalances,
+    [],
+    null,
     'transactions'
   );
 }

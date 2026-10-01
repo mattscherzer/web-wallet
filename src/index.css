@@ -605,6 +605,15 @@ img {
   background: #ffcdd2;
 }
 
+.form-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: calc(-1 * var(--space-sm)) 0 var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-warning);
+}
+
 .transaction-item__edited-badge {
   display: inline-flex;
   align-items: center;
