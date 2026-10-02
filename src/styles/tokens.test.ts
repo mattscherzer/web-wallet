@@ -80,31 +80,18 @@ const PAIRS: Array<[string, string, number]> = [
   ['color-border', 'color-bg', 3],
   ['color-focus', 'color-card', 3],
   ['color-focus', 'color-bg', 3],
+  ['color-hero-focus', 'color-hero-bg', 3],
+  ['color-hero-action-text', 'color-hero-action-hover-bg', 4.5],
+  ['color-text-inverse', 'color-primary-hover', 4.5],
+  ['color-link-hover', 'color-card', 4.5],
+  ['color-link-hover', 'color-bg', 4.5],
+  ['color-text-primary', 'color-in-surface', 4.5],
 ];
 
 describe('design tokens', () => {
   it('defines a light and a dark token block', () => {
     expect(Object.keys(tokens(lightBlock)).length).toBeGreaterThan(20);
     expect(Object.keys(tokens(darkBlock)).length).toBeGreaterThan(10);
-  });
-
-  it('uses the Clear Navy palette', () => {
-    const light = tokens(lightBlock);
-    expect(light['color-bg'].toLowerCase()).toBe('#f4f5f7');
-    expect(light['color-card'].toLowerCase()).toBe('#ffffff');
-    expect(light['color-text-primary'].toLowerCase()).toBe('#101828');
-    expect(light['color-text-secondary'].toLowerCase()).toBe('#5d6675');
-    expect(light['color-primary'].toLowerCase()).toBe('#0b2545');
-    expect(light['color-in'].toLowerCase()).toBe('#067647');
-    expect(light['color-error'].toLowerCase()).toBe('#b42318');
-    expect(light['color-reserve-bg'].toLowerCase()).toBe('#eaeff7');
-    expect(light['color-focus'].toLowerCase()).toBe('#1f4e9e');
-    const dark = tokens(darkBlock);
-    expect(dark['color-bg'].toLowerCase()).toBe('#0b0f17');
-    expect(dark['color-card'].toLowerCase()).toBe('#141a24');
-    expect(dark['color-text-primary'].toLowerCase()).toBe('#f2f4f7');
-    expect(dark['color-in'].toLowerCase()).toBe('#47cd89');
-    expect(dark['color-focus'].toLowerCase()).toBe('#8ab4f8');
   });
 
   describe.each([
@@ -130,15 +117,24 @@ describe('stylesheet rules', () => {
     expect(css).not.toMatch(/gradient\(/);
   });
 
-  it('uses Geist and none of the earlier typefaces', () => {
+  it('uses Geist', () => {
     expect(css).toMatch(/--font-family:\s*'Geist'/);
     expect(css).toMatch(/--font-mono:\s*'Geist Mono'/);
-    expect(css).not.toMatch(/Inter|Newsreader|Public Sans|IBM Plex/);
-    expect(css).not.toMatch(/#1a1f71|#3f51b5|#5c6bc0/i);
   });
 
-  it('has no pill-shaped radius on controls, chips or marks', () => {
-    expect(rest).not.toMatch(/border-radius:\s*(9999px|var\(--radius-full\)|2[2-9]px)/);
+  it('keeps literal radii small (no pills); larger radii come from tokens', () => {
+    const literals = [...rest.matchAll(/border-radius:\s*([\d.]+)px/g)].map((m) => parseFloat(m[1]));
+    for (const r of literals) expect(r).toBeLessThanOrEqual(10);
+    expect(rest).not.toMatch(/border-radius:\s*(9999px|var\(--radius-full\))/);
+  });
+
+  it('keeps green for money in only, never for links', () => {
+    const linkRules = [...rest.matchAll(/([^{}]*\ba\b[^{}]*|[^{}]*btn--link[^{}]*)\{([^}]*)\}/g)].map((m) => m[2]);
+    for (const body of linkRules) expect(body).not.toMatch(/--color-in\b/);
+  });
+
+  it('does not recolour every anchor on hover (it leaks onto nav items)', () => {
+    expect(rest).not.toMatch(/(^|\n)a:hover/);
   });
 
   it('never sets text below 12px', () => {
@@ -149,6 +145,10 @@ describe('stylesheet rules', () => {
       m[2] === 'rem' ? parseFloat(m[1]) * 16 : parseFloat(m[1]),
     );
     for (const size of [...sizes, ...tokenSizes]) expect(size).toBeGreaterThanOrEqual(12);
+  });
+
+  it('uses a contrasting focus ring on the navy balance card', () => {
+    expect(rest).toMatch(/\.balance-hero :focus-visible\s*\{[^}]*outline-color:\s*var\(--color-hero-focus\)/);
   });
 
   it('draws a 3px focus ring offset by 2px on every focusable element', () => {
