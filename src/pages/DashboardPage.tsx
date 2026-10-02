@@ -79,17 +79,19 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Account Cards */}
-      {mainAccounts.map((account) => (
-        <div className="account-card" key={account.id} id={`account-${account.id}`}>
-          <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
-            {ACCOUNT_ICONS[account.id]}
+      <div className="segmented-list">
+        {mainAccounts.map((account) => (
+          <div className="account-card" key={account.id} id={`account-${account.id}`}>
+            <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
+              {ACCOUNT_ICONS[account.id]}
+            </div>
+            <div className="account-card__info">
+              <p className="account-card__label">{account.name}</p>
+              <p className="account-card__balance">{formatCurrency(account.balance)}</p>
+            </div>
           </div>
-          <div className="account-card__info">
-            <p className="account-card__label">{account.name}</p>
-            <p className="account-card__balance">{formatCurrency(account.balance)}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* Reserve Accounts */}
       {reserveAccounts.length > 0 && (
@@ -119,9 +121,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {recentTransactions.map((tx) => (
-        <DashboardTransactionItem key={tx.id} transaction={tx} />
-      ))}
+      <div className="segmented-list">
+        {recentTransactions.map((tx) => (
+          <DashboardTransactionItem key={tx.id} transaction={tx} />
+        ))}
+      </div>
 
       {recentTransactions.length > 0 && (
         <div className="view-all-link">

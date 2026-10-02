@@ -147,16 +147,18 @@ export default function HistoryPage() {
       {Array.from(grouped.entries()).map(([date, txs]) => (
         <div className="date-group" key={date}>
           <div className="date-group__label">{getDateGroupLabel(date)}</div>
-          {txs.map((tx) => (
-            <HistoryTransactionItem
-              key={tx.id}
-              transaction={tx}
-              isExpanded={expandedId === tx.id}
-              onToggle={() => setExpandedId(expandedId === tx.id ? null : tx.id)}
-              onDelete={() => requestDelete(tx.id)}
-              onEdit={() => startEdit(tx)}
-            />
-          ))}
+          <div className="segmented-list">
+            {txs.map((tx) => (
+              <HistoryTransactionItem
+                key={tx.id}
+                transaction={tx}
+                isExpanded={expandedId === tx.id}
+                onToggle={() => setExpandedId(expandedId === tx.id ? null : tx.id)}
+                onDelete={() => requestDelete(tx.id)}
+                onEdit={() => startEdit(tx)}
+              />
+            ))}
+          </div>
         </div>
       ))}
 

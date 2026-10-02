@@ -61,32 +61,38 @@ function contrast(a: string, b: string): number {
 const PAIRS: Array<[string, string, number]> = [
   ['color-text-primary', 'color-bg', 4.5],
   ['color-text-primary', 'color-card', 4.5],
+  ['color-text-primary', 'color-container', 4.5],
   ['color-text-primary', 'color-bg-secondary', 4.5],
-  ['color-text-primary', 'color-reserve-bg', 4.5],
+  ['color-text-primary', 'color-avatar', 4.5],
+  ['color-text-primary', 'color-in-surface', 4.5],
   ['color-text-secondary', 'color-bg', 4.5],
   ['color-text-secondary', 'color-card', 4.5],
+  ['color-text-secondary', 'color-container', 4.5],
   ['color-text-secondary', 'color-bg-secondary', 4.5],
-  ['color-text-secondary', 'color-reserve-bg', 4.5],
+  ['color-text-secondary', 'color-avatar', 4.5],
   ['color-in', 'color-card', 4.5],
   ['color-in', 'color-bg', 4.5],
   ['color-in', 'color-in-surface', 4.5],
   ['color-error', 'color-card', 4.5],
   ['color-error', 'color-bg', 4.5],
+  ['color-error', 'color-bg-secondary', 4.5],
   ['color-text-inverse', 'color-primary', 4.5],
+  ['color-text-inverse', 'color-primary-hover', 4.5],
+  ['color-on-primary-container', 'color-primary-container', 4.5],
   ['color-hero-text', 'color-hero-bg', 4.5],
   ['color-hero-text-secondary', 'color-hero-bg', 4.5],
   ['color-hero-action-text', 'color-hero-action-bg', 4.5],
+  ['color-hero-action-text', 'color-hero-action-hover-bg', 4.5],
+  ['color-link-hover', 'color-card', 4.5],
+  ['color-link-hover', 'color-bg', 4.5],
+  ['color-hero-action-bg', 'color-hero-bg', 3],
   ['color-border', 'color-card', 3],
   ['color-border', 'color-bg', 3],
   ['color-focus', 'color-card', 3],
   ['color-focus', 'color-bg', 3],
+  ['color-focus', 'color-container', 3],
+  ['color-focus', 'color-bg-secondary', 3],
   ['color-hero-focus', 'color-hero-bg', 3],
-  ['color-hero-action-border', 'color-hero-bg', 3],
-  ['color-hero-action-text', 'color-hero-action-hover-bg', 4.5],
-  ['color-text-inverse', 'color-primary-hover', 4.5],
-  ['color-link-hover', 'color-card', 4.5],
-  ['color-link-hover', 'color-bg', 4.5],
-  ['color-text-primary', 'color-in-surface', 4.5],
 ];
 
 describe('design tokens', () => {
@@ -123,10 +129,39 @@ describe('stylesheet rules', () => {
     expect(css).toMatch(/--font-mono:\s*'Geist Mono'/);
   });
 
-  it('keeps literal radii small (no pills); larger radii come from tokens', () => {
+  it('takes large corner radii from tokens, not literals', () => {
     const literals = [...rest.matchAll(/border-radius:\s*([\d.]+)px/g)].map((m) => parseFloat(m[1]));
-    for (const r of literals) expect(r).toBeLessThanOrEqual(10);
-    expect(rest).not.toMatch(/border-radius:\s*(9999px|var\(--radius-full\))/);
+    for (const r of literals) expect(r).toBeLessThanOrEqual(12);
+  });
+
+  it('gives the balance card an asymmetric hero corner', () => {
+    expect(rest).toMatch(
+      /\.balance-hero\s*\{[^}]*border-radius:\s*var\(--radius-hero-start\)\s+var\(--radius-xl\)\s+var\(--radius-xl\)\s+var\(--radius-xl\)/,
+    );
+  });
+
+  it('segments lists with 2px gaps, large outer corners and small inner corners', () => {
+    expect(rest).toMatch(/\.segmented-list\s*\{[^}]*gap:\s*2px/);
+    expect(rest).toMatch(/\.segmented-list > :first-child/);
+    expect(rest).toMatch(/\.segmented-list > :last-child/);
+    expect(rest).toMatch(/\.segmented-list > :only-child/);
+  });
+
+  it('presses controls with a spring scale and a 12px corner morph', () => {
+    expect(rest).toMatch(/:active\s*\{[^}]*transform:\s*scale\(0\.94\)/);
+    expect(rest).toMatch(/:active\s*\{[^}]*border-radius:\s*var\(--radius-md\)/);
+  });
+
+  it('turns off springs, transitions and animations for reduced motion', () => {
+    const block = rest.slice(rest.indexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(block).toMatch(/animation:\s*none\s*!important/);
+    expect(block).toMatch(/transition:\s*none\s*!important/);
+    expect(block).toMatch(/transform:\s*none\s*!important/);
+  });
+
+  it('uses 48px touch targets and 56px primary actions', () => {
+    expect(lightBlock).toMatch(/--touch-min:\s*48px/);
+    expect(lightBlock).toMatch(/--touch-primary:\s*56px/);
   });
 
   it('keeps green for money in only, never for links', () => {

@@ -21,7 +21,7 @@ export default function BottomNav() {
           end={to === '/'}
         >
           <span className="bottom-nav__icon-wrap">
-            <Icon size={22} />
+            <Icon size={24} />
           </span>
           <span className="bottom-nav__label">{label}</span>
         </NavLink>
