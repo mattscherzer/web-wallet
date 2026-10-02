@@ -9,7 +9,6 @@ import {
   ChevronUp,
   Pencil,
   Trash2,
-  AlertCircle,
   History,
   Download,
 } from 'lucide-react';
@@ -21,7 +20,9 @@ import {
   type Transaction,
   type AccountId,
 } from '../db/database';
-import { formatSignedCurrency, formatCurrency } from '../utils/formatCurrency';
+import Amount from '../components/Amount';
+import StatusChip from '../components/StatusChip';
+import { formatCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
 import PinModal from '../components/PinModal';
@@ -146,16 +147,18 @@ export default function HistoryPage() {
       {Array.from(grouped.entries()).map(([date, txs]) => (
         <div className="date-group" key={date}>
           <div className="date-group__label">{getDateGroupLabel(date)}</div>
-          {txs.map((tx) => (
-            <HistoryTransactionItem
-              key={tx.id}
-              transaction={tx}
-              isExpanded={expandedId === tx.id}
-              onToggle={() => setExpandedId(expandedId === tx.id ? null : tx.id)}
-              onDelete={() => requestDelete(tx.id)}
-              onEdit={() => startEdit(tx)}
-            />
-          ))}
+          <div className="segmented-list">
+            {txs.map((tx) => (
+              <HistoryTransactionItem
+                key={tx.id}
+                transaction={tx}
+                isExpanded={expandedId === tx.id}
+                onToggle={() => setExpandedId(expandedId === tx.id ? null : tx.id)}
+                onDelete={() => requestDelete(tx.id)}
+                onEdit={() => startEdit(tx)}
+              />
+            ))}
+          </div>
         </div>
       ))}
 
@@ -256,17 +259,9 @@ function HistoryTransactionItem({
       ? 'transaction-item__icon--inflow'
       : 'transaction-item__icon--outflow';
 
-  const amountClass = isTransfer
-    ? 'transaction-item__amount--transfer'
-    : isInflow
-      ? 'transaction-item__amount--inflow'
-      : 'transaction-item__amount--outflow';
-
   const formatAuditAction = (action: string) => {
     switch (action) {
       case 'create': return 'Created';
-      case 'update': return 'Edited';
-      case 'delete': return 'Deleted';
       default: return action;
     }
   };
@@ -284,17 +279,12 @@ function HistoryTransactionItem({
         <div className="transaction-item__info">
           <p className="transaction-item__name">
             {displayName}
-            {wasEdited && (
-              <span className="transaction-item__edited-badge">
-                <AlertCircle size={10} />
-                Edited
-              </span>
-            )}
+            {wasEdited && <StatusChip variant="edited" />}
           </p>
           <p className="transaction-item__time">{formatTime(tx.created_at)}</p>
         </div>
-        <span className={`transaction-item__amount ${amountClass}`}>
-          {isTransfer ? formatCurrency(tx.amount) : formatSignedCurrency(tx.amount, tx.type)}
+        <span className="transaction-item__amount">
+          <Amount type={tx.type} amount={tx.amount} />
         </span>
         <span className={`transaction-item__chevron${isExpanded ? ' transaction-item__chevron--open' : ''}`}>
           {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -337,7 +327,9 @@ function HistoryTransactionItem({
                 {auditEntries.map((entry) => (
                   <div key={entry.id} className="audit-log__entry">
                     <span className="audit-log__action">
-                      {formatAuditAction(entry.action)}
+                      {entry.action === 'update' ? <StatusChip variant="edited" />
+                        : entry.action === 'delete' ? <StatusChip variant="removed" />
+                        : formatAuditAction(entry.action)}
                     </span>
                     <span className="audit-log__time">
                       {new Date(entry.timestamp).toLocaleString()}
@@ -346,7 +338,7 @@ function HistoryTransactionItem({
                       <div className="audit-log__changes">
                         {entry.previous_data.amount !== entry.new_data.amount && (
                           <span className="audit-log__change">
-                            Amount: {formatCurrency(entry.previous_data.amount ?? 0)} → {formatCurrency(entry.new_data.amount ?? 0)}
+                            Amount: <span className="sr-only">from </span>{formatCurrency(entry.previous_data.amount ?? 0)}<span aria-hidden="true"> → </span><span className="sr-only"> to </span>{formatCurrency(entry.new_data.amount ?? 0)}
                           </span>
                         )}
                         {entry.previous_data.notes !== entry.new_data.notes && (

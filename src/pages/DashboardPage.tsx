@@ -21,7 +21,8 @@ import {
   useTotalBalance,
   useRecentTransactions,
 } from '../db/hooks';
-import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
+import Amount from '../components/Amount';
+import { formatCurrency } from '../utils/formatCurrency';
 import { getAccountLabel, type Transaction, type AccountId } from '../db/database';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
@@ -78,17 +79,19 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Account Cards */}
-      {mainAccounts.map((account) => (
-        <div className="account-card" key={account.id} id={`account-${account.id}`}>
-          <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
-            {ACCOUNT_ICONS[account.id]}
+      <div className="segmented-list">
+        {mainAccounts.map((account) => (
+          <div className="account-card" key={account.id} id={`account-${account.id}`}>
+            <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
+              {ACCOUNT_ICONS[account.id]}
+            </div>
+            <div className="account-card__info">
+              <p className="account-card__label">{account.name}</p>
+              <p className="account-card__balance">{formatCurrency(account.balance)}</p>
+            </div>
           </div>
-          <div className="account-card__info">
-            <p className="account-card__label">{account.name}</p>
-            <p className="account-card__balance">{formatCurrency(account.balance)}</p>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* Reserve Accounts */}
       {reserveAccounts.length > 0 && (
@@ -118,9 +121,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {recentTransactions.map((tx) => (
-        <DashboardTransactionItem key={tx.id} transaction={tx} />
-      ))}
+      <div className="segmented-list">
+        {recentTransactions.map((tx) => (
+          <DashboardTransactionItem key={tx.id} transaction={tx} />
+        ))}
+      </div>
 
       {recentTransactions.length > 0 && (
         <div className="view-all-link">
@@ -171,8 +176,8 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
         <div className="transaction-item__info">
           <p className="transaction-item__name">{displayName}</p>
         </div>
-        <span className={`transaction-item__amount ${isTransfer ? 'transaction-item__amount--transfer' : isInflow ? 'transaction-item__amount--inflow' : 'transaction-item__amount--outflow'}`}>
-          {isTransfer ? formatCurrency(tx.amount) : formatSignedCurrency(tx.amount, tx.type)}
+        <span className="transaction-item__amount">
+          <Amount type={tx.type} amount={tx.amount} />
         </span>
         <span className={`transaction-item__chevron${expanded ? ' transaction-item__chevron--open' : ''}`}>
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

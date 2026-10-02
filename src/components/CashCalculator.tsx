@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Calculator, X, Coins, Banknote } from 'lucide-react';
+import { formatCurrency } from '../utils/formatCurrency';
 
 interface CashCalculatorProps {
   isOpen: boolean;
@@ -55,9 +56,6 @@ export default function CashCalculator({ isOpen, onClose, onApply }: CashCalcula
     onClose();
   };
 
-  const formatAmount = (amount: number) =>
-    `€${amount.toFixed(2)}`;
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
@@ -89,7 +87,7 @@ export default function CashCalculator({ isOpen, onClose, onApply }: CashCalcula
                   id={`calc-bill-${bill.value}`}
                 />
                 <span className="calc-row__subtotal">
-                  {formatAmount(getSubtotal(bill.label, bill.value))}
+                  {formatCurrency(getSubtotal(bill.label, bill.value))}
                 </span>
               </div>
             ))}
@@ -112,7 +110,7 @@ export default function CashCalculator({ isOpen, onClose, onApply }: CashCalcula
                   id={`calc-coin-${coin.value}`}
                 />
                 <span className="calc-row__subtotal">
-                  {formatAmount(getSubtotal(coin.label, coin.value))}
+                  {formatCurrency(getSubtotal(coin.label, coin.value))}
                 </span>
               </div>
             ))}
@@ -121,7 +119,7 @@ export default function CashCalculator({ isOpen, onClose, onApply }: CashCalcula
 
         <div className="calc-modal__footer">
           <p className="calc-modal__total-label">Current Total</p>
-          <p className="calc-modal__total-amount">{formatAmount(total)}</p>
+          <p className="calc-modal__total-amount">{formatCurrency(total)}</p>
           <button className="btn btn--primary" onClick={handleApply} id="calc-apply-btn">
             Apply Total to Form →
           </button>
