@@ -81,6 +81,7 @@ const PAIRS: Array<[string, string, number]> = [
   ['color-focus', 'color-card', 3],
   ['color-focus', 'color-bg', 3],
   ['color-hero-focus', 'color-hero-bg', 3],
+  ['color-hero-action-border', 'color-hero-bg', 3],
   ['color-hero-action-text', 'color-hero-action-hover-bg', 4.5],
   ['color-text-inverse', 'color-primary-hover', 4.5],
   ['color-link-hover', 'color-card', 4.5],
