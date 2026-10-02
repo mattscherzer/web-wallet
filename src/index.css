@@ -361,7 +361,7 @@ img {
   content: '';
   position: absolute;
   right: -52px;
-  top: -104px;
+  top: -112px;
   width: 160px;
   height: 160px;
   background: var(--color-hero-decor);
@@ -729,6 +729,7 @@ img {
 
 .form-input::placeholder {
   color: var(--color-text-secondary);
+  opacity: 1;
 }
 
 .form-textarea {
@@ -750,6 +751,7 @@ img {
 
 .form-textarea::placeholder {
   color: var(--color-text-secondary);
+  opacity: 1;
 }
 
 /* Amount Input */
@@ -936,7 +938,7 @@ img {
   color: var(--color-text-primary);
 }
 
-.btn--outline:hover {
+.btn--outline:hover:not(:disabled) {
   background: var(--color-primary-container);
 }
 
@@ -954,7 +956,7 @@ img {
   font-weight: var(--font-weight-bold);
 }
 
-.btn--cash-calc:hover {
+.btn--cash-calc:hover:not(:disabled) {
   background: var(--color-primary-container);
 }
 
@@ -1003,6 +1005,7 @@ img {
 .search-bar__input::placeholder,
 .amount-input__value::placeholder {
   color: var(--color-text-secondary);
+  opacity: 1;
 }
 
 .search-bar__input {

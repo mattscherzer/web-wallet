@@ -208,15 +208,18 @@ describe('stylesheet rules', () => {
   it('keeps the decorative cookie out of the balance figure', () => {
     const deco = rest.match(/\.balance-hero::after\s*\{([^}]*)\}/)?.[1] ?? '';
     const px = (prop: string) => parseFloat(deco.match(new RegExp(`${prop}:\\s*(-?[\\d.]+)px`))?.[1] ?? 'NaN');
-    // the figure starts about 56px below the top of the card (padding + label)
-    expect(px('top') + px('height')).toBeLessThanOrEqual(56);
+    // the figure's line box starts about 49px below the top of the card (24px padding + 21px label + 4px margin)
+    expect(px('top') + px('height')).toBeLessThanOrEqual(48);
   });
 
   it('gives every placeholder the secondary ink colour', () => {
     const placeholders = [...rest.matchAll(/([^{}]*::placeholder)\s*\{([^}]*)\}/g)];
     expect(rest).toMatch(/\.search-bar__input::placeholder/);
     expect(rest).toMatch(/\.amount-input__value::placeholder/);
-    for (const [, , body] of placeholders) expect(body).toMatch(/color:\s*var\(--color-text-secondary\)/);
+    for (const [, , body] of placeholders) {
+      expect(body).toMatch(/color:\s*var\(--color-text-secondary\)/);
+      expect(body).toMatch(/opacity:\s*1/);
+    }
   });
 
   it('rings the navigation indicator, not the edge-to-edge item', () => {
@@ -229,7 +232,17 @@ describe('stylesheet rules', () => {
   it('keeps the rail and FAB inside the safe area and the layout box', () => {
     expect(css).toMatch(/--rail-offset:\s*calc\(var\(--rail-width\) \+ env\(safe-area-inset-left/);
     expect(css).not.toMatch(/100vw/);
+    expect(rest).toMatch(/\.bottom-nav\s*\{[^}]*width:\s*var\(--rail-offset\)/);
+    expect(rest).toMatch(/\.app-layout\s*\{[^}]*margin:[^;}]*max\(var\(--rail-offset\)/);
+    expect(rest).toMatch(/\.fab\s*\{[^}]*left:[^;}]*max\(var\(--rail-offset\)/);
     expect(rest).toMatch(/\.page-container\s*\{[^}]*safe-area-inset-bottom/);
+  });
+
+  it('does not apply hover styles to disabled buttons', () => {
+    for (const sel of ['.btn--primary', '.btn--outline', '.btn--cash-calc']) {
+      expect(rest).toContain(`${sel}:hover:not(:disabled)`);
+    }
+    expect(rest).not.toMatch(/\.btn--[\w-]+:hover\s*\{/);
   });
 
   it('keeps green for money in only, never for links', () => {
