@@ -61,22 +61,25 @@ function contrast(a: string, b: string): number {
 const PAIRS: Array<[string, string, number]> = [
   ['color-text-primary', 'color-bg', 4.5],
   ['color-text-primary', 'color-card', 4.5],
+  ['color-text-primary', 'color-bg-secondary', 4.5],
+  ['color-text-primary', 'color-reserve-bg', 4.5],
   ['color-text-secondary', 'color-bg', 4.5],
   ['color-text-secondary', 'color-card', 4.5],
   ['color-text-secondary', 'color-bg-secondary', 4.5],
-  ['color-text-primary', 'color-transfer-surface', 4.5],
+  ['color-text-secondary', 'color-reserve-bg', 4.5],
   ['color-in', 'color-card', 4.5],
   ['color-in', 'color-bg', 4.5],
   ['color-in', 'color-in-surface', 4.5],
-  ['color-out', 'color-card', 4.5],
-  ['color-out', 'color-bg', 4.5],
-  ['color-out', 'color-out-surface', 4.5],
+  ['color-error', 'color-card', 4.5],
+  ['color-error', 'color-bg', 4.5],
   ['color-text-inverse', 'color-primary', 4.5],
+  ['color-hero-text', 'color-hero-bg', 4.5],
+  ['color-hero-text-secondary', 'color-hero-bg', 4.5],
+  ['color-hero-action-text', 'color-hero-action-bg', 4.5],
   ['color-border', 'color-card', 3],
   ['color-border', 'color-bg', 3],
   ['color-focus', 'color-card', 3],
   ['color-focus', 'color-bg', 3],
-  ['color-reserve-border', 'color-bg-secondary', 3],
 ];
 
 describe('design tokens', () => {
@@ -85,18 +88,23 @@ describe('design tokens', () => {
     expect(Object.keys(tokens(darkBlock)).length).toBeGreaterThan(10);
   });
 
-  it('uses the Ledger paper palette', () => {
+  it('uses the Clear Navy palette', () => {
     const light = tokens(lightBlock);
-    expect(light['color-bg'].toLowerCase()).toBe('#f5f2ea');
-    expect(light['color-card'].toLowerCase()).toBe('#fffdf8');
-    expect(light['color-text-primary'].toLowerCase()).toBe('#1b2029');
-    expect(light['color-in'].toLowerCase()).toBe('#1f68bd');
-    expect(light['color-out'].toLowerCase()).toBe('#8c3a12');
+    expect(light['color-bg'].toLowerCase()).toBe('#f4f5f7');
+    expect(light['color-card'].toLowerCase()).toBe('#ffffff');
+    expect(light['color-text-primary'].toLowerCase()).toBe('#101828');
+    expect(light['color-text-secondary'].toLowerCase()).toBe('#5d6675');
+    expect(light['color-primary'].toLowerCase()).toBe('#0b2545');
+    expect(light['color-in'].toLowerCase()).toBe('#067647');
+    expect(light['color-error'].toLowerCase()).toBe('#b42318');
+    expect(light['color-reserve-bg'].toLowerCase()).toBe('#eaeff7');
+    expect(light['color-focus'].toLowerCase()).toBe('#1f4e9e');
     const dark = tokens(darkBlock);
-    expect(dark['color-bg'].toLowerCase()).toBe('#12151b');
-    expect(dark['color-text-primary'].toLowerCase()).toBe('#ece7dc');
-    expect(dark['color-in'].toLowerCase()).toBe('#9cc4f5');
-    expect(dark['color-out'].toLowerCase()).toBe('#e08a55');
+    expect(dark['color-bg'].toLowerCase()).toBe('#0b0f17');
+    expect(dark['color-card'].toLowerCase()).toBe('#141a24');
+    expect(dark['color-text-primary'].toLowerCase()).toBe('#f2f4f7');
+    expect(dark['color-in'].toLowerCase()).toBe('#47cd89');
+    expect(dark['color-focus'].toLowerCase()).toBe('#8ab4f8');
   });
 
   describe.each([
@@ -118,13 +126,19 @@ describe('stylesheet rules', () => {
     expect(rest.match(/\brgba?\(/g) ?? []).toEqual([]);
   });
 
-  it('has no gradients outside the tokens', () => {
-    expect(rest).not.toMatch(/gradient\(/);
+  it('has no gradients at all', () => {
+    expect(css).not.toMatch(/gradient\(/);
   });
 
-  it('no longer references the old indigo theme or Inter', () => {
-    expect(css).not.toMatch(/Inter/);
+  it('uses Geist and none of the earlier typefaces', () => {
+    expect(css).toMatch(/--font-family:\s*'Geist'/);
+    expect(css).toMatch(/--font-mono:\s*'Geist Mono'/);
+    expect(css).not.toMatch(/Inter|Newsreader|Public Sans|IBM Plex/);
     expect(css).not.toMatch(/#1a1f71|#3f51b5|#5c6bc0/i);
+  });
+
+  it('has no pill-shaped radius on controls, chips or marks', () => {
+    expect(rest).not.toMatch(/border-radius:\s*(9999px|var\(--radius-full\)|2[2-9]px)/);
   });
 
   it('never sets text below 12px', () => {

@@ -1,44 +1,51 @@
 /* =============================================
-   DESIGN TOKENS — "Ledger paper"
+   DESIGN TOKENS — "Clear Navy"
    Colours live only in this block and the dark block below.
    ============================================= */
 :root {
   color-scheme: light;
 
   /* Surfaces */
-  --color-bg: #f5f2ea;
-  --color-bg-secondary: #efebe1;
-  --color-card: #fffdf8;
-  --color-rule: #dcd6c8;
-  --color-border: #8f8774;
-  --color-transfer-surface: #eae4d6;
+  --color-bg: #f4f5f7;
+  --color-bg-secondary: #eef0f3;
+  --color-card: #ffffff;
+  --color-rule: #e4e7ec;
+  --color-rule-soft: #eef0f3;
+  --color-border: #818a9a;
 
   /* Ink */
-  --color-text-primary: #1b2029;
-  --color-text-secondary: #4e5563;
-  --color-text-inverse: #fffdf8;
-  --color-primary: #1b2029;
+  --color-text-primary: #101828;
+  --color-text-secondary: #5d6675;
+  --color-text-inverse: #ffffff;
+  --color-primary: #0b2545;
 
-  /* Money */
-  --color-in: #1f68bd;
-  --color-in-surface: #e3ecf8;
-  --color-out: #8c3a12;
-  --color-out-surface: #f6e6da;
+  /* Money in is the only coloured amount; errors are separate */
+  --color-in: #067647;
+  --color-in-surface: #e7f4ee;
+  --color-error: #b42318;
 
-  /* Reserve (hatch + dashed border) */
-  --color-reserve-border: #857d69;
-  --color-hatch: rgba(27, 32, 41, 0.07);
-  --hatch: repeating-linear-gradient(135deg, var(--color-hatch) 0 2px, transparent 2px 8px);
+  /* Reserve: its own tinted card */
+  --color-reserve-bg: #eaeff7;
+  --color-reserve-border: #c7d3e6;
 
-  /* Focus and overlays */
-  --color-focus: #1f68bd;
-  --color-scrim: rgba(27, 32, 41, 0.55);
-  --shadow-xl: 0 12px 36px rgba(27, 32, 41, 0.18);
+  /* Balance card */
+  --color-hero-bg: #0b2545;
+  --color-hero-border: #0b2545;
+  --color-hero-text: #ffffff;
+  --color-hero-text-secondary: #b9c6da;
+  --color-hero-action-bg: #ffffff;
+  --color-hero-action-text: #101828;
+  --radius-hero: 20px;
+
+  /* Focus, links and overlays */
+  --color-focus: #1f4e9e;
+  --color-link-hover: #173c7a;
+  --color-scrim: rgba(16, 24, 40, 0.55);
+  --shadow-xl: 0 6px 16px rgba(11, 37, 69, 0.25);
 
   /* Typography */
-  --font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-serif: 'Newsreader', Georgia, serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, Menlo, monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.8125rem;
   --font-size-base: 0.9375rem;
@@ -67,11 +74,11 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* Radius: 10 inputs, 14 buttons, 16 cards, pill */
+  /* Radius: 10 controls and chips, 12 buttons, 16 cards, 20 balance card and sheets */
   --radius-sm: 10px;
-  --radius-md: 14px;
+  --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-full: 9999px;
+  --radius-xl: 20px;
 
   /* Touch targets */
   --touch-min: 44px;
@@ -93,29 +100,37 @@
   :root {
     color-scheme: dark;
 
-    --color-bg: #12151b;
-    --color-bg-secondary: #171a21;
-    --color-card: #1b1f27;
-    --color-rule: #2d323c;
-    --color-border: #6e7686;
-    --color-transfer-surface: #2d323c;
+    --color-bg: #0b0f17;
+    --color-bg-secondary: #222a36;
+    --color-card: #141a24;
+    --color-rule: #263040;
+    --color-rule-soft: #263040;
+    --color-border: #6b7587;
 
-    --color-text-primary: #ece7dc;
-    --color-text-secondary: #a9afbb;
-    --color-text-inverse: #12151b;
-    --color-primary: #ece7dc;
+    --color-text-primary: #f2f4f7;
+    --color-text-secondary: #98a2b3;
+    --color-text-inverse: #0b0f17;
+    --color-primary: #f2f4f7;
 
-    --color-in: #9cc4f5;
-    --color-in-surface: #1c2a3d;
-    --color-out: #e08a55;
-    --color-out-surface: #3a2519;
+    --color-in: #47cd89;
+    --color-in-surface: #0f2a1e;
+    --color-error: #f97066;
 
-    --color-reserve-border: #6e6a60;
-    --color-hatch: rgba(236, 231, 220, 0.07);
+    --color-reserve-bg: #121c2e;
+    --color-reserve-border: #2a3b57;
 
-    --color-focus: #9cc4f5;
+    --color-hero-bg: #141a24;
+    --color-hero-border: #263040;
+    --color-hero-text: #f2f4f7;
+    --color-hero-text-secondary: #98a2b3;
+    --color-hero-action-bg: #0b0f17;
+    --color-hero-action-text: #f2f4f7;
+    --radius-hero: 16px;
+
+    --color-focus: #8ab4f8;
+    --color-link-hover: #b9ccf5;
     --color-scrim: rgba(0, 0, 0, 0.6);
-    --shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 6px 16px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -152,6 +167,10 @@ body {
   outline-offset: 2px;
 }
 
+a:hover {
+  color: var(--color-link-hover);
+}
+
 .num {
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -172,7 +191,7 @@ body {
 }
 
 a {
-  color: var(--color-in);
+  color: var(--color-focus);
   text-decoration: none;
 }
 
@@ -252,7 +271,7 @@ img {
 }
 
 .page-header__title {
-  font-family: var(--font-serif);
+  letter-spacing: -0.025em;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   line-height: 1.1;
@@ -301,8 +320,8 @@ img {
 }
 
 .bottom-nav__item--active .bottom-nav__icon-wrap {
-  background: var(--color-rule);
-  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  border-radius: 14px;
 }
 
 .bottom-nav__icon-wrap {
@@ -311,7 +330,7 @@ img {
   justify-content: center;
   width: 44px;
   height: 28px;
-  border-radius: var(--radius-full);
+  border-radius: 14px;
   transition: background var(--transition-fast);
 }
 
@@ -324,26 +343,26 @@ img {
    BALANCE HERO CARD
    ============================================= */
 .balance-hero {
-  background: var(--color-card);
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-lg);
-  padding: 20px 20px var(--space-lg);
-  color: var(--color-text-primary);
+  background: var(--color-hero-bg);
+  border: 1px solid var(--color-hero-border);
+  border-radius: var(--radius-hero);
+  padding: 18px 20px var(--space-lg);
+  color: var(--color-hero-text);
   margin-bottom: var(--space-lg);
 }
 
 .balance-hero__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
+  color: var(--color-hero-text-secondary);
   margin-bottom: var(--space-xs);
 }
 
 .balance-hero__amount {
-  font-family: var(--font-serif);
   font-size: var(--font-size-hero);
-  font-weight: var(--font-weight-medium);
-  line-height: 52 / 48;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums lining-nums;
   overflow-wrap: anywhere;
   margin-bottom: var(--space-lg);
@@ -356,13 +375,13 @@ img {
   gap: var(--space-sm);
   min-height: 48px;
   padding: 0 var(--space-lg);
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
+  background: var(--color-hero-action-bg);
+  border: 1px solid var(--color-hero-action-bg);
   border-radius: var(--radius-md);
-  color: var(--color-text-primary);
+  color: var(--color-hero-action-text);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-md);
-  transition: background var(--transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .balance-hero__actions {
@@ -372,7 +391,7 @@ img {
 }
 
 .balance-hero__action:hover {
-  background: var(--color-bg-secondary);
+  opacity: 0.9;
 }
 
 /* =============================================
@@ -400,17 +419,17 @@ img {
 }
 
 .account-card__icon--cash {
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
 .account-card__icon--paypal {
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
 .account-card__icon--bank {
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
@@ -435,14 +454,13 @@ img {
 }
 
 .account-card__icon--reserve {
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
 .account-card--reserve {
-  background-color: var(--color-bg-secondary);
-  background-image: var(--hatch);
-  border: 1.5px dashed var(--color-reserve-border);
+  background-color: var(--color-reserve-bg);
+  border: 1px solid var(--color-reserve-border);
 }
 
 .account-card__reserve-badge {
@@ -450,11 +468,11 @@ img {
   align-items: center;
   min-height: 24px;
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
   padding: 0 var(--space-sm);
-  border-radius: var(--radius-full);
+  border-radius: 6px;
 }
 
 /* =============================================
@@ -494,12 +512,12 @@ img {
 }
 
 .transaction-item__icon--outflow {
-  background: var(--color-out-surface);
-  color: var(--color-out);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 .transaction-item__icon--transfer {
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
 }
 
@@ -547,10 +565,6 @@ img {
   color: var(--color-in);
 }
 
-.amount--outflow .amount__figure {
-  color: var(--color-out);
-}
-
 .amount__tag {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
@@ -568,7 +582,7 @@ img {
 
 .transaction-item__details {
   padding: 0 var(--space-lg) var(--space-md);
-  border-top: 1px solid var(--color-rule);
+  border-top: 1px solid var(--color-rule-soft);
   animation: slideDown var(--transition-fast) ease-out;
 }
 
@@ -605,7 +619,7 @@ img {
   display: flex;
   gap: var(--space-sm);
   padding-top: var(--space-sm);
-  border-top: 1px solid var(--color-rule);
+  border-top: 1px solid var(--color-rule-soft);
   margin-top: var(--space-sm);
 }
 
@@ -800,7 +814,7 @@ img {
   gap: var(--space-sm);
   min-height: var(--touch-min);
   padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   border: 1.5px solid var(--color-border);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -948,7 +962,7 @@ img {
   right: calc(50% - var(--max-width) / 2 + var(--page-padding));
   width: 68px;
   height: 48px;
-  border-radius: 24px;
+  border-radius: var(--radius-md);
   background: var(--color-primary);
   color: var(--color-text-inverse);
   display: flex;
@@ -1015,7 +1029,7 @@ img {
 .filter-pill {
   min-height: var(--touch-min);
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
@@ -1055,7 +1069,7 @@ img {
 
 .modal-content {
   background: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-xl);
   width: 100%;
   max-width: 360px;
@@ -1075,7 +1089,7 @@ img {
 }
 
 .pin-modal__title {
-  font-family: var(--font-serif);
+  letter-spacing: -0.025em;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   text-align: center;
@@ -1114,7 +1128,7 @@ img {
 }
 
 .pin-input--error {
-  border-color: var(--color-out);
+  border-color: var(--color-error);
   animation: shake 0.4s ease-in-out;
 }
 
@@ -1129,7 +1143,7 @@ img {
 .pin-modal__error {
   text-align: center;
   font-size: var(--font-size-sm);
-  color: var(--color-out);
+  color: var(--color-error);
   margin-bottom: var(--space-md);
   animation: fadeIn var(--transition-fast);
 }
@@ -1151,7 +1165,7 @@ img {
    ============================================= */
 .calc-modal {
   background: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   max-height: 90dvh;
   width: 100%;
   max-width: 400px;
@@ -1174,7 +1188,7 @@ img {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-family: var(--font-serif);
+  letter-spacing: -0.025em;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
@@ -1272,7 +1286,7 @@ img {
 }
 
 .calc-modal__total-amount {
-  font-family: var(--font-serif);
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums lining-nums;
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
@@ -1296,7 +1310,7 @@ img {
 
 .login-card {
   background: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-2xl) var(--space-xl);
   width: 100%;
   max-width: 380px;
@@ -1344,7 +1358,7 @@ img {
 .login-card__error {
   text-align: center;
   font-size: var(--font-size-sm);
-  color: var(--color-out);
+  color: var(--color-error);
   margin-bottom: var(--space-md);
 }
 
@@ -1409,7 +1423,7 @@ img {
   position: relative;
   padding-bottom: var(--space-sm);
   margin-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--color-rule);
+  border-bottom: 1px solid var(--color-rule-soft);
 }
 
 .audit-log__entry:last-child {
@@ -1487,7 +1501,7 @@ img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--color-transfer-surface);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -1516,7 +1530,7 @@ img {
    FORM ERROR
    ============================================= */
 .form-error {
-  color: var(--color-out);
+  color: var(--color-error);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   margin-bottom: var(--space-md);
@@ -1570,7 +1584,7 @@ img {
   height: 32px;
   border: 3px solid var(--color-rule);
   border-top-color: var(--color-primary);
-  border-radius: var(--radius-full);
+  border-radius: 50%;
   animation: routeSpin 0.7s linear infinite;
 }
 
@@ -1594,7 +1608,7 @@ img {
   align-items: center;
   min-height: 24px;
   padding: 0 var(--space-sm);
-  border-radius: 12px;
+  border-radius: 6px;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   white-space: nowrap;
@@ -1616,7 +1630,7 @@ img {
   gap: var(--space-sm);
   min-height: var(--touch-min);
   padding: 0 14px;
-  border-radius: 22px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
   background: var(--color-card);
   font-size: var(--font-size-base);
