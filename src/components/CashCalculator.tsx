@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Calculator, X, Coins, Banknote } from 'lucide-react';
-import { formatCurrency } from '../utils/formatCurrency';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { CashCountView } from './CashCountView';
+import { applyAndClose, countReducer, initialCountState } from '../utils/cashCount';
 
 interface CashCalculatorProps {
   isOpen: boolean;
@@ -8,123 +8,69 @@ interface CashCalculatorProps {
   onApply: (total: number) => void;
 }
 
-interface DenominationRow {
-  label: string;
-  value: number;
-}
-
-const BILLS: DenominationRow[] = [
-  { label: '€50', value: 50 },
-  { label: '€20', value: 20 },
-  { label: '€10', value: 10 },
-  { label: '€5', value: 5 },
-];
-
-const COINS_LIST: DenominationRow[] = [
-  { label: '€2', value: 2 },
-  { label: '€1', value: 1 },
-  { label: '€0.50', value: 0.5 },
-  { label: '€0.20', value: 0.2 },
-  { label: '€0.10', value: 0.1 },
-  { label: '€0.05', value: 0.05 },
-  { label: '€0.02', value: 0.02 },
-  { label: '€0.01', value: 0.01 },
-];
-
-export default function CashCalculator({ isOpen, onClose, onApply }: CashCalculatorProps) {
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
-
-  if (!isOpen) return null;
-
-  const handleQuantityChange = (label: string, value: string) => {
-    const num = parseInt(value) || 0;
-    setQuantities((prev) => ({ ...prev, [label]: Math.max(0, num) }));
-  };
-
-  const getSubtotal = (label: string, value: number) => {
-    return (quantities[label] || 0) * value;
-  };
-
-  const total = [...BILLS, ...COINS_LIST].reduce(
-    (sum, d) => sum + getSubtotal(d.label, d.value),
-    0
+/** Counting state lives only while the overlay is open, so closing or applying starts fresh. */
+function CountOverlay({ onClose, onApply }: Omit<CashCalculatorProps, 'isOpen'>) {
+  const [state, dispatch] = useReducer(countReducer, undefined, initialCountState);
+  const closeRef = useRef(onClose);
+  // Read during the first render, before Back takes focus, so it can be restored on close.
+  const [opener] = useState(() =>
+    typeof document === 'undefined' ? null : (document.activeElement as HTMLElement | null),
   );
 
-  const handleApply = () => {
-    onApply(Math.round(total * 100) / 100);
-    setQuantities({});
-    onClose();
-  };
+  useEffect(() => {
+    closeRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    document.querySelector<HTMLElement>('.count-screen .count-icon-btn')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (e.isComposing) return;
+        const field = document.activeElement;
+        // Escape in a count field commits and leaves it; a second Escape closes the screen.
+        if (field instanceof HTMLInputElement) field.blur();
+        else closeRef.current();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      // Keep Tab inside the modal dialog.
+      const focusable = Array.from(
+        document.querySelectorAll<HTMLElement>('.count-screen button:not(:disabled), .count-screen input'),
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const inside = active !== null && focusable.includes(active);
+      if (!inside) {
+        // Focus is on the page behind (or the body): bring it back into the dialog.
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      opener?.focus?.();
+    };
+  }, [opener]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="calc-modal__header">
-          <h2 className="calc-modal__title">
-            <Calculator size={22} />
-            Cash Calculator
-          </h2>
-          <button className="calc-modal__close" onClick={onClose} id="calc-close-btn">
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="calc-modal__body">
-          <div className="calc-section">
-            <h3 className="calc-section__title">
-              <Banknote size={16} />
-              BILLS
-            </h3>
-            {BILLS.map((bill) => (
-              <div className="calc-row" key={bill.label}>
-                <span className="calc-row__denom">{bill.label}</span>
-                <input
-                  type="number"
-                  min="0"
-                  className="calc-row__input"
-                  value={quantities[bill.label] || 0}
-                  onChange={(e) => handleQuantityChange(bill.label, e.target.value)}
-                  id={`calc-bill-${bill.value}`}
-                />
-                <span className="calc-row__subtotal">
-                  {formatCurrency(getSubtotal(bill.label, bill.value))}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="calc-section" style={{ marginTop: '24px' }}>
-            <h3 className="calc-section__title">
-              <Coins size={16} />
-              COINS
-            </h3>
-            {COINS_LIST.map((coin) => (
-              <div className="calc-row" key={coin.label}>
-                <span className="calc-row__denom">{coin.label}</span>
-                <input
-                  type="number"
-                  min="0"
-                  className="calc-row__input"
-                  value={quantities[coin.label] || 0}
-                  onChange={(e) => handleQuantityChange(coin.label, e.target.value)}
-                  id={`calc-coin-${coin.value}`}
-                />
-                <span className="calc-row__subtotal">
-                  {formatCurrency(getSubtotal(coin.label, coin.value))}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="calc-modal__footer">
-          <p className="calc-modal__total-label">Current Total</p>
-          <p className="calc-modal__total-amount">{formatCurrency(total)}</p>
-          <button className="btn btn--primary" onClick={handleApply} id="calc-apply-btn">
-            Apply Total to Form →
-          </button>
-        </div>
-      </div>
-    </div>
+    <CashCountView
+      state={state}
+      dispatch={dispatch}
+      onClose={onClose}
+      onApply={(total) => applyAndClose(total, onApply, onClose)}
+    />
   );
+}
+
+export default function CashCalculator({ isOpen, onClose, onApply }: CashCalculatorProps) {
+  return isOpen ? <CountOverlay onClose={onClose} onApply={onApply} /> : null;
 }

@@ -42,6 +42,8 @@
   --color-focus: #1f4e9e;
   --color-link-hover: #173c7a;
   --color-scrim: rgba(16, 24, 40, 0.5);
+  --color-count-surface: #ffdf9e;
+  --color-on-count-surface: #261a00;
   --shadow-fab: 0 4px 12px rgba(11, 37, 69, 0.22);
 
   /* Typography: Geist, with emphasized weights */
@@ -136,6 +138,8 @@
     --color-focus: #8ab4f8;
     --color-link-hover: #b9ccf5;
     --color-scrim: rgba(0, 0, 0, 0.6);
+    --color-count-surface: #4a3912;
+    --color-on-count-surface: #ffe7b0;
     --shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }
@@ -1160,137 +1164,293 @@ img {
 }
 
 /* =============================================
-   CASH CALCULATOR MODAL
+   COUNT CASH — full-screen overlay
    ============================================= */
-.calc-modal {
-  background: var(--color-card);
-  border-radius: var(--radius-xl);
-  max-height: 90dvh;
-  width: 100%;
-  max-width: 400px;
+.count-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  max-width: var(--max-width);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  animation: modalSlideUp var(--transition-spring);
-  overflow: hidden;
-}
-
-.calc-modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-lg);
-  border-bottom: 1px solid var(--color-rule);
-}
-
-.calc-modal__title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  letter-spacing: -0.01em;
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-extrabold);
+  background: var(--color-bg);
   color: var(--color-text-primary);
 }
 
-.calc-modal__close {
+.count-header {
+  flex: none;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) 0 var(--space-xs);
+}
+
+.count-header__title {
+  flex: 1;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.count-icon-btn {
   width: var(--touch-min);
   height: var(--touch-min);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl);
+  color: var(--color-text-primary);
+}
+
+.count-undo {
+  background: var(--color-bg-secondary);
+}
+
+.count-clear {
+  min-height: var(--touch-min);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-error);
+}
+
+.count-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xs) var(--page-padding) var(--space-md);
+}
+
+.count-total {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: 18px 22px;
+  border-radius: var(--radius-xl);
+  background: var(--color-count-surface);
+  color: var(--color-on-count-surface);
+}
+
+.count-total__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.count-total__amount {
+  font-size: var(--font-size-3xl);
+  line-height: 1.15;
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-total__pieces {
+  font-size: var(--font-size-base);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-section {
+  margin-top: var(--space-md);
+}
+
+.count-section__title {
+  margin: 0 var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.count-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.count-tile,
+.count-entry {
+  position: relative;
+  height: 84px;
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  border: 1px solid var(--color-rule);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.count-tile--note {
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px 10px 8px;
+  text-align: left;
+}
+
+.count-tile--on {
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-primary);
+}
+
+.count-tile--remove {
+  border-style: dashed;
+  border-color: var(--color-error);
+}
+
+.count-tile__face {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-tile--note .count-tile__face {
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.count-tile--coin .count-tile__face {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-avatar);
+  font-size: var(--font-size-sm);
+}
+
+.count-tile__sub {
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  transition: background var(--transition-fast);
 }
 
-.calc-modal__close:hover {
-  background: var(--color-bg-secondary);
+.count-tile__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-avatar);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
 }
 
-.calc-modal__body {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-lg);
+.count-tile--on .count-tile__badge {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
-.calc-section__title {
+.count-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.count-entry__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-entry__input {
+  width: 60px;
+  height: var(--touch-min);
+  text-align: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-container);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+  font-size: 20px;
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-hint {
+  margin: 10px var(--space-xs) 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.count-footer {
+  flex: none;
+  background: var(--color-container);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.count-apply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 2 * var(--page-padding));
+  min-height: var(--touch-primary);
+  margin: var(--space-md) var(--page-padding) 0;
+  border-radius: var(--radius-xl);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  margin-bottom: var(--space-md);
+  padding: var(--space-sm) var(--page-padding) var(--space-md);
 }
 
-.calc-row {
+.count-modes {
+  flex: 1;
   display: grid;
-  grid-template-columns: 60px 1fr 80px;
-  align-items: center;
-  gap: var(--space-md);
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  margin-bottom: var(--space-sm);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2xs);
 }
 
-.calc-row__denom {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.calc-row__input {
-  width: 64px;
+.count-mode {
   min-height: var(--touch-min);
-  text-align: center;
-  padding: var(--space-sm);
-  background: var(--color-card);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  justify-self: center;
-}
-
-.calc-row__input:focus {
-  border-color: var(--color-primary);
-}
-
-.calc-row__subtotal {
-  font-variant-numeric: tabular-nums lining-nums;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  text-align: right;
-}
-
-.calc-modal__footer {
-  padding: var(--space-lg);
-  border-top: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
   background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
 }
 
-.calc-modal__total-label {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-xs);
+.count-mode:first-child {
+  border-radius: var(--radius-xl) var(--radius-sm) var(--radius-sm) var(--radius-xl);
 }
 
-.calc-modal__total-amount {
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums lining-nums;
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  text-align: center;
-  color: var(--color-primary);
-  margin-bottom: var(--space-md);
+.count-mode:last-child {
+  border-radius: var(--radius-sm) var(--radius-xl) var(--radius-xl) var(--radius-sm);
+}
+
+.count-mode--on,
+.count-mode--on:first-child,
+.count-mode--on:last-child {
+  border-radius: var(--radius-xl);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-mode--remove,
+.count-mode--remove:first-child,
+.count-mode--remove:last-child {
+  background: var(--color-error);
+  color: var(--color-bg);
 }
 
 /* =============================================
@@ -1666,7 +1826,10 @@ img {
   .filter-pill,
   .payment-card,
   .transaction-item__action-btn,
-  .calc-modal__close,
+  .count-icon-btn,
+  .count-tile,
+  .count-apply,
+  .count-mode,
   .bottom-nav__icon-wrap {
     transition:
       transform var(--transition-spring),
@@ -1682,7 +1845,10 @@ img {
   .filter-pill:not(:disabled):active,
   .payment-card:not(:disabled):active,
   .transaction-item__action-btn:not(:disabled):active,
-  .calc-modal__close:not(:disabled):active {
+  .count-icon-btn:not(:disabled):active,
+  .count-tile:not(:disabled):active,
+  .count-apply:not(:disabled):active,
+  .count-mode:not(:disabled):active {
     transform: scale(0.94);
     border-radius: var(--radius-md);
   }

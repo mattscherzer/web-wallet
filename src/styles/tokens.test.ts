@@ -167,7 +167,8 @@ describe('stylesheet rules', () => {
       '.filter-pill',
       '.payment-card',
       '.transaction-item__action-btn',
-      '.calc-modal__close',
+      '.count-icon-btn',
+      '.count-tile',
     ];
 
     it('defines the press spring only when motion is allowed', () => {
