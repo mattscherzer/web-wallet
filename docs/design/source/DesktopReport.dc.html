@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Monthly ledger report</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#E9ECF1;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}a:hover{color:#173C7A}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.serif{font-family:'Geist',system-ui,sans-serif;letter-spacing:-0.025em}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5D6675;text-align:left;padding:10px 12px;border-bottom:2px solid #101828}
+td{padding:10px 12px;border-bottom:1px solid #EEF0F3;font-size:14px}
+.r{text-align:right}
+.sum{padding:14px 16px;border:1px solid #E4E7EC;border-radius:12px;display:flex;flex-direction:column;gap:2px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1060px; background: #E9ECF1; display: flex; flex-direction: column; align-items: center">
+<div style="width: 100%; height: 64px; padding: 0 28px; background: #FFFFFF; border-bottom: 1px solid #E4E7EC; display: flex; align-items: center; gap: 12px">
+<a href="DesktopHistory.dc.html" style="font-size: 15px; font-weight: 600">← Back to app</a>
+<span style="margin-left: 16px; font-size: 14px; color: #5D6675">Period</span>
+<button type="button" style="height: 38px; padding: 0 12px; border-radius: 10px; border: 2px solid #0B2545; background: #FFFFFF; font-weight: 700; font-size: 14px">1 – 24 Sep 2026</button>
+<span style="margin-left: auto"></span>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #D0D5DD; background: #FFFFFF; font-weight: 600; font-size: 14px">Print / save PDF</button>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0B2545; color: #FFFFFF; font-weight: 700; font-size: 14px">Export CSV</button>
+</div>
+
+<article style="width: 1040px; margin-top: 28px; padding: 44px 52px; background: #FFFFFF; box-shadow: 0 2px 12px rgba(11,37,69,0.12); display: flex; flex-direction: column; gap: 22px">
+<header style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #101828; padding-bottom: 14px">
+<div><span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5D6675">[Group name] · Treasurer’s report</span><h1 class="serif" style="margin: 4px 0 0; font-size: 36px; font-weight: 600">September 2026</h1></div>
+<span style="font-size: 13px; color: #5D6675; text-align: right">1 – 24 Sep 2026<br>Prepared by Anna · 24 Sep 2026, 21:20</span>
+</header>
+
+<section aria-label="Summary" class="num" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
+<div class="sum"><span style="font-size: 12px; color: #5D6675">Available, 1 Sep</span><span style="font-size: 20px; font-weight: 600">€1,064.40</span></div>
+<div class="sum"><span style="font-size: 12px; color: #5D6675">Money in</span><span style="font-size: 20px; font-weight: 600; color: #067647">+€295.90</span></div>
+<div class="sum"><span style="font-size: 12px; color: #5D6675">Money out</span><span style="font-size: 20px; font-weight: 600; color: #101828">−€100.00</span></div>
+<div class="sum"><span style="font-size: 12px; color: #5D6675">Moved to reserve</span><span style="font-size: 20px; font-weight: 600">−€50.00</span></div>
+<div class="sum" style="border: 2px solid #0B2545"><span style="font-size: 12px; font-weight: 700; color: #5D6675">Available, 24 Sep</span><span class="serif" style="font-size: 24px; font-weight: 600">€1,210.30</span></div>
+</section>
+
+<table>
+<thead><tr><th scope="col" style="width: 100px">Date</th><th scope="col">Description</th><th scope="col" class="r">Money in</th><th scope="col" class="r">Money out</th><th scope="col" class="r">Available balance</th><th scope="col" class="r">Reserve balance</th></tr></thead>
+<tbody class="num">
+<tr style="background: #F4F5F7"><td>1 Sep</td><td><em>Opening balance</em></td><td class="r"></td><td class="r"></td><td class="r" style="font-weight: 600">€1,064.40</td><td class="r" style="font-weight: 600">€550.00</td></tr>
+<tr><td>3 Sep</td><td>Literature sales · Cash box</td><td class="r">€18.00</td><td class="r"></td><td class="r">€1,082.40</td><td class="r">€550.00</td></tr>
+<tr><td>10 Sep</td><td>Donation · Area service committee · Bank account</td><td class="r"></td><td class="r">€40.00</td><td class="r">€1,042.40</td><td class="r">€550.00</td></tr>
+<tr><td>10 Sep</td><td>Transfer €50.00 · Bank account → Prudent Reserve</td><td class="r"></td><td class="r"></td><td class="r">€992.40</td><td class="r">€600.00</td></tr>
+<tr><td>15 Sep</td><td>Transfer €150.00 · Cash box → Bank account</td><td class="r"></td><td class="r"></td><td class="r">€992.40</td><td class="r">€600.00</td></tr>
+<tr><td>17 Sep</td><td>7th Tradition · Cash box</td><td class="r">€132.40</td><td class="r"></td><td class="r">€1,124.80</td><td class="r">€600.00</td></tr>
+<tr><td>17 Sep</td><td>Hall rent · Bank account</td><td class="r"></td><td class="r">€60.00</td><td class="r">€1,064.80</td><td class="r">€600.00</td></tr>
+<tr><td>24 Sep</td><td>7th Tradition · Cash box</td><td class="r">€145.50</td><td class="r"></td><td class="r">€1,210.30</td><td class="r">€600.00</td></tr>
+<tr style="border-top: 2px solid #101828"><td colspan="2" style="font-weight: 700; border-top: 2px solid #101828">Totals for the period</td><td class="r" style="font-weight: 700; border-top: 2px solid #101828">€295.90</td><td class="r" style="font-weight: 700; border-top: 2px solid #101828">€100.00</td><td class="r" style="font-weight: 700; border-top: 2px solid #101828">€1,210.30</td><td class="r" style="font-weight: 700; border-top: 2px solid #101828">€600.00</td></tr>
+</tbody>
+</table>
+
+<footer style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; font-size: 13px; line-height: 1.5; color: #5D6675">
+<p style="margin: 0">Total held in all accounts on 24 Sep: <strong style="color: #101828">€1,810.30</strong> (Available €1,210.30 + Reserve €600.00). Transfers move money between accounts and never change this total.</p>
+<p style="margin: 0">1 entry was removed in this period (#0143, duplicate of #0142, removed by Ben on 19 Sep) and 1 was edited (#0142). Both are listed in full in the app’s change log.</p>
+</footer>
+</article>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

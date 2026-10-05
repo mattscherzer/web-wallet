@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Count cash</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F7F8FA">
+<header style="height: 64px; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px">
+<a href="Record.dc.html" aria-label="Back to the form" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; flex-grow: 1; font-size: 22px; font-weight: 700">Count cash</h1>
+<button type="button" onClick="{{clear}}" style="height: 48px; padding: 0 16px; border: 0; border-radius: 24px; background: transparent; font-size: 15px; font-weight: 700; color: #B42318">Clear</button>
+</header>
+<section aria-label="Counted total" class="spring" style="margin: 4px 16px 0; padding: 18px 22px; border-radius: 32px; background: #FFDF9E; color: #261A00; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 700">Counted</span>
+<span aria-live="polite" class="num" style="font-size: 45px; line-height: 52px; font-weight: 800; letter-spacing: -0.025em">{{totalStr}}</span>
+<span class="num" style="font-size: 14px">{{pieces}}</span>
+</section>
+<section aria-labelledby="n-h" style="margin: 16px 16px 0"><h2 id="n-h" style="margin: 0 4px 8px; font-size: 14px; font-weight: 700; color: #5D6675">Notes</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{notes}}" as="row" hint-placeholder-count="4">
+<sc-if value="{{row.tapping}}" hint-placeholder-val="{{true}}">
+<button type="button" class="spring" onClick="{{row.tap}}" aria-label="{{row.aria}}" style="position: relative; height: 84px; padding: 10px 10px 8px; border-radius: 16px; border: {{row.border}}; background: {{row.bg}}; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left">
+<span class="num" style="font-size: 22px; line-height: 1; font-weight: 800; letter-spacing: -0.02em">{{row.label}}</span>
+<span class="num" style="font-size: 12px; color: #5D6675">{{row.sub}}</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 6px; right: 6px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: {{row.badgeBg}}; color: {{row.badgeFg}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">{{row.count}}</span>
+</button>
+</sc-if>
+<sc-if value="{{row.typing}}" hint-placeholder-val="{{false}}">
+<div style="height: 84px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E4E7EC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="font-size: 14px; font-weight: 800">{{row.label}}</span>
+<input type="text" inputmode="numeric" pattern="[0-9]*" aria-label="Number of {{row.label}} {{row.kind}}" value="{{row.count}}" onChange="{{row.setv}}" class="num" style="width: 60px; height: 48px; text-align: center; font-size: 20px; font-weight: 800; border: 0; border-radius: 12px; background: #EEF0F4; box-shadow: inset 0 0 0 2px #0B2545">
+</div>
+</sc-if>
+</sc-for>
+</div>
+</section>
+<section aria-labelledby="c-h" style="margin: 16px 16px 0"><h2 id="c-h" style="margin: 0 4px 8px; font-size: 14px; font-weight: 700; color: #5D6675">Coins</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{coins}}" as="row" hint-placeholder-count="8">
+<sc-if value="{{row.tapping}}" hint-placeholder-val="{{true}}">
+<button type="button" class="spring" onClick="{{row.tap}}" aria-label="{{row.aria}}" style="position: relative; height: 84px; border-radius: 16px; border: {{row.border}}; background: {{row.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">{{row.label}}</span>
+<span class="num" style="font-size: 12px; color: #5D6675">{{row.sub}}</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: {{row.badgeBg}}; color: {{row.badgeFg}}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">{{row.count}}</span>
+</button>
+</sc-if>
+<sc-if value="{{row.typing}}" hint-placeholder-val="{{false}}">
+<div style="height: 84px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E4E7EC; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="font-size: 14px; font-weight: 800">{{row.label}}</span>
+<input type="text" inputmode="numeric" pattern="[0-9]*" aria-label="Number of {{row.label}} {{row.kind}}" value="{{row.count}}" onChange="{{row.setv}}" class="num" style="width: 60px; height: 48px; text-align: center; font-size: 20px; font-weight: 800; border: 0; border-radius: 12px; background: #EEF0F4; box-shadow: inset 0 0 0 2px #0B2545">
+</div>
+</sc-if>
+</sc-for>
+</div>
+</section>
+<p style="margin: 10px 20px 0; font-size: 14px; color: #5D6675">{{hint}}</p>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 92px">
+<a href="Record.dc.html" class="spring num" style="height: 56px; border-radius: 28px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800">Use {{totalStr}} as amount</a>
+</div>
+<div role="toolbar" aria-label="Counting tools" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; padding: 12px 16px 16px; background: #EEF0F4; display: flex; align-items: center; gap: 12px">
+<div role="group" aria-label="What a tap does" style="flex-grow: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+<button type="button" class="spring" aria-pressed="{{m.on}}" onClick="{{m.pick}}" style="height: 48px; border: 0; border-radius: {{m.rad}}; background: {{m.bg}}; color: {{m.fg}}; font-size: 15px; font-weight: {{m.fw}}">{{m.label}}</button>
+</sc-for>
+</div>
+<button type="button" onClick="{{undo}}" disabled="{{noUndo}}" aria-label="Undo last tap" class="spring" style="width: 48px; height: 48px; border: 0; border-radius: 24px; background: #E3E8F0; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg></button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+var D = [5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1];
+var Lb = ['€50', '€20', '€10', '€5', '€2', '€1', '50c', '20c', '10c', '5c', '2c', '1c'];
+var DEF = [0, 3, 4, 5, 6, 5, 4, 5, 3, 4, 0, 0];
+var s = this.state || {};
+var counts = s.counts || DEF;
+var hist = s.hist || [];
+var mode = s.mode || 'add';
+var self = this;
+var fmt = function (c) {
+return '€' + (c / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+var commit = function (next) {
+self.setState({ counts: next, hist: hist.concat([counts]).slice(-100) });
+};
+var setAt = function (i, v) {
+var n = counts.slice();
+n[i] = Math.max(0, Math.min(9999, v));
+if (n[i] === counts[i]) return;
+commit(n);
+};
+var mk = function (i) {
+var n = counts[i];
+var kind = i < 4 ? 'notes' : 'coins';
+var on = n > 0;
+return {
+label: Lb[i],
+kind: kind,
+count: String(n),
+sub: on ? fmt(n * D[i]) : '—',
+bg: on ? '#E3E8F0' : '#FFFFFF',
+border: on ? (mode === 'remove' ? '2px dashed #B42318' : '2px solid #0B2545') : '1px solid #E4E7EC',
+badgeBg: on ? '#0B2545' : '#E6E9EE',
+badgeFg: on ? '#FFFFFF' : '#5D6675',
+tapping: mode !== 'type',
+typing: mode === 'type',
+aria: Lb[i] + ' ' + kind + ': ' + n + '. ' + (mode === 'remove' ? 'Tap to remove one' : 'Tap to add one'),
+tap: function () { setAt(i, mode === 'remove' ? n - 1 : n + 1); },
+setv: function (e) {
+var v = parseInt(String(e.target.value).replace(/\D/g, ''), 10);
+setAt(i, isNaN(v) ? 0 : v);
+}
+};
+};
+var total = 0, nNotes = 0, nCoins = 0;
+for (var i = 0; i < D.length; i++) {
+total += D[i] * counts[i];
+if (i < 4) nNotes += counts[i]; else nCoins += counts[i];
+}
+var M = [['add', 'Add'], ['remove', 'Remove'], ['type', 'Type']];
+var HINT = {
+add: 'Tap a note or coin to add one.',
+remove: 'Removing: tap a note or coin to take one away.',
+type: 'Type how many of each you counted.'
+};
+return {
+notes: [0, 1, 2, 3].map(mk),
+coins: [4, 5, 6, 7, 8, 9, 10, 11].map(mk),
+modes: M.map(function (m, j) {
+var on = mode === m[0];
+var l = j === 0 ? '24px' : '8px';
+var r = j === 2 ? '24px' : '8px';
+return {
+on: on,
+label: (on ? '✓ ' : '') + m[1],
+rad: on ? '24px' : (l + ' ' + r + ' ' + r + ' ' + l),
+bg: on ? (m[0] === 'remove' ? '#B42318' : '#0B2545') : '#E3E8F0',
+fg: on ? '#FFFFFF' : '#101828',
+fw: on ? '800' : '500',
+pick: function () { self.setState({ mode: m[0] }); }
+};
+}),
+hint: HINT[mode],
+totalStr: fmt(total),
+pieces: nNotes + (nNotes === 1 ? ' note · ' : ' notes · ') + nCoins + (nCoins === 1 ? ' coin' : ' coins'),
+noUndo: hist.length === 0,
+undo: function () {
+if (!hist.length) return;
+var h = hist.slice();
+var prev = h.pop();
+self.setState({ counts: prev, hist: h });
+},
+clear: function () {
+commit([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+}
+};
+}
+}
+</script>
+</body>
+</html>

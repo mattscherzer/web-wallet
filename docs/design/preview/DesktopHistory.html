@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desktop history with entry panel · Treasury design</title>
+<!-- Static preview generated from ../source/DesktopHistory.dc.html. Source of truth is the .dc.html file. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F4F5F7;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}a:hover{color:#173C7A}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.serif{font-family:'Geist',system-ui,sans-serif;letter-spacing:-0.025em}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hatch{}
+.nav{height:40px;padding:0 12px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:15px;color:#101828}
+.f{height:32px;padding:0 12px;border-radius:8px;border:1px solid #D0D5DD;background:#FFFFFF;display:flex;align-items:center;gap:6px;font-size:14px}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5D6675;text-align:left;padding:10px 12px;border-bottom:2px solid #101828}
+td{padding:11px 12px;border-bottom:1px solid #EEF0F3;font-size:14px;vertical-align:top}
+.r{text-align:right}
+</style>
+</head>
+<body>
+
+<div style="width: 1440px; height: 900px; background: #F4F5F7; display: grid; grid-template-columns: 96px 1fr 420px">
+
+<aside style="background: #FFFFFF; border-right: 1px solid #E4E7EC; padding: 24px 0 20px; display: flex; flex-direction: column; align-items: center; gap: 32px">
+<a href="Unlock.html" aria-label="Record a new entry" title="Record (N)" style="width: 56px; height: 56px; border-radius: 16px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(11,37,69,0.28)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></a>
+<nav aria-label="Main" style="display: flex; flex-direction: column; gap: 4px">
+<a href="Main.html" style="width: 96px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5D6675; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"></path><path d="M6 10v10h12V10"></path></svg></span>Overview</a>
+<a href="DesktopHistory.html" aria-current="page" style="width: 96px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #101828; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; background: #EEF0F3; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"></path><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"></path></svg></span>History</a>
+<a href="DesktopReport.html" style="width: 96px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5D6675; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"></path><path d="M14 3v4h4"></path><path d="M9 13h6M9 17h6"></path></svg></span>Reports</a>
+<a href="More.html" style="width: 96px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5D6675; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M3 10h18"></path></svg></span>Accounts</a>
+<a href="More.html" style="width: 96px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5D6675; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>Change log</a>
+</nav>
+<button type="button" aria-label="Unlocked as Anna, 42 minutes left. Lock now" style="margin-top: auto; width: 80px; min-height: 64px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 500"><span style="width: 56px; height: 32px; border-radius: 16px; border: 1.5px solid #0B2545; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg></span>Lock<span style="color: #5D6675">42 min</span></button>
+</aside>
+
+<main style="padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
+<div style="display: flex; align-items: baseline; gap: 12px"><span class="serif" style="font-size: 22px; font-weight: 600">Treasury</span><span style="font-size: 14px; color: #5D6675">[Group name] · unlocked as Anna</span></div>
+<section aria-label="Balances" style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1.2fr; gap: 12px">
+<div style="padding: 14px 16px; background: #FFFFFF; border: 2px solid #0B2545; border-radius: 14px"><span style="font-size: 12px; font-weight: 700; color: #5D6675">Available to spend</span><br><span class="serif num" style="font-size: 32px; font-weight: 500">€1,210.30</span></div>
+<div style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 14px"><span style="font-size: 12px; color: #5D6675">Cash box</span><br><span class="num" style="font-size: 20px; font-weight: 600">€357.80</span></div>
+<div style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 14px"><span style="font-size: 12px; color: #5D6675">Bank account</span><br><span class="num" style="font-size: 20px; font-weight: 600">€802.50</span></div>
+<div style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 14px"><span style="font-size: 12px; color: #5D6675">PayPal</span><br><span class="num" style="font-size: 20px; font-weight: 600">€50.00</span></div>
+<div class="hatch" style="padding: 14px 16px; background-color: #EAEFF7; border: 1px solid #C7D3E6; border-radius: 14px"><span style="font-size: 12px; font-weight: 700; color: #5D6675">Set aside · Prudent Reserve</span><br><span class="num" style="font-size: 20px; font-weight: 600">€600.00</span></div>
+</section>
+
+<div style="display: flex; align-items: center; gap: 10px">
+<h1 class="serif" style="margin: 0 12px 0 0; font-size: 28px; font-weight: 600">History</h1>
+<div class="f" style="width: 300px; height: 48px; border-radius: 24px; border: 0; background: #EEF0F3; padding: 0 16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D6675" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><label for="dq" class="sr">Search</label><input id="dq" type="search" placeholder="Search notes, categories, amounts" style="border: 0; background: transparent; width: 100%; font-size: 14px"></div>
+<button type="button" class="f">Type: All</button>
+<button type="button" class="f">Account: All</button>
+<button type="button" class="f">Category: All</button>
+<button type="button" class="f" style="border: 2px solid #0B2545; font-weight: 700">1 – 30 Sep 2026</button>
+<label style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 14px"><input type="checkbox" role="switch" style="width: 16px; height: 16px; margin: 0">Show removed (1)</label>
+</div>
+
+<table>
+<thead><tr><th scope="col" style="width: 96px">Date</th><th scope="col" style="width: 110px">Type</th><th scope="col">Description</th><th scope="col">Account</th><th scope="col" class="r">Money in</th><th scope="col" class="r">Money out</th><th scope="col" class="r">Available after</th></tr></thead>
+<tbody class="num">
+<tr><td>24 Sep</td><td><span style="color: #067647; font-weight: 600">↓ In</span></td><td><strong>7th Tradition</strong> · Thursday meeting</td><td>Cash box</td><td class="r" style="color: #067647; font-weight: 600">+€145.50</td><td class="r"></td><td class="r">€1,210.30</td></tr>
+<tr><td>17 Sep</td><td><span style="color: #101828; font-weight: 600">↑ Out</span></td><td><strong>Hall rent</strong> · September</td><td>Bank account</td><td class="r"></td><td class="r" style="color: #101828; font-weight: 600">−€60.00</td><td class="r">€1,064.80</td></tr>
+<tr style="background: #E7F4EE; box-shadow: inset 4px 0 0 #0B2545"><td>17 Sep</td><td><span style="color: #067647; font-weight: 600">↓ In</span></td><td><strong>7th Tradition</strong> · Thursday meeting (recount) <span style="font-size: 12px; font-weight: 700; border: 1px solid #98A2B3; border-radius: 8px; padding: 1px 6px">Edited</span></td><td>Cash box</td><td class="r" style="color: #067647; font-weight: 600">+€132.40</td><td class="r"></td><td class="r">€1,124.80</td></tr>
+<tr><td>15 Sep</td><td><span style="font-weight: 600">⇄ Transfer</span></td><td><strong>Bank deposit</strong> · €150.00</td><td>Cash box → Bank account</td><td class="r"></td><td class="r"></td><td class="r">€992.40 <span style="color: #5D6675; font-size: 12px">(no change)</span></td></tr>
+<tr><td>10 Sep</td><td><span style="font-weight: 600">⇄ Transfer</span></td><td><strong>Top up reserve</strong> · €50.00</td><td>Bank account → Prudent Reserve</td><td class="r"></td><td class="r"></td><td class="r">€992.40 <span style="color: #101828; font-size: 12px; font-weight: 600">(−€50.00)</span></td></tr>
+<tr><td>10 Sep</td><td><span style="color: #101828; font-weight: 600">↑ Out</span></td><td><strong>Donation</strong> · Area service committee</td><td>Bank account</td><td class="r"></td><td class="r" style="color: #101828; font-weight: 600">−€40.00</td><td class="r">€1,042.40</td></tr>
+<tr><td>3 Sep</td><td><span style="color: #067647; font-weight: 600">↓ In</span></td><td><strong>Literature sales</strong> · 3 booklets</td><td>Cash box</td><td class="r" style="color: #067647; font-weight: 600">+€18.00</td><td class="r"></td><td class="r">€1,082.40</td></tr>
+</tbody>
+</table>
+<p style="margin: 0; font-size: 13px; color: #5D6675">Keyboard: ↑ ↓ move between rows · Enter opens an entry · N records a new one · / focuses search</p>
+</main>
+
+<aside aria-labelledby="dp-h" style="background: #FFFFFF; border-left: 1px solid #E4E7EC; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="mono" style="font-size: 13px; color: #5D6675">Entry #0142</span><button type="button" aria-label="Close entry panel" style="width: 36px; height: 36px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+<span style="align-self: flex-start; height: 26px; padding: 0 10px; border-radius: 13px; background: #E7F4EE; color: #067647; display: flex; align-items: center; font-size: 13px; font-weight: 700">↓ Money in</span>
+<h2 id="dp-h" class="serif num" style="margin: 0; font-size: 40px; font-weight: 500; color: #067647">+€132.40</h2>
+<p style="margin: -8px 0 0; font-size: 15px">into <strong>Cash box</strong> · 7th Tradition · Thu 17 Sep 2026</p>
+<div style="display: flex; gap: 8px"><button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #D0D5DD; background: transparent; font-weight: 600">Edit</button><button type="button" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #FDA29B; background: transparent; color: #B42318; font-weight: 600">Remove</button></div>
+<div style="border-top: 2px solid #101828; padding-top: 10px; display: flex; flex-direction: column; gap: 12px">
+<span class="serif" style="font-size: 20px; font-weight: 600">Change history</span>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px"><strong>Edited</strong> by Anna</span><span class="mono" style="font-size: 12px; color: #5D6675">Fri 18 Sep 2026, 08:05:12</span>
+<div class="mono num" style="font-size: 12px; line-height: 1.7; padding: 8px 10px; border: 1px solid #E4E7EC; border-radius: 8px">Amount · before <s>€123.40</s> · after €132.40<br>Notes · before <s>Thursday meeting</s><br>&#160;&#160;&#160;&#160;&#160;&#160;&#160;after Thursday meeting (recount)</div>
+<span style="font-size: 13px"><span style="color: #5D6675">Reason:</span> Recounted the coin bag at home; €9.00 in coins was missed.</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px"><strong>Created</strong> by Anna</span><span class="mono" style="font-size: 12px; color: #5D6675">Thu 17 Sep 2026, 21:32:40</span></div>
+</div>
+</aside>
+</div>
+</body>
+</html>

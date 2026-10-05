@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count cash · Treasury design</title>
+<!-- Static preview generated from ../source/CashCount.dc.html. Source of truth is the .dc.html file. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+
+</style>
+</head>
+<body>
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F7F8FA">
+<header style="height: 64px; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px">
+<a href="Record.html" aria-label="Back to the form" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></svg></a>
+<h1 style="margin: 0; flex-grow: 1; font-size: 22px; font-weight: 700">Count cash</h1>
+<button type="button" style="height: 48px; padding: 0 16px; border: 0; border-radius: 24px; background: transparent; font-size: 15px; font-weight: 700; color: #B42318">Clear</button>
+</header>
+<section aria-label="Counted total" class="spring" style="margin: 4px 16px 0; padding: 18px 22px; border-radius: 32px; background: #FFDF9E; color: #261A00; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 700">Counted</span>
+<span aria-live="polite" class="num" style="font-size: 45px; line-height: 52px; font-weight: 800; letter-spacing: -0.025em">€145.50</span>
+<span class="num" style="font-size: 14px">12 notes · 27 coins</span>
+</section>
+<section aria-labelledby="n-h" style="margin: 16px 16px 0"><h2 id="n-h" style="margin: 0 4px 8px; font-size: 14px; font-weight: 700; color: #5D6675">Notes</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+
+
+<button type="button" class="spring" aria-label="€50 notes: 0. Tap to add one" style="position: relative; height: 84px; padding: 10px 10px 8px; border-radius: 16px; border: 1px solid #E4E7EC; background: #FFFFFF; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left">
+<span class="num" style="font-size: 22px; line-height: 1; font-weight: 800; letter-spacing: -0.02em">€50</span>
+<span class="num" style="font-size: 12px; color: #5D6675">—</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 6px; right: 6px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: #E6E9EE; color: #5D6675; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">0</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="€20 notes: 3. Tap to add one" style="position: relative; height: 84px; padding: 10px 10px 8px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left">
+<span class="num" style="font-size: 22px; line-height: 1; font-weight: 800; letter-spacing: -0.02em">€20</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€60.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 6px; right: 6px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">3</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="€10 notes: 4. Tap to add one" style="position: relative; height: 84px; padding: 10px 10px 8px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left">
+<span class="num" style="font-size: 22px; line-height: 1; font-weight: 800; letter-spacing: -0.02em">€10</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€40.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 6px; right: 6px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">4</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="€5 notes: 5. Tap to add one" style="position: relative; height: 84px; padding: 10px 10px 8px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; text-align: left">
+<span class="num" style="font-size: 22px; line-height: 1; font-weight: 800; letter-spacing: -0.02em">€5</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€25.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 6px; right: 6px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 14px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800">5</span>
+</button>
+
+
+
+</div>
+</section>
+<section aria-labelledby="c-h" style="margin: 16px 16px 0"><h2 id="c-h" style="margin: 0 4px 8px; font-size: 14px; font-weight: 700; color: #5D6675">Coins</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+
+
+<button type="button" class="spring" aria-label="€2 coins: 6. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">€2</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€12.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">6</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="€1 coins: 5. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">€1</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€5.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">5</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="50c coins: 4. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">50c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€2.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">4</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="20c coins: 5. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">20c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€1.00</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">5</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="10c coins: 3. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">10c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€0.30</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">3</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="5c coins: 4. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 2px solid #0B2545; background: #E3E8F0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">5c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">€0.20</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">4</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="2c coins: 0. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 1px solid #E4E7EC; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">2c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">—</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #E6E9EE; color: #5D6675; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">0</span>
+</button>
+
+
+
+
+
+<button type="button" class="spring" aria-label="1c coins: 0. Tap to add one" style="position: relative; height: 84px; border-radius: 16px; border: 1px solid #E4E7EC; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span class="num" style="width: 40px; height: 40px; border-radius: 20px; border: 1.5px solid #C4CAD4; background: #E6E9EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">1c</span>
+<span class="num" style="font-size: 12px; color: #5D6675">—</span>
+<span class="num" aria-hidden="true" style="position: absolute; top: 5px; right: 5px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: #E6E9EE; color: #5D6675; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">0</span>
+</button>
+
+
+
+</div>
+</section>
+<p style="margin: 10px 20px 0; font-size: 14px; color: #5D6675">Tap a note or coin to add one.</p>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 92px">
+<a href="Record.html" class="spring num" style="height: 56px; border-radius: 28px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800">Use €145.50 as amount</a>
+</div>
+<div role="toolbar" aria-label="Counting tools" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; padding: 12px 16px 16px; background: #EEF0F4; display: flex; align-items: center; gap: 12px">
+<div role="group" aria-label="What a tap does" style="flex-grow: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px">
+
+<button type="button" class="spring" aria-pressed="true" style="height: 48px; border: 0; border-radius: 24px; background: #0B2545; color: #FFFFFF; font-size: 15px; font-weight: 800">✓ Add</button>
+
+
+<button type="button" class="spring" aria-pressed="false" style="height: 48px; border: 0; border-radius: 8px 8px 8px 8px; background: #E3E8F0; color: #101828; font-size: 15px; font-weight: 500">Remove</button>
+
+
+<button type="button" class="spring" aria-pressed="false" style="height: 48px; border: 0; border-radius: 8px 24px 24px 8px; background: #E3E8F0; color: #101828; font-size: 15px; font-weight: 500">Type</button>
+
+</div>
+<button type="button" disabled aria-label="Undo last tap" class="spring" style="width: 48px; height: 48px; border: 0; border-radius: 24px; background: #E3E8F0; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg></button>
+</div>
+</div>
+</body>
+</html>

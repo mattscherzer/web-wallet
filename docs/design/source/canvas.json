@@ -1,0 +1,191 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "CashCount.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Count cash (working)",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "DesktopHistory.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Desktop · History",
+      "w": 1440,
+      "x": 0,
+      "y": 4200
+    },
+    "DesktopReport.dc.html": {
+      "h": 1060,
+      "title": "Desktop · Monthly ledger",
+      "w": 1440,
+      "x": 1520,
+      "y": 4200
+    },
+    "Entry.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Entry + change history",
+      "w": 390,
+      "x": 470,
+      "y": 1340
+    },
+    "History.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "History",
+      "w": 390,
+      "x": 0,
+      "y": 1340
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Overview",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "More.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Accounts & settings",
+      "w": 390,
+      "x": 1410,
+      "y": 1340
+    },
+    "OverviewDark.dc.html": {
+      "h": 844,
+      "title": "Overview · dark",
+      "w": 390,
+      "x": 1880,
+      "y": 1340
+    },
+    "Record.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Record",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Recorded.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Recorded",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "Reports.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Reports",
+      "w": 390,
+      "x": 940,
+      "y": 1340
+    },
+    "States.dc.html": {
+      "h": 900,
+      "title": "States",
+      "w": 3480,
+      "x": 0,
+      "y": 2920
+    },
+    "System.dc.html": {
+      "h": 1900,
+      "title": "Visual system",
+      "w": 1440,
+      "x": 0,
+      "y": 5640
+    },
+    "Unlock.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Unlock to make changes",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "OverviewFab.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Overview · Record menu open",
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-24T13:43:07.524Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "1 · Record a meeting collection",
+      "w": 240,
+      "x": 0,
+      "y": -270
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "2 · Check the books",
+      "w": 240,
+      "x": 0,
+      "y": 1070
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 3480,
+      "text": "3 · States: loading, offline, error, empty, validation, removal, account edits",
+      "w": 240,
+      "x": 0,
+      "y": 2650
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "4 · Desktop",
+      "w": 240,
+      "x": 0,
+      "y": 3930
+    },
+    "t5": {
+      "kind": "title1",
+      "maxW": 1440,
+      "text": "5 · Visual system",
+      "w": 240,
+      "x": 0,
+      "y": 5370
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "OverviewFab.dc.html",
+    "Unlock.dc.html",
+    "Record.dc.html",
+    "CashCount.dc.html",
+    "Recorded.dc.html",
+    "History.dc.html",
+    "Entry.dc.html",
+    "Reports.dc.html",
+    "More.dc.html",
+    "OverviewDark.dc.html",
+    "States.dc.html",
+    "DesktopHistory.dc.html",
+    "DesktopReport.dc.html",
+    "System.dc.html"
+  ],
+  "pages": [],
+  "title": "Group Treasury — UI design"
+}

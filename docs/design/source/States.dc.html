@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Loading, error, empty and validation states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#E9ECF1;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}a:hover{color:#173C7A}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.serif{font-family:'Geist',system-ui,sans-serif;letter-spacing:-0.025em}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.cap{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5D6675;margin:0}
+.ph{width:390px;height:780px;position:relative;overflow:hidden;background:#F4F5F7;border-radius:24px;border:1px solid #D0D5DD}
+.sk{background:#E4E7EC;border-radius:8px}
+.lbl{font-size:13px;font-weight:600;color:#5D6675}
+.hatch{}
+.loadind{animation:lspin 1.4s cubic-bezier(.34,1.56,.64,1) infinite}@keyframes lspin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(.82)}100%{transform:rotate(360deg) scale(1)}}@media (prefers-reduced-motion: reduce){.loadind{animation:none}}
+</style>
+</helmet>
+<div style="width: 3480px; height: 900px; background: #E9ECF1; padding: 40px; display: flex; gap: 40px">
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Loading · overview</p>
+<div class="ph" aria-busy="true">
+<div style="padding: 14px 20px; display: flex; flex-direction: column; gap: 14px">
+<span class="serif" style="font-size: 26px; font-weight: 600">Treasury</span>
+<div style="padding: 18px 20px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 13px; font-weight: 600; color: #5D6675">Available to spend</span>
+<span class="sk" style="width: 220px; height: 48px"></span>
+<span class="sk" style="width: 100%; height: 16px"></span>
+<span class="sk" style="width: 100%; height: 16px"></span>
+<span class="sk" style="width: 70%; height: 16px"></span>
+</div>
+<div style="height: 90px; border: 1.5px dashed #D0D5DD; border-radius: 16px"></div>
+<span class="sk" style="width: 60%; height: 18px"></span>
+<span class="sk" style="width: 100%; height: 48px"></span>
+<span class="sk" style="width: 100%; height: 48px"></span>
+<div role="status" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 8px"><span style="width: 48px; height: 48px; border-radius: 24px; background: #D7E3F7; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" class="loadind" viewBox="0 0 100 100" width="34" height="34"><path d="M50.0 0.0 L53.4 1.3 L56.4 4.6 L58.8 8.4 L61.1 11.3 L63.8 12.1 L67.3 11.2 L71.5 9.5 L75.9 8.6 L79.4 9.5 L81.4 12.6 L81.9 17.0 L81.6 21.6 L81.8 25.2 L83.4 27.5 L86.8 28.8 L91.2 29.9 L95.3 31.7 L97.6 34.5 L97.4 38.2 L95.2 42.0 L92.3 45.6 L90.3 48.6 L90.3 51.4 L92.3 54.4 L95.2 58.0 L97.4 61.8 L97.6 65.5 L95.3 68.3 L91.2 70.1 L86.8 71.2 L83.4 72.5 L81.8 74.8 L81.6 78.4 L81.9 83.0 L81.4 87.4 L79.4 90.5 L75.9 91.4 L71.5 90.5 L67.3 88.8 L63.8 87.9 L61.1 88.7 L58.8 91.6 L56.4 95.4 L53.4 98.7 L50.0 100.0 L46.6 98.7 L43.6 95.4 L41.2 91.6 L38.9 88.7 L36.2 87.9 L32.7 88.8 L28.5 90.5 L24.1 91.4 L20.6 90.5 L18.6 87.4 L18.1 83.0 L18.4 78.4 L18.2 74.8 L16.6 72.5 L13.2 71.2 L8.8 70.1 L4.7 68.3 L2.4 65.5 L2.6 61.8 L4.8 58.0 L7.7 54.4 L9.7 51.4 L9.7 48.6 L7.7 45.6 L4.8 42.0 L2.6 38.2 L2.4 34.5 L4.7 31.7 L8.8 29.9 L13.2 28.8 L16.6 27.5 L18.2 25.2 L18.4 21.6 L18.1 17.0 L18.6 12.6 L20.6 9.5 L24.1 8.6 L28.5 9.5 L32.7 11.2 L36.2 12.1 L38.9 11.3 L41.2 8.4 L43.6 4.6 L46.6 1.3Z" fill="#0B2545"></path></svg></span><span style="font-size: 14px; color: #5D6675">Loading the books…</span></div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Offline · saved on this phone</p>
+<div class="ph">
+<div role="status" style="margin: 12px; padding: 12px 14px; background: #0B2545; color: #FFFFFF; border-radius: 12px; display: flex; gap: 10px; align-items: flex-start">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 2px"><path d="M3 3l18 18"></path><path d="M8.5 16.5a5 5 0 0 1 7 0"></path><path d="M5 12.5a10 10 0 0 1 5-2.7M14 9.8a10 10 0 0 1 5 2.7"></path><path d="M12 20h.01"></path></svg>
+<span style="font-size: 14px; line-height: 1.4"><strong>You’re offline.</strong> Showing the books as of 21:02. 1 new entry is saved on this phone and will sync when you’re back online.</span>
+</div>
+<div style="padding: 4px 20px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 600; color: #5D6675">Available to spend (last synced)</span>
+<span class="serif num" style="font-size: 44px; font-weight: 500">€1,210.30</span>
+<span style="font-size: 13px; color: #5D6675">Includes 1 entry waiting to sync</span>
+</div>
+<div style="margin: 12px 20px 0; display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #EEF0F3">
+<span style="width: 40px; height: 40px; border-radius: 20px; background: #E7F4EE; color: #067647; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M4 20h16"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">7th Tradition</span><span style="align-self: flex-start; height: 22px; padding: 0 8px; border-radius: 11px; border: 1.5px dashed #5D6675; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Waiting to sync</span></span>
+<span class="num" style="font-size: 16px; font-weight: 600; color: #067647">+€145.50</span>
+</div>
+<p style="margin: 14px 20px 0; font-size: 13px; line-height: 1.45; color: #5D6675">You can keep recording, editing and removing while offline. Everything syncs when you’re back. If someone changed the same entry in the meantime, you’ll be asked which version to keep, and both stay in its history.</p>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Error · history failed to load</p>
+<div class="ph">
+<div style="padding: 14px 16px">
+<span class="serif" style="font-size: 26px; font-weight: 600">History</span>
+</div>
+<div role="alert" style="margin: 60px 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px">
+<span style="width: 56px; height: 56px; border-radius: 28px; background: #FEF3F2; color: #B42318; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"></path><path d="M12 10v4M12 17h.01"></path></svg></span>
+<h2 class="serif" style="margin: 0; font-size: 22px; font-weight: 600">Couldn’t load the history</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #5D6675">The server didn’t answer. Your books are safe; nothing was changed. Check your connection and try again.</p>
+<button type="button" style="height: 52px; padding: 0 28px; border-radius: 14px; border: 0; background: #0B2545; color: #FFFFFF; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg>Try again</button>
+<p class="mono" style="margin: 0; font-size: 12px; color: #5D6675">Error: request timed out (30 s)</p>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Empty · first run and no matches</p>
+<div class="ph">
+<div style="padding: 14px 20px; display: flex; flex-direction: column; gap: 14px">
+<span class="serif" style="font-size: 26px; font-weight: 600">Treasury</span>
+<div style="padding: 22px 20px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 16px; display: flex; flex-direction: column; gap: 10px">
+<h2 class="serif" style="margin: 0; font-size: 22px; font-weight: 600">Set up your books</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #5D6675">Start by adding the places the group’s money is kept: a cash box, a bank account, PayPal, and a reserve if you have one.</p>
+<button type="button" style="height: 52px; border-radius: 14px; border: 0; background: #0B2545; color: #FFFFFF; font-size: 16px; font-weight: 700">Add first account</button>
+</div>
+</div>
+<div style="margin: 20px 20px 0; padding-top: 18px; border-top: 1px dashed #D0D5DD; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+<span class="lbl">History, with a search</span>
+<div style="width: 100%; height: 48px; padding: 0 12px; border: 1px solid #D0D5DD; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; font-size: 16px">plumber</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.45"><strong>No entries match “plumber”</strong> in September 2026 with Money out.</p>
+<button type="button" style="height: 48px; padding: 0 16px; border-radius: 24px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 15px; font-weight: 600">Clear filters</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Validation · transfer</p>
+<div class="ph">
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 14px">
+<span class="serif" style="font-size: 22px; font-weight: 600">Record · Transfer</span>
+<div role="alert" style="padding: 12px 14px; border: 2px solid #B42318; border-radius: 12px; background: #FFFFFF">
+<p style="margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #B42318">2 things to fix</p>
+<ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6"><li><a href="#t-amt">Amount must be more than €0.00</a></li><li><a href="#t-to">Choose a different “To” account</a></li></ul>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="t-amt" class="lbl">Amount</label>
+<div style="height: 60px; padding: 0 14px; background: #FFFFFF; border: 2px solid #B42318; border-radius: 12px; display: flex; align-items: center; gap: 6px"><span class="serif" style="font-size: 28px; color: #5D6675">€</span><input id="t-amt" type="text" inputmode="decimal" value="0.00" aria-invalid="true" aria-describedby="t-amt-e" class="serif num" style="border: 0; background: transparent; width: 100%; font-size: 32px"></div>
+<p id="t-amt-e" style="margin: 0; font-size: 13px; font-weight: 600; color: #B42318; display: flex; gap: 6px; align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>Enter an amount greater than €0.00</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="lbl">From</span><button type="button" style="height: 48px; border-radius: 12px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 15px; font-weight: 600">Cash box</button></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="lbl">To</span><button id="t-to" type="button" aria-invalid="true" aria-describedby="t-to-e" style="height: 48px; border-radius: 12px; border: 2px solid #B42318; background: #FFFFFF; font-size: 15px; font-weight: 600">Cash box</button></div>
+</div>
+<p id="t-to-e" style="margin: -6px 0 0; font-size: 13px; font-weight: 600; color: #B42318; display: flex; gap: 6px; align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>From and To must be different accounts</p>
+<p class="hatch" style="margin: 0; padding: 10px 12px; border: 1px solid #C7D3E6; border-radius: 10px; background-color: #EAEFF7; font-size: 13px; line-height: 1.45">Tip: moving money into <strong>Prudent Reserve</strong> lowers Available by the same amount. The total held stays the same.</p>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 20px; background: #FFFFFF; border-top: 1px solid #E4E7EC">
+<button type="button" aria-disabled="true" style="width: 100%; height: 56px; border-radius: 16px; border: 1px solid #C7D3E6; background: #EEF0F3; color: #5D6675; font-size: 16px; font-weight: 700">Fix 2 things to record</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Remove · asks for a reason</p>
+<div class="ph">
+<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.55)"></div>
+<section role="dialog" aria-modal="true" aria-labelledby="rm-h" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 14px">
+<div aria-hidden="true" style="align-self: center; width: 32px; height: 4px; border-radius: 2px; background: #98A2B3"></div>
+<h2 id="rm-h" class="serif" style="margin: 0; font-size: 26px; font-weight: 600">Remove this entry?</h2>
+<p class="num" style="margin: 0; padding: 10px 12px; border: 1px solid #E4E7EC; border-radius: 10px; font-size: 15px"><strong>Money in +€132.40</strong> into Cash box<br><span style="color: #5D6675; font-size: 13px">7th Tradition · Thu 17 Sep · #0143</span></p>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #5D6675">It stops counting in balances and reports. It is not erased: it stays in the change history, marked as removed, and can be restored.</p>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend class="lbl" style="padding: 0; margin-bottom: 8px">Why? (shown in the history)</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="true" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 2px solid #0B2545; background: #0B2545; color: #FFFFFF; font-size: 14px; font-weight: 600">Duplicate</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 14px">Entered by mistake</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 14px">Wrong account</button>
+<button type="button" aria-pressed="false" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 14px">Other</button>
+</div>
+<label for="rm-r" class="lbl" style="margin-top: 2px">Note (optional)</label>
+<input id="rm-r" type="text" value="Same collection as #0142" style="height: 48px; padding: 0 12px; border: 1px solid #D0D5DD; border-radius: 12px; background: #FFFFFF; font-size: 16px">
+</fieldset>
+<button type="button" style="height: 56px; border-radius: 16px; border: 0; background: #B42318; color: #FFFFFF; font-size: 17px; font-weight: 700">Remove entry</button>
+<button type="button" style="height: 48px; border-radius: 14px; border: 1px solid #D0D5DD; background: transparent; font-size: 16px; font-weight: 600">Keep it</button>
+</section>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Removed entry · still visible</p>
+<div class="ph">
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 14px">
+<span class="mono" style="font-size: 13px; color: #5D6675">Entry #0143</span>
+<div role="note" style="padding: 12px 14px; background: #0B2545; color: #FFFFFF; border-radius: 12px; display: flex; flex-direction: column; gap: 4px">
+<strong style="font-size: 15px; display: flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"></path></svg>Removed · not counted in balances</strong>
+<span style="font-size: 13px">by Ben · Sat 19 Sep 2026, 10:12</span>
+<span style="font-size: 13px">Reason: Duplicate · “Same collection as #0142”</span>
+</div>
+<span style="align-self: flex-start; height: 28px; padding: 0 10px; border-radius: 14px; border: 1px solid #98A2B3; color: #5D6675; display: flex; align-items: center; font-size: 13px; font-weight: 700">Was: Money in</span>
+<p class="serif num" style="margin: 0; font-size: 42px; font-weight: 500; color: #5D6675; text-decoration: line-through">+€132.40</p>
+<p style="margin: -8px 0 0; font-size: 15px; color: #5D6675">into Cash box · 7th Tradition · 17 Sep</p>
+<button type="button" style="height: 48px; border-radius: 12px; border: 1px solid #D0D5DD; background: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg>Restore entry</button>
+<div style="border-top: 2px solid #101828; padding-top: 8px; display: flex; flex-direction: column; gap: 10px">
+<span class="serif" style="font-size: 20px; font-weight: 600">Change history</span>
+<p style="margin: 0; font-size: 14px"><strong>Removed</strong> by Ben<br><span class="mono" style="font-size: 12px; color: #5D6675">Sat 19 Sep 2026, 10:12:03</span></p>
+<p style="margin: 0; font-size: 14px"><strong>Created</strong> by Ben<br><span class="mono" style="font-size: 12px; color: #5D6675">Thu 17 Sep 2026, 21:40:18</span></p>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p class="cap">Edit account · type change &amp; archive</p>
+<div class="ph">
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 14px">
+<span class="serif" style="font-size: 22px; font-weight: 600">Edit account</span>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ea-n" class="lbl">Name</label>
+<input id="ea-n" type="text" value="PayPal" style="height: 48px; padding: 0 12px; border: 1px solid #D0D5DD; border-radius: 12px; background: #FFFFFF; font-size: 16px">
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend class="lbl" style="padding: 0; margin-bottom: 8px">Type</legend>
+<label style="padding: 12px 14px; border: 1px solid #D0D5DD; border-radius: 12px; background: #FFFFFF; display: flex; gap: 10px; align-items: flex-start"><input type="radio" name="ea-k" style="width: 20px; height: 20px; margin: 2px 0 0"><span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px">Operating</strong><span style="font-size: 13px; color: #5D6675">Counts toward Available to spend</span></span></label>
+<label class="hatch" style="padding: 12px 14px; border: 2px solid #0B2545; border-radius: 12px; background-color: #EAEFF7; display: flex; gap: 10px; align-items: flex-start"><input type="radio" name="ea-k" checked style="width: 20px; height: 20px; margin: 2px 0 0"><span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px">Reserve</strong><span style="font-size: 13px; color: #5D6675">Set aside, not available to spend</span></span></label>
+</fieldset>
+<div role="status" class="num" style="padding: 12px 14px; border: 2px solid #0B2545; border-radius: 12px; background: #FFFFFF; font-size: 14px; line-height: 1.5">
+<strong>This moves €50.00 out of Available.</strong><br>Available €1,210.30 → €1,160.30. Total held stays €1,810.30. You’ll confirm on save, and the change is logged.
+</div>
+<div style="border-top: 1px solid #E4E7EC; padding-top: 12px; display: flex; flex-direction: column; gap: 6px">
+<button type="button" aria-disabled="true" aria-describedby="ea-a" style="height: 48px; border-radius: 12px; border: 1px solid #C7D3E6; background: #EEF0F3; color: #5D6675; font-size: 15px; font-weight: 600">Archive account</button>
+<p id="ea-a" class="num" style="margin: 0; font-size: 13px; line-height: 1.45; color: #5D6675">Only accounts at €0.00 can be archived. PayPal holds €50.00; transfer it out first.</p>
+</div>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 20px; background: #FFFFFF; border-top: 1px solid #E4E7EC">
+<button type="button" style="width: 100%; height: 56px; border-radius: 16px; border: 0; background: #0B2545; color: #FFFFFF; font-size: 16px; font-weight: 700">Save changes</button>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3480,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

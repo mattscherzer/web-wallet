@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unlock to make changes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F4F5F7;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}a:hover{color:#173C7A}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.serif{font-family:'Geist',system-ui,sans-serif;letter-spacing:-0.025em}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1)}.spring:active{transform:scale(.94)}@media (prefers-reduced-motion: reduce){.spring{transition:none}.spring:active{transform:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F4F5F7">
+<div aria-hidden="true" style="padding: 14px 20px; display: flex; flex-direction: column; gap: 16px">
+<span class="serif" style="font-size: 26px; font-weight: 600">Treasury</span>
+<div style="height: 200px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E4E7EC; padding: 18px 20px"><span class="serif num" style="font-size: 48px">€1,064.80</span></div>
+</div>
+<div aria-hidden="true" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.55)"></div>
+
+<section role="dialog" aria-modal="true" aria-labelledby="unlock-h" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 16px 24px 28px; display: flex; flex-direction: column; gap: 16px">
+<div aria-hidden="true" style="align-self: center; width: 32px; height: 4px; border-radius: 2px; background: #98A2B3"></div>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #EEF0F3; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
+<a href="Main.dc.html" aria-label="Close, keep viewing" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h2 id="unlock-h" class="serif" style="margin: 0; font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em">Unlock to make changes</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #5D6675">Anyone with the link can view the books. Recording, editing or removing entries needs a trusted member.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="who-l" style="font-size: 13px; font-weight: 600; color: #5D6675">Unlocking as</span>
+<button type="button" aria-describedby="who-l" style="min-height: 56px; padding: 0 14px; border: 1px solid #D0D5DD; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; gap: 12px; text-align: left">
+<span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 18px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700">A</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 600">Anna</span><span style="font-size: 13px; color: #5D6675">Treasurer · passkey on this phone</span></span>
+<span style="font-size: 15px; font-weight: 600; color: #1F4E9E">Change</span>
+</button>
+</div>
+
+<a href="Record.dc.html" style="height: 56px; border-radius: 16px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 17px; font-weight: 700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="m11 12 9-9M17 6l3 3M15 8l2 2"></path></svg>Unlock with passkey</a>
+<button type="button" style="height: 48px; border-radius: 14px; border: 1px solid #D0D5DD; background: transparent; font-size: 16px; font-weight: 600">Use 6-digit PIN instead</button>
+
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="font-size: 13px; font-weight: 600; color: #5D6675; padding: 0; margin-bottom: 8px">Stay unlocked on this phone</legend>
+<div role="group" aria-label="Stay unlocked for" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px">
+<button type="button" aria-pressed="false" class="spring" style="height: 40px; padding: 0 8px; border: 0; border-radius: 20px 8px 8px 20px; background: #E3E8F0; color: #101828; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 500">15 min</button>
+<button type="button" aria-pressed="true" class="spring" style="height: 40px; padding: 0 8px; border: 0; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>1 hour</button>
+<button type="button" aria-pressed="false" class="spring" style="height: 40px; padding: 0 8px; border: 0; border-radius: 8px 20px 20px 8px; background: #E3E8F0; color: #101828; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 500">Until I lock</button>
+</div>
+</fieldset>
+<p style="margin: 0; font-size: 13px; line-height: 1.45; color: #5D6675">Every change you make is signed with your name in its history. Locks itself after 1 hour, or any time from the lock button.</p>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
