@@ -1800,7 +1800,6 @@ img {
   .page-container {
     padding-bottom: calc(var(--fab-size) + var(--space-2xl) + env(safe-area-inset-bottom, 0px));
   }
-
 }
 
 /* =============================================

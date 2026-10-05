@@ -131,7 +131,6 @@ export default function DashboardPage() {
           <Link to="/history" id="view-all-transactions-link">View All Transactions</Link>
         </div>
       )}
-
     </>
   );
 }

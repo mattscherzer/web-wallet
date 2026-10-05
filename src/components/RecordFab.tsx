@@ -34,6 +34,7 @@ interface RecordFabViewProps {
   onPick: () => void;
   fabRef?: RefObject<HTMLButtonElement | null>;
   firstItemRef?: RefObject<HTMLAnchorElement | null>;
+  menuRef?: RefObject<HTMLDivElement | null>;
 }
 
 export function RecordFabView({
@@ -43,12 +44,13 @@ export function RecordFabView({
   onPick,
   fabRef,
   firstItemRef,
+  menuRef,
 }: RecordFabViewProps) {
   return (
     <>
       {open && <div className="record-scrim" aria-hidden="true" onClick={onScrim} />}
       {open && (
-        <div className="record-menu" role="menu" aria-label="Record" id="record-menu">
+        <div ref={menuRef} className="record-menu" role="menu" aria-label="Record" id="record-menu">
           {RECORD_ACTIONS.map(({ to, label, icon: Icon }, i) => (
             <Link
               key={to}
@@ -87,12 +89,19 @@ export function RecordFab() {
   // The menu is open for the page it was opened on, so navigating closes it.
   const [openFor, setOpenFor] = useState<string | null>(null);
   const open = openFor === pathname;
+  // Leaving the page closes the menu, so coming back later never finds it open.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setOpenFor(null);
+  }
   const fabRef = useRef<HTMLButtonElement>(null);
   const firstItemRef = useRef<HTMLAnchorElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const send = (event: MenuEvent) => {
     setOpenFor(nextMenuOpen(open, event) ? pathname : null);
-    if (event === 'escape' || event === 'scrim') fabRef.current?.focus();
+    if (event === 'escape' || event === 'scrim' || (event === 'toggle' && open)) fabRef.current?.focus();
   };
 
   useEffect(() => {
@@ -107,7 +116,7 @@ export function RecordFab() {
     // Tabbing out of the open menu closes it instead of leaving it open behind the scrim.
     const onFocusIn = (e: FocusEvent) => {
       const target = e.target as Node;
-      if (fabRef.current?.contains(target) || document.getElementById('record-menu')?.contains(target)) return;
+      if (fabRef.current?.contains(target) || menuRef.current?.contains(target)) return;
       setOpenFor(null);
     };
     document.addEventListener('keydown', onKey);
@@ -128,6 +137,7 @@ export function RecordFab() {
       onPick={() => send('itemPick')}
       fabRef={fabRef}
       firstItemRef={firstItemRef}
+      menuRef={menuRef}
     />
   );
 }

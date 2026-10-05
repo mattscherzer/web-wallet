@@ -1,14 +1,25 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { RecordFab } from './RecordFab';
 
 afterEach(cleanup);
 
+function Nav() {
+  const navigate = useNavigate();
+  return (
+    <>
+      <button onClick={() => navigate('/reports')}>go-reports</button>
+      <button onClick={() => navigate(-1)}>go-back</button>
+    </>
+  );
+}
+
 function setup(path = '/') {
   render(
     <MemoryRouter initialEntries={[path]}>
+      <Nav />
       <RecordFab />
     </MemoryRouter>,
   );
@@ -31,6 +42,18 @@ describe('RecordFab interaction', () => {
     setup();
     open();
     fireEvent.click(screen.getByRole('button', { name: 'Close record menu' }));
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(document.activeElement).toBe(fab());
+    expect(fab()?.getAttribute('aria-label')).toBe('Record');
+  });
+
+  it('stays closed after leaving the page and coming back', () => {
+    setup();
+    open();
+    fireEvent.click(screen.getByText('go-reports'));
+    expect(screen.queryByRole('button', { name: 'Record' })).toBeNull();
+    fireEvent.click(screen.getByText('go-back'));
+    expect(screen.getByRole('button', { name: 'Record' })).toBeTruthy();
     expect(screen.queryByRole('menu')).toBeNull();
   });
 
