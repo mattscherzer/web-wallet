@@ -254,3 +254,12 @@ describe('CashCountView handlers', () => {
     expect(fireField('Number of €50 notes', state, 'onBlur')).toHaveBeenCalledWith({ type: 'set', index: 0, value: 2 });
   });
 });
+
+describe('CashCountView undo icon', () => {
+  it('uses the rotate-counter-clockwise icon from the design', () => {
+    const html = render();
+    const undo = html.slice(html.indexOf('aria-label="Undo last tap"'));
+    expect(undo.slice(0, undo.indexOf('</button>'))).toContain('lucide-rotate-ccw');
+    expect(html).not.toContain('lucide-undo-2');
+  });
+});
