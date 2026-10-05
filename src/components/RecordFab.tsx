@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- the pure menu logic is exported next to the components it drives */
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Plus, X } from 'lucide-react';
 
@@ -55,7 +55,7 @@ export function RecordFabView({
               to={to}
               role="menuitem"
               className="record-menu__item"
-              style={{ '--i': i } as React.CSSProperties}
+              style={{ '--i': i } as CSSProperties}
               ref={i === 0 ? firstItemRef : undefined}
               onClick={onPick}
             >
@@ -90,9 +90,9 @@ export function RecordFab() {
   const fabRef = useRef<HTMLButtonElement>(null);
   const firstItemRef = useRef<HTMLAnchorElement>(null);
 
-  const closeToFab = () => {
-    setOpenFor(null);
-    fabRef.current?.focus();
+  const send = (event: MenuEvent) => {
+    setOpenFor(nextMenuOpen(open, event) ? pathname : null);
+    if (event === 'escape' || event === 'scrim') fabRef.current?.focus();
   };
 
   useEffect(() => {
@@ -104,8 +104,18 @@ export function RecordFab() {
         fabRef.current?.focus();
       }
     };
+    // Tabbing out of the open menu closes it instead of leaving it open behind the scrim.
+    const onFocusIn = (e: FocusEvent) => {
+      const target = e.target as Node;
+      if (fabRef.current?.contains(target) || document.getElementById('record-menu')?.contains(target)) return;
+      setOpenFor(null);
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocusIn);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocusIn);
+    };
   }, [open]);
 
   if (!showFabAt(pathname)) return null;
@@ -113,9 +123,9 @@ export function RecordFab() {
   return (
     <RecordFabView
       open={open}
-      onToggle={() => setOpenFor(nextMenuOpen(open, 'toggle') ? pathname : null)}
-      onScrim={closeToFab}
-      onPick={() => setOpenFor(null)}
+      onToggle={() => send('toggle')}
+      onScrim={() => send('scrim')}
+      onPick={() => send('itemPick')}
       fabRef={fabRef}
       firstItemRef={firstItemRef}
     />

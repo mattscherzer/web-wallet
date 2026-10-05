@@ -43,12 +43,9 @@ describe('record menu motion and layering', () => {
     expect(base, '.record-menu__item base rule must exist').not.toBe('');
     expect(base).not.toMatch(/animation/);
     expect(base).not.toMatch(/opacity:\s*0/);
-    const animated = motionOk
-      .filter(([h]) => h.includes('.record-menu__item'))
-      .map(([, b]) => b)
-      .join('\n');
+    const animated = motionOk.find(([h]) => h === '.record-menu__item')?.[1] ?? '';
     expect(animated).toMatch(/animation:/);
-    expect(animated).toMatch(/40ms/);
+    expect(animated).toMatch(/animation-delay:[^;]*var\(--i\)[^;]*40ms/);
     expect(css).toMatch(/@keyframes\s+record-menu-in/);
   });
 

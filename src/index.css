@@ -986,6 +986,7 @@ img {
 .record-fab--open {
   width: var(--touch-primary);
   height: var(--touch-primary);
+  /* Keeps the smaller close button centred where the larger FAB was */
   margin: calc((var(--fab-size) - var(--touch-primary)) / 2);
   border-radius: var(--radius-xl);
   background: var(--color-primary);
@@ -1041,7 +1042,10 @@ img {
 
   .record-menu {
     right: auto;
-    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--fab-size) - var(--page-padding));
+    /* Anchored by its right edge to the FAB's right edge */
+    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--page-padding));
+    width: max-content;
+    transform: translateX(-100%);
     bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md));
   }
 }
