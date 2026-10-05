@@ -92,6 +92,13 @@ describe('count cash matches the design handoff', () => {
     expect(rule('.count-apply')).toMatch(/margin:\s*0 var\(--page-padding\) 12px/);
   });
 
+  it('keeps the toolbar bottom spacing, with the home-indicator inset added inside the grey band', () => {
+    expect(rule('.count-toolbar')).toMatch(
+      /padding:\s*12px var\(--page-padding\) calc\(var\(--space-md\) \+ env\(safe-area-inset-bottom, 0px\)\)/,
+    );
+    expect(css).toMatch(/--space-md:\s*16px/);
+  });
+
   // README: Count cash total corner 32; tiles 16 (inputs 12-16)
   it('takes the Counted card (32) and tile (16) corners from tokens', () => {
     expect(css).toMatch(/--radius-count-total:\s*32px/);
