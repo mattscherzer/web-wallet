@@ -10,6 +10,8 @@ const AddMoneyPage = lazy(() => import('./pages/AddMoneyPage'));
 const AddExpensePage = lazy(() => import('./pages/AddExpensePage'));
 const TransferPage = lazy(() => import('./pages/TransferPage'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
+const MorePage = lazy(() => import('./pages/MorePage'));
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="withdraw" element={<AddExpensePage />} />
           <Route path="transfer" element={<TransferPage />} />
           <Route path="history" element={<HistoryPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="more" element={<MorePage />} />
         </Route>
       </Routes>
     </BrowserRouter>
