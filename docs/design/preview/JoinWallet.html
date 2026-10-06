@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join a wallet with a link · Treasury design</title>
+<!-- Static preview generated from ../source/JoinWallet.dc.html. Source of truth is the .dc.html file. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+
+</style>
+</head>
+<body>
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F7F8FA">
+<header style="height: 64px; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px"><a href="WalletSwitcher.html" aria-label="Close" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a><h1 style="margin: 0; flex-grow: 1; font-size: 22px; font-weight: 700">Join a wallet</h1></header>
+<div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 8px"><label for="jl" style="font-size: 14px; font-weight: 600; color: #5D6675">Invite link or code</label>
+<div style="height: 56px; padding: 0 8px 0 16px; border-radius: 16px; background: #EEF0F4; display: flex; align-items: center; gap: 8px; box-shadow: inset 0 0 0 2px #0B2545">
+<input id="jl" type="text" value="…/join/8KQ-2MZ" aria-describedby="jl-h" class="mono" style="flex: 1; min-width: 0; border: 0; background: transparent; font-size: 16px">
+<button type="button" style="height: 40px; padding: 0 14px; border: 0; border-radius: 20px; background: #E3E8F0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="4" rx="1"></rect><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path></svg>Paste</button>
+</div>
+<span id="jl-h" style="font-size: 13px; color: #5D6675">Ask the wallet’s treasurer for a link. Opening it on this phone works too.</span></div>
+<section aria-labelledby="jw-h" style="padding: 20px; border-radius: 28px; background: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 16px"><span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 28px; background: #D7E3F7; color: #0B2545; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 17px; font-weight: 800">AS</span><div style="display: flex; flex-direction: column; gap: 2px"><h2 id="jw-h" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 800">Area Service Committee</h2><span style="font-size: 14px; color: #5D6675; display: flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"></path></svg>Invited by Ben · 4 members</span></div></div>
+<div style="padding: 12px 14px; border-radius: 16px; background: #E3E8F0; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">You’ll join as: View only</strong><span style="font-size: 14px; line-height: 20px; color: #5D6675">See balances, history and reports. A treasurer can give you edit rights later.</span></div>
+</section>
+</div>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 24px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 8px">
+<a href="WalletSwitcher.html" class="spring num" style="height: 56px; padding: 0 24px; border-radius: 28px; border: 0; background: #E3E8F0; color: #101828; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700;">Cancel</a><a href="Main.html" class="spring num" style="height: 56px; padding: 0 24px; border-radius: 28px; border: 0; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Join wallet</a>
+</div>
+</div>
+</body>
+</html>
