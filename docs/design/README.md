@@ -109,3 +109,7 @@ All amounts use `font-variant-numeric: tabular-nums`. Format follows the device 
 - Keyboard: full support. Desktop shortcuts: N = record, / = search, ↑↓ + Enter in the table.
 - Selected states never rely on shape alone; they also use a fill, a check or a badge.
 - Brass (tertiary) never sits next to income green, because the two can be confused with colour-vision deficiency.
+
+## App icon
+
+"The coin": a brass milled coin with a navy €, on navy, with the balance card's cookie shape in the top-right corner. Sources and every exported size are in `icon/`. The app uses them in `public/`: `favicon.svg`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` (full-bleed, coin inside the 80% safe zone) and `apple-touch-icon.png` (180px).
