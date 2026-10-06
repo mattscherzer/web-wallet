@@ -5,6 +5,7 @@ import { copyFileSync, existsSync, mkdtempSync, readdirSync, readFileSync, write
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadEnv } from 'vite';
+import { PGlite } from '@electric-sql/pglite';
 
 const root = process.cwd();
 const read = (p: string) => readFileSync(join(root, p), 'utf8');
@@ -101,6 +102,22 @@ describe('local Supabase dev environment', () => {
     expect(readme).toMatch(/db push/);
     expect(readme).toMatch(/\.env\.prod\.local/);
     expect(readme).toMatch(/site data/i);
+  });
+
+  it('T7 the seed loads into the migrated schema and every audit entry belongs to a seeded transaction', async () => {
+    const db = new PGlite();
+    // PGlite has no Supabase realtime publication; create it so the migration runs unchanged.
+    await db.exec('CREATE PUBLICATION supabase_realtime;');
+    await db.exec(migrationsSql());
+    const seed = read('supabase/seed.sql');
+    await db.exec(seed);
+    await db.exec(seed); // re-running must be harmless (db:seed)
+    const count = async (t: string) => Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
+    expect(await count('transactions')).toBeGreaterThan(0);
+    expect(await count('audit_log')).toBeGreaterThan(0);
+    expect(await count("app_config WHERE key = 'pin'")).toBe(1);
+    expect(await count('audit_log a LEFT JOIN transactions t ON t.id = a.transaction_id WHERE t.id IS NULL')).toBe(0);
+    await db.close();
   });
 
   it('G1 build, lint and typecheck commands are unchanged and build is not pinned to a mode', () => {
