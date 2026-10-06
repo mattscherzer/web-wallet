@@ -67,7 +67,7 @@
     "Record.dc.html": {
       "h": 844,
       "is_interactive": true,
-      "title": "Record",
+      "title": "Record · Money in",
       "w": 390,
       "x": 1410,
       "y": 0
@@ -117,6 +117,109 @@
       "h": 844,
       "title": "Overview · Record menu open",
       "is_interactive": true
+    },
+    "AppIcon.dc.html": {
+      "x": 1520,
+      "y": 5640,
+      "w": 1440,
+      "h": 1320,
+      "title": "App icon"
+    },
+    "RecordOut.dc.html": {
+      "x": 2820,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Record · Money out",
+      "is_interactive": true
+    },
+    "RecordOther.dc.html": {
+      "x": 3290,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Record · Money out, category “Other”",
+      "is_interactive": true
+    },
+    "Categories.dc.html": {
+      "x": 2350,
+      "y": 1340,
+      "w": 390,
+      "h": 844,
+      "title": "Categories",
+      "is_interactive": true
+    },
+    "CategoryEdit.dc.html": {
+      "x": 2820,
+      "y": 1340,
+      "w": 390,
+      "h": 844,
+      "title": "Categories · edit sheet",
+      "is_interactive": true
+    },
+    "CategoryNew.dc.html": {
+      "x": 3290,
+      "y": 1340,
+      "w": 390,
+      "h": 844,
+      "title": "Record · new category sheet",
+      "is_interactive": true
+    },
+    "WalletSwitcher.dc.html": {
+      "x": 3760,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Overview · switch wallet",
+      "is_interactive": true
+    },
+    "Welcome.dc.html": {
+      "x": 4230,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Welcome · no wallet yet",
+      "is_interactive": true
+    },
+    "NewWallet.dc.html": {
+      "x": 4700,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "New wallet",
+      "is_interactive": true
+    },
+    "JoinWallet.dc.html": {
+      "x": 5170,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Join a wallet",
+      "is_interactive": true
+    },
+    "DesktopWallets.dc.html": {
+      "x": 3040,
+      "y": 4200,
+      "w": 1440,
+      "h": 900,
+      "title": "Desktop · switch wallet",
+      "is_interactive": true
+    },
+    "Members.dc.html": {
+      "x": 3760,
+      "y": 1340,
+      "w": 390,
+      "h": 844,
+      "title": "Members & invites",
+      "is_interactive": true
+    },
+    "InviteSheet.dc.html": {
+      "x": 4230,
+      "y": 1340,
+      "w": 390,
+      "h": 844,
+      "title": "Invite with link",
+      "is_interactive": true
     }
   },
   "createdOnFiles": {
@@ -130,16 +233,16 @@
   "notes": {
     "t1": {
       "kind": "title1",
-      "maxW": 2740,
-      "text": "1 · Record a meeting collection",
+      "maxW": 5560,
+      "text": "1 · Wallets & recording a collection",
       "w": 240,
       "x": 0,
       "y": -270
     },
     "t2": {
       "kind": "title1",
-      "maxW": 2270,
-      "text": "2 · Check the books",
+      "maxW": 4620,
+      "text": "2 · Check the books, categories & members",
       "w": 240,
       "x": 0,
       "y": 1070
@@ -154,7 +257,7 @@
     },
     "t4": {
       "kind": "title1",
-      "maxW": 2960,
+      "maxW": 4480,
       "text": "4 · Desktop",
       "w": 240,
       "x": 0,
@@ -162,8 +265,8 @@
     },
     "t5": {
       "kind": "title1",
-      "maxW": 1440,
-      "text": "5 · Visual system",
+      "maxW": 2960,
+      "text": "5 · Visual system & app icon",
       "w": 240,
       "x": 0,
       "y": 5370
@@ -172,19 +275,32 @@
   "order": [
     "Main.dc.html",
     "OverviewFab.dc.html",
+    "WalletSwitcher.dc.html",
+    "Welcome.dc.html",
+    "NewWallet.dc.html",
+    "JoinWallet.dc.html",
     "Unlock.dc.html",
     "Record.dc.html",
     "CashCount.dc.html",
     "Recorded.dc.html",
+    "RecordOut.dc.html",
+    "RecordOther.dc.html",
     "History.dc.html",
     "Entry.dc.html",
     "Reports.dc.html",
     "More.dc.html",
     "OverviewDark.dc.html",
+    "Categories.dc.html",
+    "CategoryEdit.dc.html",
+    "CategoryNew.dc.html",
+    "Members.dc.html",
+    "InviteSheet.dc.html",
     "States.dc.html",
     "DesktopHistory.dc.html",
+    "DesktopWallets.dc.html",
     "DesktopReport.dc.html",
-    "System.dc.html"
+    "System.dc.html",
+    "AppIcon.dc.html"
   ],
   "pages": [],
   "title": "Group Treasury — UI design"

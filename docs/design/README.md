@@ -1,6 +1,6 @@
 # Treasury — UI design reference
 
-Exported from the "Group Treasury — UI design" canvas (Clear Navy + Material 3 Expressive pass, October 2026). Use it as the visual and behavioural reference when implementing screens. It is a design mockup, not production code.
+Exported from the "Group Treasury — UI design" canvas (Clear Navy + Material 3 Expressive pass, updated 6 October 2026). Use it as the visual and behavioural reference when implementing screens. It is a design mockup, not production code.
 
 ## Folder layout
 
@@ -20,20 +20,33 @@ About the `.dc.html` format: `<x-dc>` wraps the markup, `<helmet>` holds page CS
 | `Main` | Overview | Flexible app bar (title + group subtitle), lock icon button, navy balance hero, segmented accounts list, reserve card, recent activity, medium FAB, nav bar |
 | `OverviewFab` | Overview, Record menu open | FAB menu: Money in / Money out / Transfer. Choosing one opens Unlock if locked, then Record with that type preset |
 | `Unlock` | Unlock sheet | Passkey first, 6-digit PIN fallback, "stay unlocked" 15 min / 1 hour / until I lock |
-| `Record` | Record form | Connected button group for type, Display M amount field (`inputmode="decimal"`), Count cash, account/category/date chips, notes, before→after preview, primary button that states the action |
+| `Record` | Record · Money in | Connected button group for type, Display M amount field (`inputmode="decimal"`), Count cash, account/category/date chips, notes, before→after preview, primary button that states the action |
+| `RecordOut` | Record · Money out | Amount shown as "−€60.00" (minus never wraps), From account, money-out categories, required "Paid to or what for", before→after preview, "Record −€60.00 from Bank account" |
+| `RecordOther` | Money out, category "Other" | Choosing Other makes the description required (validation shown) |
+| `CategoryNew` | New category from the form | "+ New" chip opens a sheet: name, "Add and select"; added to the current type's list |
 | `CashCount` | Count cash (hero 1) | Working prototype. Tap tile = +1, Remove mode = −1, Type mode = numeric inputs, Undo, Clear, running total in `aria-live`. Denominations €50 down to 1c. No €100+ notes |
 | `Recorded` | Confirmation (hero 2) | Burst + "Recorded", full receipt incl. counted breakdown, Record another / Done, Undo (logged as a removal) |
 | `History` | History | Search app bar, filter chips, day groups as segmented lists, "Removed (1)" toggle |
 | `Entry` | Entry + change history | Amount as headline, details list, change history (who, exact time, before/after per field, reason, effect on balances), floating toolbar Edit / Remove |
 | `Reports` | Reports | Period group, summary (opening available → in → out → moved to reserve → closing; reserve total), split button Export CSV ▾, ledger preview |
 | `More` | Accounts & settings | Operating vs reserve sections, archived accounts, categories, trusted members, theme, change log |
+| `Categories` | Categories | Money in / Money out tabs, active list (drag to reorder), "Other" pinned last, archived with Restore, Add category |
+| `CategoryEdit` | Edit category sheet | Rename (updates past entries, old name kept in the log), Archive, Delete disabled while used |
+| `Members` | Members & invites | Members with role chips (Can edit / View only), open invite links with Revoke, "Invite with link" |
+| `InviteSheet` | Invite with link | Role (View only / Edit), expiry 1 / 7 / 30 days, QR code + short link, Copy / Share link |
 | `OverviewDark` | Overview, dark theme | Dark tokens |
+| `WalletSwitcher` | Switch wallet sheet | Opened from the wallet name in the app bar. Each wallet with role, available balance, pending-sync badge; New wallet / Join with link |
+| `Welcome` | First run, no wallet | Create a wallet / Join with a link |
+| `NewWallet` | New wallet | Name, first account and opening balance; creator becomes treasurer with edit rights |
+| `JoinWallet` | Join a wallet | Paste or open a link, preview of the wallet and the role it grants, Join |
 | `States` | States board | Loading (Expressive loading indicator), offline with pending sync, error with retry, empty first run, no search results, validation (zero amount, same-account transfer), remove sheet with reasons, removed entry, edit account (type change effect, archive blocked) |
 | `DesktopHistory` | Desktop history | Navigation rail, balance strip, dense table with separate Money in / Money out columns, entry panel with history |
+| `DesktopWallets` | Desktop wallet switcher | Wallet menu from the rail header |
 | `DesktopReport` | Monthly ledger | Printable report: date, description, money in, money out, running available, running reserve, totals, removed/edited entries noted |
 | `System` | Visual system | Tokens, type, shape, motion, component rules |
+| `AppIcon` | App icon | "The coin": navy tile, brass euro coin. Files in `icon/` (already in `public/`) |
 
-Not yet updated to the Expressive pass: `More`, `DesktopHistory` and `DesktopReport` still use the earlier Clear Navy styling (same tokens, flatter components). On desktop the Record FAB menu should open from the rail.
+Not yet fully updated to the Expressive pass: `More`, `DesktopHistory` and `DesktopReport` use the same tokens but flatter components (no segmented lists). Build them with the same components as the phone screens. Reports and the desktop report header show the wallet name. On desktop the Record FAB menu should open from the rail.
 
 ## Tokens (light)
 
@@ -101,6 +114,11 @@ All amounts use `font-variant-numeric: tabular-nums`. Format follows the device 
 10. **Validation.** Amount > €0.00. Transfer From ≠ To. Errors are listed in a summary at the top that links to each field, plus a message on the field itself.
 11. **Reports.** The ledger for a period shows date, description, money in, money out, running available balance and running reserve balance, and exports as CSV. Removed and edited entries in the period are noted.
 12. **States for every data view:** loading, error with retry, empty, offline / pending sync.
+13. **Categories are data, not code.** Each wallet has its own Money in and Money out lists. They can be added (also from the form via "+ New"), renamed (past entries show the new name; the old name stays in the change log), reordered, archived (hidden from new entries, kept on past ones) and deleted only when unused. All changes are logged.
+14. **"Other".** Always last in each list and can't be removed. Choosing it makes the description required, so every entry says what it was. Frequent "Other" descriptions are a hint to add a category.
+15. **Money out.** Amount shown with a true minus, From account, a required "Paid to or what for", and a preview of the account and Available after.
+16. **Wallets.** A person can belong to several wallets (one per group). Each wallet has its own accounts, categories, members, history and reports. The wallet name sits in the app bar and opens the switcher. Unlocking applies to one wallet; switching never unlocks another. A new user with no wallet sees Welcome (Create / Join).
+17. **Invites.** Treasurers invite with a link or QR code. The link sets the role (View only by default, or Edit) and an expiry (1, 7 or 30 days). Open links are listed in Members with use count and can be revoked. Joining, role changes and revokes are logged. Anyone with the wallet's view link can still view, per decision 3.
 
 ## Accessibility (WCAG 2.2 AA)
 
@@ -109,7 +127,3 @@ All amounts use `font-variant-numeric: tabular-nums`. Format follows the device 
 - Keyboard: full support. Desktop shortcuts: N = record, / = search, ↑↓ + Enter in the table.
 - Selected states never rely on shape alone; they also use a fill, a check or a badge.
 - Brass (tertiary) never sits next to income green, because the two can be confused with colour-vision deficiency.
-
-## App icon
-
-"The coin": a brass milled coin with a navy €, on navy, with the balance card's cookie shape in the top-right corner. Sources and every exported size are in `icon/`. The app uses them in `public/`: `favicon.svg`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png` (full-bleed, coin inside the 80% safe zone) and `apple-touch-icon.png` (180px).

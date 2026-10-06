@@ -26,6 +26,7 @@ table{border-collapse:collapse;width:100%}
 th{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#5D6675;text-align:left;padding:10px 12px;border-bottom:2px solid #101828}
 td{padding:11px 12px;border-bottom:1px solid #EEF0F3;font-size:14px;vertical-align:top}
 .r{text-align:right}
+.f{white-space:nowrap;flex-shrink:0}td.r,th{white-space:nowrap}
 </style>
 </helmet>
 <div style="width: 1440px; height: 900px; background: #F4F5F7; display: grid; grid-template-columns: 96px 1fr 420px">
@@ -43,7 +44,7 @@ td{padding:11px 12px;border-bottom:1px solid #EEF0F3;font-size:14px;vertical-ali
 </aside>
 
 <main style="padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; overflow: hidden">
-<div style="display: flex; align-items: baseline; gap: 12px"><span class="serif" style="font-size: 22px; font-weight: 600">Treasury</span><span style="font-size: 14px; color: #5D6675">[Group name] · unlocked as Anna</span></div>
+<a href="DesktopWallets.dc.html" aria-haspopup="menu" aria-label="Wallet: Thursday Night Group, unlocked as Anna. Switch wallet" style="align-self: flex-start; min-height: 56px; margin-left: -8px; padding: 6px 14px 6px 6px; border-radius: 28px; color: #101828; display: flex; align-items: center; gap: 12px"><span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 20px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 800">TN</span><span style="display: flex; flex-direction: column; gap: 2px"><span style="display: flex; align-items: center; gap: 6px; font-size: 22px; line-height: 28px; font-weight: 800; letter-spacing: -0.02em">Thursday Night Group<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span><span style="font-size: 13px; color: #5D6675">Unlocked as Anna · 42 min</span></span></a>
 <section aria-label="Balances" style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1.2fr; gap: 12px">
 <div style="padding: 14px 16px; background: #FFFFFF; border: 2px solid #0B2545; border-radius: 14px"><span style="font-size: 12px; font-weight: 700; color: #5D6675">Available to spend</span><br><span class="serif num" style="font-size: 32px; font-weight: 500">€1,210.30</span></div>
 <div style="padding: 14px 16px; background: #FFFFFF; border: 1px solid #E4E7EC; border-radius: 14px"><span style="font-size: 12px; color: #5D6675">Cash box</span><br><span class="num" style="font-size: 20px; font-weight: 600">€357.80</span></div>
@@ -53,13 +54,13 @@ td{padding:11px 12px;border-bottom:1px solid #EEF0F3;font-size:14px;vertical-ali
 </section>
 
 <div style="display: flex; align-items: center; gap: 10px">
-<h1 class="serif" style="margin: 0 12px 0 0; font-size: 28px; font-weight: 600">History</h1>
-<div class="f" style="width: 300px; height: 48px; border-radius: 24px; border: 0; background: #EEF0F3; padding: 0 16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D6675" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><label for="dq" class="sr">Search</label><input id="dq" type="search" placeholder="Search notes, categories, amounts" style="border: 0; background: transparent; width: 100%; font-size: 14px"></div>
+<h1 class="serif" style="margin: 0 4px 0 0; font-size: 28px; font-weight: 600">History</h1>
+<div class="f" style="width: 180px; height: 48px; border-radius: 24px; border: 0; background: #EEF0F3; padding: 0 16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D6675" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><label for="dq" class="sr">Search</label><input id="dq" type="search" placeholder="Search" style="border: 0; background: transparent; width: 100%; font-size: 14px"></div>
 <button type="button" class="f">Type: All</button>
 <button type="button" class="f">Account: All</button>
 <button type="button" class="f">Category: All</button>
 <button type="button" class="f" style="border: 2px solid #0B2545; font-weight: 700">1 – 30 Sep 2026</button>
-<label style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 14px"><input type="checkbox" role="switch" style="width: 16px; height: 16px; margin: 0">Show removed (1)</label>
+<button type="button" class="f" aria-pressed="false">Removed (1)</button>
 </div>
 
 <table>
