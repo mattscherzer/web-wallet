@@ -1,16 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, MinusCircle, Clock } from 'lucide-react';
+import { House, List, FileText, Ellipsis } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/add', icon: PlusCircle, label: 'Add' },
-  { to: '/withdraw', icon: MinusCircle, label: 'Withdraw' },
-  { to: '/history', icon: Clock, label: 'History' },
+  { to: '/', icon: House, label: 'Overview' },
+  { to: '/history', icon: List, label: 'History' },
+  { to: '/reports', icon: FileText, label: 'Reports' },
+  { to: '/more', icon: Ellipsis, label: 'More' },
 ];
 
 export default function BottomNav() {
   return (
-    <nav className="bottom-nav" id="bottom-nav">
+    <nav className="bottom-nav" id="bottom-nav" aria-label="Main">
       {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}

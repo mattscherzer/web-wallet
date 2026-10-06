@@ -12,7 +12,6 @@ import {
   ArrowLeftRight,
   ChevronDown,
   ChevronUp,
-  Plus,
   Repeat,
 } from 'lucide-react';
 import {
@@ -132,16 +131,6 @@ export default function DashboardPage() {
           <Link to="/history" id="view-all-transactions-link">View All Transactions</Link>
         </div>
       )}
-
-      {/* FAB */}
-      <button
-        className="fab"
-        onClick={() => navigate('/add')}
-        id="fab-add-btn"
-        aria-label="Add transaction"
-      >
-        <Plus size={24} />
-      </button>
     </>
   );
 }

@@ -162,7 +162,7 @@ describe('stylesheet rules', () => {
       '.btn',
       '.btn--cash-calc',
       '.balance-hero__action',
-      '.fab',
+      '.record-fab',
       '.chip',
       '.filter-pill',
       '.payment-card',
@@ -201,7 +201,7 @@ describe('stylesheet rules', () => {
     expect(lightBlock).toMatch(/--touch-primary:\s*56px/);
     expect(rest).toMatch(/\.btn\s*\{[^}]*min-height:\s*var\(--touch-min\)/);
     expect(rest).toMatch(/\.btn--primary\s*\{[^}]*min-height:\s*var\(--touch-primary\)/);
-    expect(rest).toMatch(/\.fab\s*\{[^}]*width:\s*var\(--fab-size\)/);
+    expect(rest).toMatch(/\.record-fab\s*\{[^}]*width:\s*var\(--fab-size\)/);
     expect(lightBlock).toMatch(/--fab-size:\s*80px/);
     expect(rest).toMatch(/\.search-bar__input\s*\{[^}]*min-height:\s*var\(--touch-min\)/);
   });
@@ -235,7 +235,7 @@ describe('stylesheet rules', () => {
     expect(css).not.toMatch(/100vw/);
     expect(rest).toMatch(/\.bottom-nav\s*\{[^}]*width:\s*var\(--rail-offset\)/);
     expect(rest).toMatch(/\.app-layout\s*\{[^}]*margin:[^;}]*max\(var\(--rail-offset\)/);
-    expect(rest).toMatch(/\.fab\s*\{[^}]*left:[^;}]*max\(var\(--rail-offset\)/);
+    expect(rest).toMatch(/\.record-fab\s*\{[^}]*left:[^;}]*max\(var\(--rail-offset\)/);
     expect(rest).toMatch(/\.page-container\s*\{[^}]*safe-area-inset-bottom/);
   });
 

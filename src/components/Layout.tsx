@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
+import { RecordFab } from './RecordFab';
 
 export default function Layout() {
   return (
@@ -16,6 +17,7 @@ export default function Layout() {
           <Outlet />
         </Suspense>
       </main>
+      <RecordFab />
       <BottomNav />
     </div>
   );
