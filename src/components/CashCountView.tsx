@@ -1,5 +1,5 @@
 import type { ChangeEvent, Dispatch, KeyboardEvent } from 'react';
-import { ArrowLeft, Undo2 } from 'lucide-react';
+import { ArrowLeft, RotateCcw } from 'lucide-react';
 import {
   DENOMINATIONS,
   parseCount,
@@ -182,7 +182,7 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
             disabled={history.length === 0}
             onClick={() => dispatch({ type: 'undo' })}
           >
-            <Undo2 size={24} aria-hidden="true" />
+            <RotateCcw size={24} aria-hidden="true" />
           </button>
         </div>
       </footer>
