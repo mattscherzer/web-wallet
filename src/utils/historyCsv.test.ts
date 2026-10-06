@@ -7,6 +7,7 @@ function tx(overrides: Partial<Transaction> & Pick<Transaction, 'type' | 'amount
   seq += 1;
   return {
     id: `tx-${seq}`,
+    wallet_id: 'w1',
     date: '2026-03-01',
     from_account_id: null,
     category: 'other',

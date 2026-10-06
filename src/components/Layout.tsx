@@ -2,11 +2,13 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import { RecordFab } from './RecordFab';
+import AppBar from './AppBar';
 
 export default function Layout() {
   return (
     <div className="app-layout">
       <main className="page-container">
+        <AppBar />
         <Suspense
           fallback={
             <div className="route-fallback" role="status" aria-label="Loading">

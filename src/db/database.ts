@@ -9,6 +9,7 @@ export type AuditAction = 'create' | 'update' | 'delete';
 
 export interface Transaction {
   id: string;
+  wallet_id: string;
   type: TransactionType;
   amount: number;
   date: string;
@@ -24,6 +25,7 @@ export interface Transaction {
 
 export interface AuditEntry {
   id: string;
+  wallet_id: string;
   transaction_id: string;
   action: AuditAction;
   timestamp: string;
@@ -61,6 +63,7 @@ export async function createTransaction(
   const { data: inserted, error } = await supabase
     .from('transactions')
     .insert({
+      wallet_id: data.wallet_id,
       type: data.type,
       amount: data.amount,
       date: data.date,
@@ -78,6 +81,7 @@ export async function createTransaction(
   const id = inserted.id;
 
   await supabase.from('audit_log').insert({
+    wallet_id: data.wallet_id,
     transaction_id: id,
     action: 'create' as AuditAction,
     new_data: { ...data, id },
@@ -88,6 +92,7 @@ export async function createTransaction(
 
 // ─── Create Transfer (between accounts) ─────────────────
 export async function createTransfer(data: {
+  wallet_id: string;
   amount: number;
   date: string;
   from_account_id: AccountId;
@@ -95,6 +100,7 @@ export async function createTransfer(data: {
   notes: string;
 }): Promise<string> {
   return createTransaction({
+    wallet_id: data.wallet_id,
     type: 'transfer',
     amount: data.amount,
     date: data.date,
@@ -130,6 +136,7 @@ export async function updateTransaction(
   if (error) throw new Error(`Failed to update transaction: ${error.message}`);
 
   await supabase.from('audit_log').insert({
+    wallet_id: existing.wallet_id,
     transaction_id: id,
     action: 'update' as AuditAction,
     previous_data: existing,
@@ -157,6 +164,7 @@ export async function deleteTransaction(id: string): Promise<void> {
   if (error) throw new Error(`Failed to delete transaction: ${error.message}`);
 
   await supabase.from('audit_log').insert({
+    wallet_id: existing.wallet_id,
     transaction_id: id,
     action: 'delete' as AuditAction,
     previous_data: existing,

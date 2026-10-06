@@ -11,6 +11,7 @@ import {
 import { createTransaction, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
+import { useWallet } from '../wallet/WalletContext';
 import CashCalculator from '../components/CashCalculator';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 import { PAYMENT_OPTIONS } from '../components/paymentOptions';
@@ -27,6 +28,7 @@ const PAYMENT_METHODS = PAYMENT_OPTIONS.map((o) =>
 
 export default function AddMoneyPage() {
   const navigate = useNavigate();
+  const { current: wallet } = useWallet();
   const today = getTodayString();
 
   const [operationDate, setOperationDate] = useState(today);
@@ -54,7 +56,9 @@ export default function AddMoneyPage() {
       ? `${reasonText !== reason ? '' : ''}${collectionNotes}`
       : '';
 
+    if (!wallet) return;
     await createTransaction({
+      wallet_id: wallet.id,
       type: 'inflow',
       amount: numAmount,
       date: operationDate,
