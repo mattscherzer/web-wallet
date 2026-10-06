@@ -24,10 +24,46 @@ A mobile-first Progressive Web App for tracking treasury funds across multiple a
 
 ## Getting Started
 
+Development runs against a **local Supabase stack** (Docker), never production.
+
+Prerequisites: [Docker](https://docs.docker.com/get-docker/) running, plus `psql` (any Postgres client) if you want `db:seed`. The Supabase CLI is a pinned dev dependency, installed by `npm install`.
+
 ```bash
 npm install
-npm run dev
+npm run db:start   # starts Postgres, API, Studio (http://127.0.0.1:54323) in Docker
+npm run dev        # uses .env.development -> http://127.0.0.1:54321
 ```
+
+| Command | What it does |
+|---|---|
+| `npm run db:start` / `db:stop` | Start / stop the local stack |
+| `npm run db:reset` | **Destructive.** Wipes the local DB, re-applies `supabase/migrations`, loads `supabase/seed.sql` |
+| `npm run db:seed` | Non-destructive: re-runs `supabase/seed.sql` (inserts are idempotent) |
+| `npm run dev:prod` | Runs the app against **production**, using `.env.prod.local` |
+
+The seed contains fake transactions, audit entries and the local PIN `1234`.
+
+Notes:
+- `.env.development` is committed and holds the public demo values of the local stack. If `npx supabase status` prints a different key, update it there.
+- Vite gives `.env.development` priority over `.env`, so `npm run dev` never uses production credentials. Move any production values out of `.env` into `.env.prod.local` (gitignored; template in `.env.example`). Variables exported in your shell (`VITE_SUPABASE_*`) override all files, so don't export production ones.
+- When switching between local and production in the same browser, clear site data for `localhost:5173` (the PWA service worker caches per origin).
+- If `db:start` fails: check Docker is running and ports 54321-54323 are free.
+
+## Database migrations
+
+The schema lives only in `supabase/migrations/` (single source of truth). To change it, add a migration (`npx supabase migration new <name>`), then test it with `npm run db:reset`.
+
+Applying to production:
+
+```bash
+npx supabase login
+npx supabase link --project-ref <your-project-ref>
+# One time only: production already has the baseline schema, so mark it applied
+npx supabase migration repair --status applied 20260101000000
+npx supabase db push
+```
+
+The migrations never create the PIN. In a brand-new project insert it by hand: `INSERT INTO app_config (key, value) VALUES ('pin', '<your pin>');`.
 
 ## Build
 
