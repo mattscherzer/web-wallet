@@ -4,10 +4,16 @@ import { MemoryRouter } from 'react-router-dom';
 
 // Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./RecordFab').catch(() => undefined);
+const menu = await import('./recordMenu').catch(() => undefined);
 
 function lib() {
   expect(mod, 'src/components/RecordFab.tsx must exist').toBeDefined();
   return mod!;
+}
+
+function menuLib() {
+  expect(menu, 'src/components/recordMenu.ts must exist').toBeDefined();
+  return menu!;
 }
 
 function view(open: boolean) {
@@ -21,7 +27,8 @@ function view(open: boolean) {
 
 describe('RecordFab visibility', () => {
   it('shows on Overview and History only', () => {
-    const { showFabAt, RecordFab } = lib();
+    const { RecordFab } = lib();
+    const { showFabAt } = menuLib();
     for (const p of ['/', '/history', '/history/']) expect(showFabAt(p), p).toBe(true);
     for (const p of ['/add', '/withdraw', '/transfer', '/reports', '/more', '/history/x'])
       expect(showFabAt(p), p).toBe(false);
@@ -73,7 +80,7 @@ describe('RecordFabView', () => {
 
 describe('record menu state', () => {
   it('opens on toggle and closes on toggle, escape, scrim, item pick and route change', () => {
-    const { nextMenuOpen, menuEventForKey } = lib();
+    const { nextMenuOpen, menuEventForKey } = menuLib();
     expect(nextMenuOpen(false, 'toggle')).toBe(true);
     expect(nextMenuOpen(true, 'toggle')).toBe(false);
     for (const e of ['escape', 'scrim', 'itemPick', 'routeChange'] as const)
