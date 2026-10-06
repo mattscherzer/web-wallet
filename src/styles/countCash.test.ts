@@ -52,8 +52,8 @@ describe('count cash styles', () => {
 function rule(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
   const match = new RegExp(`(?:^|\\})\\s*${escaped}\\s*\\{([^}]*)\\}`).exec(css);
-  expect(match, `rule "${selector}" not found`).not.toBeNull();
-  return match![1];
+  if (!match) throw new Error(`rule "${selector}" not found`);
+  return match[1];
 }
 
 const darkBlock = () => mediaBlocks(css).find(([query]) => query.includes('prefers-color-scheme: dark'))?.[1] ?? '';
