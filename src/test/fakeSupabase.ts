@@ -36,6 +36,7 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
     private orders: { column: string; ascending: boolean }[] = [];
     private max?: number;
     private single_ = false;
+    private window?: [number, number];
 
     private table: string;
     constructor(table: string) {
@@ -65,6 +66,10 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
     }
     limit(n: number) {
       this.max = n;
+      return this;
+    }
+    range(from: number, to: number) {
+      this.window = [from, to];
       return this;
     }
     single() {
@@ -114,6 +119,8 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
           return ascending ? x.localeCompare(y) : y.localeCompare(x);
         });
       }
+      // Like the real API: at most 1000 rows per request unless a range says otherwise.
+      matched = this.window ? matched.slice(this.window[0], this.window[1] + 1) : matched.slice(0, 1000);
       if (this.max !== undefined) matched = matched.slice(0, this.max);
       if (this.single_) {
         return matched[0]

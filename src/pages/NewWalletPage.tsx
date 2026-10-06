@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { MAX_WALLET_NAME, WalletNameError } from '../db/wallets';
+import { WalletNameError } from '../db/wallets';
 import { useWallet } from '../wallet/WalletContext';
 
 export default function NewWalletPage() {
@@ -41,7 +41,6 @@ export default function NewWalletPage() {
             id="wallet-name"
             className="form-input"
             value={name}
-            maxLength={MAX_WALLET_NAME + 20}
             onChange={(e) => setName(e.target.value)}
             aria-describedby="wallet-name-hint"
             aria-invalid={error ? true : undefined}

@@ -57,6 +57,3 @@ CREATE INDEX IF NOT EXISTS idx_audit_log_wallet ON audit_log (wallet_id);
 ALTER TABLE wallets ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow all for anon" ON wallets;
 CREATE POLICY "Allow all for anon" ON wallets FOR ALL USING (true) WITH CHECK (true);
-
--- Realtime for the wallet list
-ALTER PUBLICATION supabase_realtime ADD TABLE wallets;

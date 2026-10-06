@@ -37,6 +37,7 @@ function useSupabaseQuery<T>(
     } catch (err) {
       console.error('Supabase query error:', err);
     }
+    // `deps` has a fixed length per hook, so the spread is stable between renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
   }, [walletId, ...deps]);
 

@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { MAIN_ACCOUNTS } from './accounts';
 import { computeAccountBalances, type BalanceInput } from './balances';
+import { fetchAllRows } from './queries';
 
 export const MAX_WALLET_NAME = 60;
 
@@ -57,10 +58,15 @@ export function availableByWallet(
 export async function fetchWalletAvailableBalances(
   walletIds: string[],
 ): Promise<Record<string, number>> {
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('wallet_id, type, amount, account_id, from_account_id')
-    .eq('deleted', false);
-  if (error) throw new Error(error.message);
-  return availableByWallet(walletIds, (data ?? []) as WalletBalanceRow[]);
+  const rows = await fetchAllRows<WalletBalanceRow>((from, to) =>
+    supabase
+      .from('transactions')
+      .select('wallet_id, type, amount, account_id, from_account_id')
+      .eq('deleted', false)
+      .order('id')
+      .range(from, to),
+  ).catch((error: { message: string }) => {
+    throw new Error(error.message);
+  });
+  return availableByWallet(walletIds, rows);
 }

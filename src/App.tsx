@@ -20,20 +20,20 @@ export default function App() {
   return (
     <BrowserRouter>
       <WalletProvider>
-      <WalletGate>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="add" element={<AddMoneyPage />} />
-          <Route path="withdraw" element={<AddExpensePage />} />
-          <Route path="transfer" element={<TransferPage />} />
-          <Route path="history" element={<HistoryPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="more" element={<MorePage />} />
-          <Route path="wallets/new" element={<NewWalletPage />} />
-        </Route>
-      </Routes>
-      </WalletGate>
+        <WalletGate>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="add" element={<AddMoneyPage />} />
+              <Route path="withdraw" element={<AddExpensePage />} />
+              <Route path="transfer" element={<TransferPage />} />
+              <Route path="history" element={<HistoryPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+              <Route path="more" element={<MorePage />} />
+              <Route path="wallets/new" element={<NewWalletPage />} />
+            </Route>
+          </Routes>
+        </WalletGate>
       </WalletProvider>
     </BrowserRouter>
   );
