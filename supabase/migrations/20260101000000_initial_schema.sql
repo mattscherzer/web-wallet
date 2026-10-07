@@ -1,6 +1,8 @@
 -- =============================================
--- Treasury Wallet — Supabase Schema
--- Run this in the Supabase SQL Editor (Dashboard → SQL Editor → New Query)
+-- Treasury Wallet — baseline schema
+-- Existing production already has this schema: mark it applied with
+-- `supabase migration repair --status applied 20260101000000` before `db push`.
+-- The PIN row is NOT created here (see supabase/seed.sql for local; set it by hand in production).
 -- =============================================
 
 -- 1. Transactions table
@@ -29,12 +31,11 @@ CREATE TABLE audit_log (
   new_data JSONB
 );
 
--- 3. App config (PIN and settings — only editable via Supabase dashboard)
+-- 3. App config (PIN and settings — only editable via Supabase dashboard / seed)
 CREATE TABLE app_config (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
-INSERT INTO app_config (key, value) VALUES ('pin', '1234');
 
 -- 4. Indexes
 CREATE INDEX idx_transactions_deleted ON transactions(deleted);
