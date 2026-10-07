@@ -22,11 +22,19 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
   const queries: { table: string; op: string; filters: [string, unknown][]; limit?: number; ascending?: boolean }[] = [];
   const channels: FakeChannel[] = [];
   const failures = new Map<string, Failure>();
+  const holds = new Map<string, Promise<void>>();
   let nextId = 1;
 
   /** Make the next operation on `table` (e.g. 'wallets:insert') fail. */
   function failNext(key: string, error: Failure) {
     failures.set(key, error);
+  }
+
+  /** Make the next `key` (e.g. 'transactions:select') answer only once the returned function is called. */
+  function holdNext(key: string): () => void {
+    let release!: () => void;
+    holds.set(key, new Promise<void>((resolve) => (release = resolve)));
+    return release;
   }
 
   class Query implements PromiseLike<Result> {
@@ -134,7 +142,10 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
       onfulfilled?: ((value: Result) => A | PromiseLike<A>) | null,
       onrejected?: ((reason: unknown) => B | PromiseLike<B>) | null,
     ): PromiseLike<A | B> {
-      return Promise.resolve(this.run()).then(onfulfilled, onrejected);
+      const key = `${this.table}:${this.op}`;
+      const held = holds.get(key);
+      holds.delete(key);
+      return Promise.resolve(held).then(() => this.run()).then(onfulfilled, onrejected);
     }
   }
 
@@ -168,6 +179,7 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
     queries,
     channels,
     failNext,
+    holdNext,
     /** Fire the realtime callbacks of live channels on `table`. */
     emit(table: string) {
       channels.filter((c) => c.table === table && !c.removed).forEach((c) => c.callback());

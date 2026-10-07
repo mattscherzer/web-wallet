@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from './supabase';
 import {
   ACCOUNTS,
@@ -29,11 +29,17 @@ function useSupabaseQuery<T>(
     data: initialValue,
   });
 
+  // An answer for a wallet we have since left must not replace the current wallet's data.
+  const openWalletId = useRef(walletId);
+  useEffect(() => {
+    openWalletId.current = walletId;
+  }, [walletId]);
+
   const refresh = useCallback(async () => {
     if (!walletId) return;
     try {
       const result = await queryFn(walletId);
-      setState({ walletId, data: result });
+      if (openWalletId.current === walletId) setState({ walletId, data: result });
     } catch (err) {
       console.error('Supabase query error:', err);
     }

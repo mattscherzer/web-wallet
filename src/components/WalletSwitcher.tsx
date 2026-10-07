@@ -11,16 +11,30 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { wallets, current, switchWallet } = useWallet();
   const navigate = useNavigate();
   const [balances, setBalances] = useState<Record<string, number> | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let live = true;
     fetchWalletAvailableBalances(wallets.map((w) => w.id))
-      .then((b) => live && setBalances(b))
-      .catch((err) => console.error('Failed to load wallet balances:', err));
+      .then((b) => {
+        if (!live) return;
+        setBalances(b);
+        setFailed(false);
+      })
+      .catch((err) => {
+        console.error('Failed to load wallet balances:', err);
+        if (live) setFailed(true);
+      });
     return () => {
       live = false;
     };
-  }, [wallets]);
+  }, [wallets, attempt]);
+
+  const retry = () => {
+    setFailed(false);
+    setAttempt((n) => n + 1);
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -68,7 +82,11 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
                   <span className="wallet-row__text">
                     <span className="wallet-row__name">{w.name}</span>
                     <span className="wallet-row__balance">
-                      {balances ? formatCurrency(balances[w.id] ?? 0) : '…'}
+                      {balances
+                        ? formatCurrency(balances[w.id] ?? 0)
+                        : failed
+                          ? 'Balance unavailable'
+                          : '…'}
                     </span>
                   </span>
                   {isCurrent && <Check size={24} aria-hidden="true" />}
@@ -77,6 +95,13 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
             );
           })}
         </ul>
+
+        {failed && (
+          <p role="alert" className="form-error">
+            Couldn’t load the balances.{' '}
+            <button type="button" className="wallet-sheet__retry" onClick={retry}>Retry</button>
+          </p>
+        )}
 
         <button
           type="button"
