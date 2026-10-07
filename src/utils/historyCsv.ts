@@ -100,8 +100,9 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
   return rows;
 }
 
-export function buildHistoryCsv(transactions: Transaction[]): string {
-  return buildHistoryCsvRows(transactions)
-    .map((e) => e.join(','))
-    .join('\n');
+/** With a wallet name, the file opens with a `Wallet,"<name>"` line above the column header. */
+export function buildHistoryCsv(transactions: Transaction[], walletName?: string): string {
+  const lines = buildHistoryCsvRows(transactions).map((e) => e.join(','));
+  if (walletName) lines.unshift(`Wallet,"${walletName.replace(/"/g, '""')}"`);
+  return lines.join('\n');
 }

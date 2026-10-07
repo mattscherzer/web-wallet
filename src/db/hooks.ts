@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from './supabase';
 import {
   ACCOUNTS,
@@ -9,39 +9,56 @@ import {
   type AccountId,
   type AuditEntry,
 } from './database';
-import { computeAccountBalances, emptyBalances, type BalanceInput } from './balances';
+import { emptyBalances } from './balances';
+import { fetchAccountBalances, fetchAuditLog, fetchTransactions } from './queries';
+import { useOptionalWallet } from '../wallet/useWallet';
 
 // ─── Generic hook for Supabase queries with real-time ───
+// Everything is scoped to the open wallet: the query gets its id, the live
+// channel only listens to its rows, and data fetched for another wallet is
+// never returned.
 function useSupabaseQuery<T>(
-  queryFn: () => Promise<T>,
+  queryFn: (walletId: string) => Promise<T>,
   deps: unknown[],
   initialValue: T,
   realtimeTable?: string
 ): T {
-  const [data, setData] = useState<T>(initialValue);
+  const walletId = useOptionalWallet()?.current?.id ?? null;
+  const [state, setState] = useState<{ walletId: string | null; data: T }>({
+    walletId: null,
+    data: initialValue,
+  });
+
+  // An answer for a wallet we have since left must not replace the current wallet's data.
+  const openWalletId = useRef(walletId);
+  useEffect(() => {
+    openWalletId.current = walletId;
+  }, [walletId]);
 
   const refresh = useCallback(async () => {
+    if (!walletId) return;
     try {
-      const result = await queryFn();
-      setData(result);
+      const result = await queryFn(walletId);
+      if (openWalletId.current === walletId) setState({ walletId, data: result });
     } catch (err) {
       console.error('Supabase query error:', err);
     }
+    // `deps` has a fixed length per hook, so the spread is stable between renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
-  }, deps as readonly unknown[]);
+  }, [walletId, ...deps]);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
   useEffect(() => {
-    if (!realtimeTable) return;
+    if (!realtimeTable || !walletId) return;
 
     const channel = supabase
       .channel(`${realtimeTable}-changes-${Math.random()}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: realtimeTable },
+        { event: '*', schema: 'public', table: realtimeTable, filter: `wallet_id=eq.${walletId}` },
         () => {
           refresh();
         }
@@ -51,9 +68,9 @@ function useSupabaseQuery<T>(
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [realtimeTable, refresh]);
+  }, [realtimeTable, walletId, refresh]);
 
-  return data;
+  return state.walletId === walletId ? state.data : initialValue;
 }
 
 // ─── PIN from database ──────────────────────────────────
@@ -69,22 +86,7 @@ export function usePin() {
 
 // ─── All active transactions ────────────────────────────
 export function useTransactions() {
-  return useSupabaseQuery<Transaction[]>(
-    async () => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('deleted', false)
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return (data ?? []) as Transaction[];
-    },
-    [],
-    [],
-    'transactions'
-  );
+  return useSupabaseQuery<Transaction[]>((walletId) => fetchTransactions(walletId), [], [], 'transactions');
 }
 
 // ─── Filtered transactions ──────────────────────────────
@@ -93,22 +95,10 @@ export function useFilteredTransactions(
   searchQuery: string
 ) {
   return useSupabaseQuery<Transaction[]>(
-    async () => {
-      let query = supabase
-        .from('transactions')
-        .select('*')
-        .eq('deleted', false)
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (filter !== 'all') {
-        query = query.eq('type', filter);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      let results = (data ?? []) as Transaction[];
+    async (walletId) => {
+      let results = await fetchTransactions(walletId, {
+        type: filter === 'all' ? undefined : filter,
+      });
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -129,17 +119,6 @@ export function useFilteredTransactions(
 }
 
 // ─── Account balances (handles transfers correctly) ─────
-async function fetchAccountBalances(): Promise<Record<AccountId, number>> {
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('type, amount, account_id, from_account_id')
-    .eq('deleted', false);
-
-  if (error) throw error;
-
-  return computeAccountBalances((data ?? []) as BalanceInput[]);
-}
-
 export function useAccountBalances() {
   return useSupabaseQuery<Record<AccountId, number>>(
     fetchAccountBalances,
@@ -168,18 +147,7 @@ export function useTotalBalance() {
 // ─── Recent transactions ────────────────────────────────
 export function useRecentTransactions(limit = 5) {
   return useSupabaseQuery<Transaction[]>(
-    async () => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('deleted', false)
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (error) throw error;
-      return (data ?? []) as Transaction[];
-    },
+    (walletId) => fetchTransactions(walletId, { limit }),
     [limit],
     [],
     'transactions'
@@ -189,17 +157,7 @@ export function useRecentTransactions(limit = 5) {
 // ─── Audit log for a transaction ────────────────────────
 export function useAuditLog(transactionId: string) {
   return useSupabaseQuery<AuditEntry[]>(
-    async () => {
-      if (!transactionId) return [];
-      const { data, error } = await supabase
-        .from('audit_log')
-        .select('*')
-        .eq('transaction_id', transactionId)
-        .order('timestamp', { ascending: true });
-
-      if (error) throw error;
-      return (data ?? []) as AuditEntry[];
-    },
+    async (walletId) => (transactionId ? fetchAuditLog(walletId, transactionId) : []),
     [transactionId],
     [],
     'audit_log'

@@ -19,6 +19,7 @@ import {
   wouldOverdraw,
 } from '../utils/expense';
 import PinModal from '../components/PinModal';
+import { useWallet } from '../wallet/useWallet';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 import { PAYMENT_OPTIONS } from '../components/paymentOptions';
 
@@ -31,6 +32,7 @@ const CATEGORIES = [
 
 export default function AddExpensePage() {
   const navigate = useNavigate();
+  const { current: wallet } = useWallet();
   const today = getTodayString();
 
   const [amount, setAmount] = useState('');
@@ -52,9 +54,11 @@ export default function AddExpensePage() {
 
   const handlePinSuccess = async () => {
     setShowPin(false);
-    await createTransaction(
-      buildExpenseInput({ amount, date: expenseDate, accountId, category, customCategory, notes })
-    );
+    if (!wallet) return;
+    await createTransaction({
+      wallet_id: wallet.id,
+      ...buildExpenseInput({ amount, date: expenseDate, accountId, category, customCategory, notes }),
+    });
 
     navigate('/');
   };

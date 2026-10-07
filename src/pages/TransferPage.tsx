@@ -12,6 +12,7 @@ import {
 import { createTransfer, ACCOUNTS, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
+import { useWallet } from '../wallet/useWallet';
 
 const ACCOUNT_OPTIONS: { id: AccountId; label: string; icon: React.ReactNode }[] = [
   { id: 'cash', label: 'Cash', icon: <Wallet size={24} /> },
@@ -22,6 +23,7 @@ const ACCOUNT_OPTIONS: { id: AccountId; label: string; icon: React.ReactNode }[]
 
 export default function TransferPage() {
   const navigate = useNavigate();
+  const { current: wallet } = useWallet();
   const today = getTodayString();
 
   const [fromAccount, setFromAccount] = useState<AccountId>('cash');
@@ -45,7 +47,9 @@ export default function TransferPage() {
   const handlePinSuccess = async () => {
     setShowPin(false);
 
+    if (!wallet) return;
     await createTransfer({
+      wallet_id: wallet.id,
       amount: parseFloat(amount),
       date: transferDate,
       from_account_id: fromAccount,

@@ -26,6 +26,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
 import PinModal from '../components/PinModal';
+import { useWallet } from '../wallet/useWallet';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
 
@@ -37,6 +38,7 @@ const FILTER_LABELS: Record<FilterType, string> = {
 };
 
 export default function HistoryPage() {
+  const { current: wallet } = useWallet();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const transactions = useFilteredTransactions(filter, searchQuery);
@@ -101,7 +103,7 @@ export default function HistoryPage() {
         <button
           className="btn btn--outline"
           style={{ marginLeft: 'auto', padding: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}
-          onClick={generateHistoryCsv}
+          onClick={() => wallet && generateHistoryCsv(wallet.id, wallet.name)}
           id="export-csv-btn"
         >
           <Download size={18} /> Export CSV
