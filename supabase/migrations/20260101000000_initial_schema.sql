@@ -55,7 +55,3 @@ CREATE POLICY "Read only config for anon" ON app_config FOR SELECT USING (true);
 -- 6. Enable realtime
 ALTER PUBLICATION supabase_realtime ADD TABLE transactions;
 ALTER PUBLICATION supabase_realtime ADD TABLE audit_log;
-
--- 7. Wallets (#46): see supabase/migrations/20261006120000_wallets.sql, which adds
---    the `wallets` table and a required `wallet_id` on transactions and audit_log.
---    Fresh installs: run this file first, then the migration.
