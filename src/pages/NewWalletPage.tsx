@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { WalletNameError } from '../db/wallets';
-import { useWallet } from '../wallet/WalletContext';
+import { useWallet } from '../wallet/useWallet';
 
 export default function NewWalletPage() {
   const { addWallet } = useWallet();

@@ -26,7 +26,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
 import PinModal from '../components/PinModal';
-import { useWallet } from '../wallet/WalletContext';
+import { useWallet } from '../wallet/useWallet';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
 

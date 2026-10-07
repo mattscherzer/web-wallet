@@ -12,7 +12,7 @@ import {
 import { createTransfer, ACCOUNTS, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
-import { useWallet } from '../wallet/WalletContext';
+import { useWallet } from '../wallet/useWallet';
 
 const ACCOUNT_OPTIONS: { id: AccountId; label: string; icon: React.ReactNode }[] = [
   { id: 'cash', label: 'Cash', icon: <Wallet size={24} /> },

@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import { WalletProvider } from './wallet/WalletContext';
+import { WalletProvider } from './wallet/WalletProvider';
 import WalletGate from './wallet/WalletGate';
 
 // Routes are code-split so the initial load only pulls the dashboard.

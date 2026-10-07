@@ -11,7 +11,7 @@ import {
 } from './database';
 import { emptyBalances } from './balances';
 import { fetchAccountBalances, fetchAuditLog, fetchTransactions } from './queries';
-import { useOptionalWallet } from '../wallet/WalletContext';
+import { useOptionalWallet } from '../wallet/useWallet';
 
 // ─── Generic hook for Supabase queries with real-time ───
 // Everything is scoped to the open wallet: the query gets its id, the live

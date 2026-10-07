@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useOptionalWallet } from '../wallet/WalletContext';
+import { useOptionalWallet } from '../wallet/useWallet';
 import { walletInitials } from '../wallet/walletStore';
-import WalletSwitcher from './WalletSwitcher';
+
+// Loaded on first open: keeps the data layer out of the shell's initial code.
+const WalletSwitcher = lazy(() => import('./WalletSwitcher'));
 
 /** Top bar with the open wallet's name; opens the wallet switcher. Draws nothing without a wallet. */
 export default function AppBar() {
@@ -28,7 +30,11 @@ export default function AppBar() {
           <ChevronDown size={20} aria-hidden="true" />
         </button>
       </header>
-      {open && <WalletSwitcher onClose={() => setOpen(false)} />}
+      {open && (
+        <Suspense fallback={null}>
+          <WalletSwitcher onClose={() => setOpen(false)} />
+        </Suspense>
+      )}
     </>
   );
 }

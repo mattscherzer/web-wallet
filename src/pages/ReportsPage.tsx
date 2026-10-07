@@ -1,4 +1,4 @@
-import { useOptionalWallet } from '../wallet/WalletContext';
+import { useOptionalWallet } from '../wallet/useWallet';
 
 export default function ReportsPage() {
   const walletName = useOptionalWallet()?.current?.name;

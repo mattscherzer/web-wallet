@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Plus, X } from 'lucide-react';
 import { fetchWalletAvailableBalances } from '../db/wallets';
-import { useWallet } from '../wallet/WalletContext';
+import { useWallet } from '../wallet/useWallet';
 import { walletInitials } from '../wallet/walletStore';
 import { formatCurrency } from '../utils/formatCurrency';
 

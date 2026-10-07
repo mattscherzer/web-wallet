@@ -11,7 +11,7 @@ import {
 import { createTransaction, type AccountId } from '../db/database';
 import { getTodayString } from '../utils/dateHelpers';
 import PinModal from '../components/PinModal';
-import { useWallet } from '../wallet/WalletContext';
+import { useWallet } from '../wallet/useWallet';
 import CashCalculator from '../components/CashCalculator';
 import PaymentMethodSelector from '../components/PaymentMethodSelector';
 import { PAYMENT_OPTIONS } from '../components/paymentOptions';

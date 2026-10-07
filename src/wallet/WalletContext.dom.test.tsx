@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { memoryStorage, walletApp } from '../test/walletTestKit';
 import { CURRENT_WALLET_KEY } from './walletStore';
-import { useWallet } from './WalletContext';
+import { useWallet } from './useWallet';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
