@@ -407,30 +407,6 @@ img {
   margin-bottom: var(--space-md);
 }
 
-.balance-hero__action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: var(--touch-min);
-  padding: 0 var(--space-lg);
-  background: var(--color-hero-action-bg);
-  border-radius: var(--radius-xl);
-  color: var(--color-hero-action-text);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-md);
-}
-
-.balance-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-.balance-hero__action:hover {
-  background: var(--color-hero-action-hover-bg);
-}
-
 /* =============================================
    ACCOUNT CARD
    ============================================= */
@@ -1889,7 +1865,6 @@ img {
 
   .btn,
   .btn--cash-calc,
-  .balance-hero__action,
   .record-fab,
   .record-menu__item,
   .chip,
@@ -1909,7 +1884,6 @@ img {
 
   .btn:not(:disabled):active,
   .btn--cash-calc:not(:disabled):active,
-  .balance-hero__action:not(:disabled):active,
   .record-fab:not(:disabled):active,
   .record-menu__item:not(:disabled):active,
   .chip:not(:disabled):active,

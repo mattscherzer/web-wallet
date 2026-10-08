@@ -177,7 +177,6 @@ describe("stylesheet rules", () => {
         const pressed = [
             ".btn",
             ".btn--cash-calc",
-            ".balance-hero__action",
             ".record-fab",
             ".chip",
             ".filter-pill",

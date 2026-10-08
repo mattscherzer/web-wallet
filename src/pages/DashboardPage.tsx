@@ -1,8 +1,7 @@
 import { useState, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
-  PlusCircle,
   Wallet,
   CreditCard,
   Landmark,
@@ -12,13 +11,13 @@ import {
   ArrowLeftRight,
   ChevronDown,
   ChevronUp,
-  Repeat,
 } from 'lucide-react';
 import {
   useMainAccountsWithBalances,
   useReserveAccountsWithBalances,
   useTotalBalance,
   useRecentTransactions,
+  useTotalAvailableBalance,
 } from '../db/hooks';
 import Amount from '../components/Amount';
 import { formatCurrency } from '../utils/formatCurrency';
@@ -41,97 +40,111 @@ const ICON_CLASSES: Record<string, string> = {
 export default function DashboardPage() {
   const mainAccounts = useMainAccountsWithBalances();
   const reserveAccounts = useReserveAccountsWithBalances();
+  const totalAvailableBalance = useTotalAvailableBalance();
   const totalBalance = useTotalBalance();
+
   const recentTransactions = useRecentTransactions(5);
-  const navigate = useNavigate();
 
   return (
-    <>
-      {/* Page Header */}
-      <div className="page-header">
-        <LayoutDashboard size={24} className="page-header__icon" />
-        <h1 className="page-header__title">Dashboard</h1>
-      </div>
-
-      {/* Hero Balance Card */}
-      <div className="balance-hero" id="total-balance-card">
-        <p className="balance-hero__label">Total Available Balance</p>
-        <p className="balance-hero__amount">{formatCurrency(totalBalance)}</p>
-        <div className="balance-hero__actions">
-          <button
-            className="balance-hero__action"
-            onClick={() => navigate('/add')}
-            id="quick-deposit-btn"
-          >
-            <PlusCircle size={18} />
-            Deposit
-          </button>
-          <button
-            className="balance-hero__action"
-            onClick={() => navigate('/transfer')}
-            id="quick-transfer-btn"
-          >
-            <Repeat size={18} />
-            Transfer
-          </button>
-        </div>
-      </div>
-
-      {/* Main Account Cards */}
-      <div className="segmented-list">
-        {mainAccounts.map((account) => (
-          <div className="account-card" key={account.id} id={`account-${account.id}`}>
-            <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
-              {ACCOUNT_ICONS[account.id]}
-            </div>
-            <div className="account-card__info">
-              <p className="account-card__label">{account.name}</p>
-              <p className="account-card__balance">{formatCurrency(account.balance)}</p>
-            </div>
+      <>
+          {/* Page Header */}
+          <div className="page-header">
+              <LayoutDashboard size={24} className="page-header__icon" />
+              <h1 className="page-header__title">Dashboard</h1>
           </div>
-        ))}
-      </div>
 
-      {/* Reserve Accounts */}
-      {reserveAccounts.length > 0 && (
-        <>
-          <p className="section-title" style={{ marginTop: '20px' }}>Reserve</p>
-          {reserveAccounts.map((account) => (
-            <div className="account-card account-card--reserve" key={account.id} id={`account-${account.id}`}>
-              <div className={`account-card__icon ${ICON_CLASSES[account.id]}`}>
-                {ACCOUNT_ICONS[account.id]}
+          {/* Hero Balance Card */}
+          <div className="balance-hero" id="total-balance-card">
+              <p className="balance-hero__label">Available to spend</p>
+              <p className="balance-hero__amount">
+                  {formatCurrency(totalBalance)}
+              </p>
+              <p className="balance-hero__label">
+                  Available in total: {formatCurrency(totalAvailableBalance)}
+              </p>
+          </div>
+
+          {/* Main Account Cards */}
+          <div className="segmented-list">
+              {mainAccounts.map(account => (
+                  <div
+                      className="account-card"
+                      key={account.id}
+                      id={`account-${account.id}`}
+                  >
+                      <div
+                          className={`account-card__icon ${ICON_CLASSES[account.id]}`}
+                      >
+                          {ACCOUNT_ICONS[account.id]}
+                      </div>
+                      <div className="account-card__info">
+                          <p className="account-card__label">{account.name}</p>
+                          <p className="account-card__balance">
+                              {formatCurrency(account.balance)}
+                          </p>
+                      </div>
+                  </div>
+              ))}
+          </div>
+
+          {/* Reserve Accounts */}
+          {reserveAccounts.length > 0 && (
+              <>
+                  <p className="section-title" style={{ marginTop: "20px" }}>
+                      Reserve
+                  </p>
+                  {reserveAccounts.map(account => (
+                      <div
+                          className="account-card account-card--reserve"
+                          key={account.id}
+                          id={`account-${account.id}`}
+                      >
+                          <div
+                              className={`account-card__icon ${ICON_CLASSES[account.id]}`}
+                          >
+                              {ACCOUNT_ICONS[account.id]}
+                          </div>
+                          <div className="account-card__info">
+                              <p className="account-card__label">
+                                  {account.name}
+                              </p>
+                              <p className="account-card__balance">
+                                  {formatCurrency(account.balance)}
+                              </p>
+                          </div>
+                          <span className="account-card__reserve-badge">
+                              Reserve
+                          </span>
+                      </div>
+                  ))}
+              </>
+          )}
+
+          {/* Recent Transactions */}
+          <p className="section-title" style={{ marginTop: "28px" }}>
+              Recent Transactions
+          </p>
+
+          {recentTransactions.length === 0 && (
+              <div className="empty-state">
+                  <p className="empty-state__text">No transactions yet</p>
               </div>
-              <div className="account-card__info">
-                <p className="account-card__label">{account.name}</p>
-                <p className="account-card__balance">{formatCurrency(account.balance)}</p>
+          )}
+
+          <div className="segmented-list">
+              {recentTransactions.map(tx => (
+                  <DashboardTransactionItem key={tx.id} transaction={tx} />
+              ))}
+          </div>
+
+          {recentTransactions.length > 0 && (
+              <div className="view-all-link">
+                  <Link to="/history" id="view-all-transactions-link">
+                      View All Transactions
+                  </Link>
               </div>
-              <span className="account-card__reserve-badge">Reserve</span>
-            </div>
-          ))}
-        </>
-      )}
-
-      {/* Recent Transactions */}
-      <p className="section-title" style={{ marginTop: '28px' }}>Recent Transactions</p>
-
-      {recentTransactions.length === 0 && (
-        <div className="empty-state">
-          <p className="empty-state__text">No transactions yet</p>
-        </div>
-      )}
-
-      <div className="segmented-list">
-        {recentTransactions.map((tx) => (
-          <DashboardTransactionItem key={tx.id} transaction={tx} />
-        ))}
-      </div>
-
-      {recentTransactions.length > 0 && (
-        <div className="view-all-link">
-          <Link to="/history" id="view-all-transactions-link">View All Transactions</Link>
-        </div>
-      )}
-    </>
+          )}
+      </>
   );
 }
 
