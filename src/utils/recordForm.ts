@@ -68,7 +68,7 @@ export function parseAmount(text: string): number {
 export function validateRecord(form: RecordForm): FieldError[] {
   const errors: FieldError[] = [];
   const amount = parseAmount(form.amount);
-  if (!(amount > 0)) errors.push({ field: 'amount', message: 'Enter an amount above zero' });
+  if (!(amount > 0)) errors.push({ field: 'amount', message: 'Enter an amount above zero, with up to two decimals' });
   if (form.type === 'transfer' && form.accountId === form.fromAccountId) {
     errors.push({ field: 'accountId', message: 'Choose two different accounts' });
   }

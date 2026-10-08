@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Calculator, X } from 'lucide-react';
 import { ACCOUNTS, createTransaction, getAccountLabel, type AccountId } from '../db/database';
-import { useAccountBalances } from '../db/hooks';
+import { useLoadedAccountBalances } from '../db/hooks';
+import { emptyBalances } from '../db/balances';
 import { getTodayString } from '../utils/dateHelpers';
 import { formatCurrency } from '../utils/formatCurrency';
 import { wouldOverdraw } from '../utils/expense';
@@ -43,7 +44,8 @@ export default function RecordPage() {
   const navigate = useNavigate();
   const { current: wallet } = useWallet();
   const [params] = useSearchParams();
-  const balances = useAccountBalances();
+  // null until the balances have really been fetched, so nothing is previewed or warned from zeros.
+  const loadedBalances = useLoadedAccountBalances();
 
   const [form, setForm] = useState<RecordForm>(() => {
     const type = TYPE_PARAMS[params.get('type') ?? ''] ?? 'inflow';
@@ -62,6 +64,7 @@ export default function RecordPage() {
   const [showPin, setShowPin] = useState(false);
   const [showCount, setShowCount] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
 
   // Focus moves to the summary each time a submit finds problems.
@@ -81,6 +84,7 @@ export default function RecordPage() {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    if (saving) return;
     setSaveError(null);
     const found = validateRecord(form);
     setErrors(found);
@@ -93,12 +97,17 @@ export default function RecordPage() {
 
   const save = async () => {
     setShowPin(false);
-    if (!wallet) return;
+    if (!wallet) {
+      setSaveError(SAVE_FAILED);
+      return;
+    }
+    setSaving(true);
     try {
       const id = await createTransaction(toTransactionInput(form, wallet.id));
       navigate(`/recorded/${id}`);
     } catch {
       setSaveError(SAVE_FAILED);
+      setSaving(false);
     }
   };
 
@@ -114,9 +123,9 @@ export default function RecordPage() {
     );
 
   const isTransfer = form.type === 'transfer';
-  const preview = recordPreview(form, balances);
+  const preview = recordPreview(form, loadedBalances ?? emptyBalances());
   const overdraws =
-    form.type === 'outflow' && wouldOverdraw(balances[form.accountId], parseAmount(form.amount));
+    form.type === 'outflow' && wouldOverdraw(loadedBalances?.[form.accountId] ?? null, parseAmount(form.amount));
   const categories = form.type === 'transfer' ? [] : CATEGORIES[form.type];
   const descriptionLabel =
     form.type === 'outflow'
@@ -253,16 +262,19 @@ export default function RecordPage() {
         </div>
 
         <div className="preview" aria-live="polite">
-          {preview.lines.map((line) => (
-            <p key={line.accountId} className="preview__line">
+          {loadedBalances === null && <p className="preview__line">Checking balances…</p>}
+          {loadedBalances !== null && preview.lines.map((line, i) => (
+            <p key={`${line.accountId}-${i}`} className="preview__line">
               <span>{getAccountLabel(line.accountId)}</span>
               <span className="num">→ {formatCurrency(line.after)}</span>
             </p>
           ))}
-          <p className="preview__line">
-            <span>Available</span>
-            <span className="num">→ {formatCurrency(preview.availableAfter)}</span>
-          </p>
+          {loadedBalances !== null && (
+            <p className="preview__line">
+              <span>Available</span>
+              <span className="num">→ {formatCurrency(preview.availableAfter)}</span>
+            </p>
+          )}
         </div>
 
         {overdraws && (
@@ -271,7 +283,7 @@ export default function RecordPage() {
           </p>
         )}
 
-        <button type="submit" className="btn btn--primary">{recordActionLabel(form)}</button>
+        <button type="submit" className="btn btn--primary" disabled={saving}>{recordActionLabel(form)}</button>
       </form>
 
       <PinModal isOpen={showPin} onSuccess={save} onCancel={() => setShowPin(false)} title="Confirm entry" />

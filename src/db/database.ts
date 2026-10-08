@@ -90,7 +90,7 @@ export async function createTransaction(
 
   const id = inserted.id;
 
-  await supabase.from('audit_log').insert({
+  const { error: logError } = await supabase.from('audit_log').insert({
     wallet_id: data.wallet_id,
     transaction_id: id,
     action: 'create' as AuditAction,
@@ -98,6 +98,12 @@ export async function createTransaction(
     actor: actor ?? null,
     new_data: { ...data, id },
   });
+
+  if (logError) {
+    // An entry without a history row must not be left behind.
+    await supabase.from('transactions').delete().eq('id', id).eq('wallet_id', data.wallet_id);
+    throw new Error(`Failed to create transaction: ${logError.message}`);
+  }
 
   return id;
 }
@@ -140,15 +146,18 @@ export async function updateTransaction(
   const now = new Date().toISOString();
   const updateData = { ...updates, updated_at: now };
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from('transactions')
     .update(updateData)
     .eq('id', id)
-    .eq('wallet_id', existing.wallet_id);
+    .eq('wallet_id', existing.wallet_id)
+    .eq('deleted', false)
+    .select('id');
 
   if (error) throw new Error(`Failed to update transaction: ${error.message}`);
+  if (!updated || updated.length === 0) throw new Error('Entry not found or removed');
 
-  await supabase.from('audit_log').insert({
+  const { error: logError } = await supabase.from('audit_log').insert({
     wallet_id: existing.wallet_id,
     transaction_id: id,
     action: 'update' as AuditAction,
@@ -158,6 +167,16 @@ export async function updateTransaction(
     reason: meta.reason ?? null,
     actor: meta.actor ?? null,
   });
+
+  if (logError) {
+    // An edit is never kept without its history: put the old values back.
+    await supabase
+      .from('transactions')
+      .update({ amount: previous.amount, notes: previous.notes, updated_at: previous.updated_at })
+      .eq('id', id)
+      .eq('wallet_id', existing.wallet_id);
+    throw new Error(`Failed to update transaction: ${logError.message}`);
+  }
 }
 
 // ─── Soft-remove / restore ──────────────────────────────

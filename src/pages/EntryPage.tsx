@@ -176,7 +176,12 @@ export default function EntryPage() {
           confirmLabel="Save changes"
           error={problem}
           onCancel={() => setSheet(null)}
-          validate={() => (parseAmount(editAmount) > 0 ? null : 'Enter an amount above zero')}
+          validate={() => {
+            const amount = parseAmount(editAmount);
+            if (!(amount > 0)) return 'Enter an amount above zero, with up to two decimals';
+            if (amount === Number(tx.amount) && editNotes.trim() === tx.notes) return 'Change the amount or the notes first';
+            return null;
+          }}
           onConfirm={(reason) =>
             askPin(() =>
               updateTransaction(

@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 interface ReasonSheetProps {
   title: string;
@@ -30,6 +30,45 @@ export default function ReasonSheet({
   error,
 }: ReasonSheetProps) {
   const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onCancelRef.current = onCancel;
+  }, [onCancel]);
+
+  // Keyboard: focus moves into the dialog, Tab stays inside, Escape closes, and focus goes back to the opener.
+  // Keys typed elsewhere (e.g. in the PIN box shown on top) are left alone.
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    const dialog = dialogRef.current;
+    dialog?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (!dialog || !dialog.contains(e.target as Node)) return;
+      if (e.key === 'Escape') {
+        onCancelRef.current();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = Array.from(
+        dialog.querySelectorAll<HTMLElement>('button, input, textarea, [href], [tabindex]:not([tabindex="-1"])'),
+      ).filter((el) => !(el as HTMLInputElement).disabled);
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      opener?.focus();
+    };
+  }, []);
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
@@ -45,8 +84,10 @@ export default function ReasonSheet({
   };
 
   return (
-    <div className="modal-overlay" onClick={onCancel} onKeyDown={(e) => e.key === 'Escape' && onCancel()}>
+    <div className="modal-overlay" onClick={onCancel}>
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className="modal-content sheet"
         role="dialog"
         aria-modal="true"

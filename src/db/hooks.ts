@@ -19,8 +19,9 @@ import { useOptionalWallet } from '../wallet/useWallet';
 // never returned.
 interface QueryState<T> {
   data: T;
-  /** False until the open wallet's first answer, true afterwards (even after a failed refresh). */
+  /** True once the open wallet has answered at least once; a later failed refresh keeps the data on screen. */
   loaded: boolean;
+  /** True only while the open wallet has never answered and its request failed. */
   failed: boolean;
   refresh: () => Promise<void>;
 }
@@ -32,9 +33,10 @@ function useQueryState<T>(
   realtimeTable?: string
 ): QueryState<T> {
   const walletId = useOptionalWallet()?.current?.id ?? null;
-  const [state, setState] = useState<{ walletId: string | null; data: T; failed: boolean }>({
+  const [state, setState] = useState<{ walletId: string | null; data: T; loaded: boolean; failed: boolean }>({
     walletId: null,
     data: initialValue,
+    loaded: false,
     failed: false,
   });
 
@@ -48,10 +50,16 @@ function useQueryState<T>(
     if (!walletId) return;
     try {
       const result = await queryFn(walletId);
-      if (openWalletId.current === walletId) setState({ walletId, data: result, failed: false });
+      if (openWalletId.current === walletId) setState({ walletId, data: result, loaded: true, failed: false });
     } catch (err) {
       console.error('Supabase query error:', err);
-      if (openWalletId.current === walletId) setState((prev) => ({ ...prev, walletId, failed: true }));
+      if (openWalletId.current !== walletId) return;
+      // Keep this wallet's data if it has some; never carry over another wallet's.
+      setState((prev) =>
+        prev.walletId === walletId
+          ? { ...prev, failed: true }
+          : { walletId, data: initialValue, loaded: false, failed: true },
+      );
     }
     // `deps` has a fixed length per hook, so the spread is stable between renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
@@ -83,8 +91,8 @@ function useQueryState<T>(
   const current = state.walletId === walletId;
   return {
     data: current ? state.data : initialValue,
-    loaded: current && !state.failed,
-    failed: state.failed && (state.walletId === walletId || state.walletId === null),
+    loaded: current && state.loaded,
+    failed: current && state.failed && !state.loaded,
     refresh,
   };
 }
