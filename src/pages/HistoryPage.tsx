@@ -1,148 +1,96 @@
 import { useState } from 'react';
-import {
-  Clock,
-  Search,
-  ArrowDownLeft,
-  ArrowUpRight,
-  ArrowLeftRight,
-  ChevronDown,
-  ChevronUp,
-  Pencil,
-  Trash2,
-  History,
-  Download,
-} from 'lucide-react';
-import { useFilteredTransactions, useAuditLog } from '../db/hooks';
-import {
-  deleteTransaction,
-  updateTransaction,
-  getAccountLabel,
-  type Transaction,
-  type AccountId,
-} from '../db/database';
+import { Link } from 'react-router-dom';
+import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Download, Search } from 'lucide-react';
+import { useFilteredTransactions } from '../db/hooks';
+import { getAccountLabel, type AccountId, type Transaction } from '../db/database';
 import Amount from '../components/Amount';
 import StatusChip from '../components/StatusChip';
-import { formatCurrency } from '../utils/formatCurrency';
-import { getDateGroupLabel, groupByDate, formatTime } from '../utils/dateHelpers';
+import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
+import { getDateGroupLabel, groupByDate } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
-import PinModal from '../components/PinModal';
+import { availableDelta, categoryLabel } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
 
 const FILTER_LABELS: Record<FilterType, string> = {
   all: 'All',
-  inflow: 'Inflows',
-  outflow: 'Outflows',
-  transfer: 'Transfers',
+  inflow: 'Money in',
+  outflow: 'Money out',
+  transfer: 'Transfer',
 };
 
 export default function HistoryPage() {
   const { current: wallet } = useWallet();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const transactions = useFilteredTransactions(filter, searchQuery);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  // PIN modal state
-  const [showPin, setShowPin] = useState(false);
-  const [pendingAction, setPendingAction] = useState<(() => Promise<void>) | null>(null);
-  const [pinTitle, setPinTitle] = useState('');
-
-  // Edit modal state
-  const [editingTx, setEditingTx] = useState<Transaction | null>(null);
-  const [editAmount, setEditAmount] = useState('');
-  const [editNotes, setEditNotes] = useState('');
-
+  const [showRemoved, setShowRemoved] = useState(false);
+  const transactions = useFilteredTransactions(filter, searchQuery, showRemoved);
   const grouped = groupByDate(transactions);
 
-  const requestDelete = (id: string) => {
-    setPinTitle('Confirm Delete');
-    setPendingAction(() => async () => {
-      await deleteTransaction(id);
-      setExpandedId(null);
-    });
-    setShowPin(true);
-  };
-
-  const startEdit = (tx: Transaction) => {
-    setEditingTx(tx);
-    setEditAmount(tx.amount.toString());
-    setEditNotes(tx.notes);
-  };
-
-  const submitEdit = () => {
-    if (!editingTx) return;
-    const numAmount = parseFloat(editAmount);
-    if (!numAmount || numAmount <= 0) return;
-
-    setPinTitle('Confirm Edit');
-    setPendingAction(() => async () => {
-      await updateTransaction(editingTx.id, {
-        amount: numAmount,
-        notes: editNotes,
-      });
-      setEditingTx(null);
-    });
-    setShowPin(true);
-  };
-
-  const handlePinSuccess = async () => {
-    setShowPin(false);
-    if (pendingAction) {
-      await pendingAction();
-      setPendingAction(null);
-    }
-  };
+  const live = transactions.filter((t) => !t.deleted);
+  const total = (type: 'inflow' | 'outflow') =>
+    live.filter((t) => t.type === type).reduce((sum, t) => sum + Number(t.amount), 0);
 
   return (
     <>
       <div className="page-header">
-        <Clock size={24} className="page-header__icon" />
-        <h1 className="page-header__title">Transaction History</h1>
+        <h1 className="page-header__title">History</h1>
         <button
-          className="btn btn--outline"
-          style={{ marginLeft: 'auto', padding: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}
+          className="btn btn--outline page-header__action"
           onClick={() => wallet && generateHistoryCsv(wallet.id, wallet.name)}
           id="export-csv-btn"
         >
-          <Download size={18} /> Export CSV
+          <Download size={18} aria-hidden="true" /> Export CSV
         </button>
       </div>
 
-      {/* Search */}
       <div className="search-bar" id="history-search-bar">
-        <Search size={18} className="search-bar__icon" />
+        <Search size={18} className="search-bar__icon" aria-hidden="true" />
         <input
-          type="text"
+          type="search"
           className="search-bar__input"
-          placeholder="Search transactions..."
+          placeholder="Search history"
+          aria-label="Search history"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           id="history-search-input"
         />
       </div>
 
-      {/* Filter Pills */}
       <div className="filter-pills">
         {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
           <button
             key={f}
+            type="button"
             className={`filter-pill${filter === f ? ' filter-pill--active' : ''}`}
+            aria-pressed={filter === f}
             onClick={() => setFilter(f)}
             id={`filter-${f}`}
           >
             {FILTER_LABELS[f]}
           </button>
         ))}
+        <button
+          type="button"
+          className={`filter-pill${showRemoved ? ' filter-pill--active' : ''}`}
+          aria-pressed={showRemoved}
+          onClick={() => setShowRemoved((v) => !v)}
+          id="filter-removed"
+        >
+          Removed
+        </button>
       </div>
 
-      {/* Transaction Groups */}
+      {live.length > 0 && (
+        <p className="history-summary num">
+          {live.length} {live.length === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(total('inflow'), 'inflow')} · out {formatSignedCurrency(total('outflow'), 'outflow')}
+        </p>
+      )}
+
       {transactions.length === 0 && (
         <div className="empty-state">
-          <p className="empty-state__text">
-            {searchQuery ? 'No matching transactions' : 'No transactions yet'}
-          </p>
+          <p className="empty-state__text">{searchQuery ? 'No matching entries' : 'No entries yet'}</p>
         </div>
       )}
 
@@ -151,231 +99,57 @@ export default function HistoryPage() {
           <div className="date-group__label">{getDateGroupLabel(date)}</div>
           <div className="segmented-list">
             {txs.map((tx) => (
-              <HistoryTransactionItem
-                key={tx.id}
-                transaction={tx}
-                isExpanded={expandedId === tx.id}
-                onToggle={() => setExpandedId(expandedId === tx.id ? null : tx.id)}
-                onDelete={() => requestDelete(tx.id)}
-                onEdit={() => startEdit(tx)}
-              />
+              <HistoryRow key={tx.id} tx={tx} />
             ))}
           </div>
         </div>
       ))}
-
-      {/* Edit Modal */}
-      {editingTx && (
-        <div className="modal-overlay" onClick={() => setEditingTx(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2 className="pin-modal__title">Edit Transaction</h2>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label className="form-label" style={{ marginBottom: '8px' }}>Amount</label>
-              <div className="amount-input" style={{ padding: '12px' }}>
-                <div className="amount-input__field">
-                  <span className="amount-input__currency" style={{ fontSize: '1.25rem' }}>€</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className="amount-input__value"
-                    style={{ fontSize: '1.5rem' }}
-                    value={editAmount}
-                    onChange={(e) => setEditAmount(e.target.value)}
-                    id="edit-amount-input"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label className="form-label" style={{ marginBottom: '8px' }}>Notes</label>
-              <textarea
-                className="form-textarea"
-                value={editNotes}
-                onChange={(e) => setEditNotes(e.target.value)}
-                rows={3}
-                id="edit-notes-input"
-              />
-            </div>
-
-            <button className="btn btn--primary" onClick={submitEdit} id="edit-save-btn">
-              Save Changes
-            </button>
-            <button
-              className="pin-modal__cancel"
-              onClick={() => setEditingTx(null)}
-              id="edit-cancel-btn"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      <PinModal
-        isOpen={showPin}
-        onSuccess={handlePinSuccess}
-        onCancel={() => {
-          setShowPin(false);
-          setPendingAction(null);
-        }}
-        title={pinTitle}
-      />
     </>
   );
 }
 
-// ─── History Transaction Item ───────────────────────────
-interface HistoryTransactionItemProps {
-  transaction: Transaction;
-  isExpanded: boolean;
-  onToggle: () => void;
-  onDelete: () => void;
-  onEdit: () => void;
-}
-
-function HistoryTransactionItem({
-  transaction: tx,
-  isExpanded,
-  onToggle,
-  onDelete,
-  onEdit,
-}: HistoryTransactionItemProps) {
-  const isInflow = tx.type === 'inflow';
+function HistoryRow({ tx }: { tx: Transaction }) {
   const isTransfer = tx.type === 'transfer';
-  const wasEdited = tx.created_at !== tx.updated_at;
-
-  const auditEntries = useAuditLog(isExpanded ? tx.id : '');
-
-  const displayName = isTransfer
+  const wasEdited = tx.created_at !== tx.updated_at && !tx.deleted;
+  const title = isTransfer
     ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
-    : tx.category
-      ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
-      : tx.notes || 'Transaction';
+    : categoryLabel(tx.category) || 'Entry';
+  const where = isTransfer ? '' : `${tx.type === 'inflow' ? 'Into' : 'From'} ${getAccountLabel(tx.account_id)}`;
+  const meta = [where, tx.notes].filter(Boolean).join(' · ');
+
+  const delta = isTransfer
+    ? availableDelta({ type: 'transfer', amount: Number(tx.amount), accountId: tx.account_id, fromAccountId: tx.from_account_id })
+    : null;
 
   const iconClass = isTransfer
     ? 'transaction-item__icon--transfer'
-    : isInflow
+    : tx.type === 'inflow'
       ? 'transaction-item__icon--inflow'
       : 'transaction-item__icon--outflow';
 
-  const formatAuditAction = (action: string) => {
-    switch (action) {
-      case 'create': return 'Created';
-      default: return action;
-    }
-  };
-
   return (
-    <div className="transaction-item">
-      <div className="transaction-item__header" onClick={onToggle}>
-        <div className={`transaction-item__icon ${iconClass}`}>
-          {isTransfer
-            ? <ArrowLeftRight size={20} />
-            : isInflow
-              ? <ArrowDownLeft size={20} />
-              : <ArrowUpRight size={20} />}
+    <div className={`transaction-item${tx.deleted ? ' transaction-item--removed' : ''}`}>
+      <Link to={`/history/${tx.id}`} className="transaction-item__header">
+        <div className={`transaction-item__icon ${iconClass}`} aria-hidden="true">
+          {isTransfer ? <ArrowLeftRight size={20} /> : tx.type === 'inflow' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
         </div>
         <div className="transaction-item__info">
           <p className="transaction-item__name">
-            {displayName}
+            {title}
             {wasEdited && <StatusChip variant="edited" />}
+            {tx.deleted && <StatusChip variant="removed" />}
           </p>
-          <p className="transaction-item__time">{formatTime(tx.created_at)}</p>
+          {meta && <p className="transaction-item__time">{meta}</p>}
+          {delta !== null && (
+            <p className="transaction-item__time">
+              {delta === 0 ? 'Available unchanged' : `Available ${formatCurrency(delta)}`}
+            </p>
+          )}
         </div>
         <span className="transaction-item__amount">
-          <Amount type={tx.type} amount={tx.amount} />
+          <Amount type={tx.type} amount={Number(tx.amount)} />
         </span>
-        <span className={`transaction-item__chevron${isExpanded ? ' transaction-item__chevron--open' : ''}`}>
-          {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-        </span>
-      </div>
-
-      {isExpanded && (
-        <div className="transaction-item__details">
-          <div className="transaction-item__detail-row">
-            <p className="transaction-item__detail-label">
-              {isTransfer ? 'Destination' : 'Payment Method'}
-            </p>
-            <p className="transaction-item__detail-value">
-              {getAccountLabel(tx.account_id)}
-            </p>
-          </div>
-          {isTransfer && tx.from_account_id && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label">Source</p>
-              <p className="transaction-item__detail-value">
-                {getAccountLabel(tx.from_account_id as AccountId)}
-              </p>
-            </div>
-          )}
-          {tx.notes && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label">Notes</p>
-              <p className="transaction-item__detail-value">{tx.notes}</p>
-            </div>
-          )}
-
-          {/* Audit Log */}
-          {auditEntries.length > 0 && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <History size={12} />
-                Change History
-              </p>
-              <div className="audit-log">
-                {auditEntries.map((entry) => (
-                  <div key={entry.id} className="audit-log__entry">
-                    <span className="audit-log__action">
-                      {entry.action === 'update' ? <StatusChip variant="edited" />
-                        : entry.action === 'delete' ? <StatusChip variant="removed" />
-                        : formatAuditAction(entry.action)}
-                    </span>
-                    <span className="audit-log__time">
-                      {new Date(entry.timestamp).toLocaleString()}
-                    </span>
-                    {entry.action === 'update' && entry.previous_data && entry.new_data && (
-                      <div className="audit-log__changes">
-                        {entry.previous_data.amount !== entry.new_data.amount && (
-                          <span className="audit-log__change">
-                            Amount: <span className="sr-only">from </span>{formatCurrency(entry.previous_data.amount ?? 0)}<span aria-hidden="true"> → </span><span className="sr-only"> to </span>{formatCurrency(entry.new_data.amount ?? 0)}
-                          </span>
-                        )}
-                        {entry.previous_data.notes !== entry.new_data.notes && (
-                          <span className="audit-log__change">
-                            Notes updated
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="transaction-item__actions">
-            <button
-              className="transaction-item__action-btn transaction-item__action-btn--edit"
-              onClick={(e) => { e.stopPropagation(); onEdit(); }}
-              id={`edit-tx-${tx.id}`}
-            >
-              <Pencil size={14} />
-              Edit
-            </button>
-            <button
-              className="transaction-item__action-btn transaction-item__action-btn--delete"
-              onClick={(e) => { e.stopPropagation(); onDelete(); }}
-              id={`delete-tx-${tx.id}`}
-            >
-              <Trash2 size={14} />
-              Delete
-            </button>
-          </div>
-        </div>
-      )}
+      </Link>
     </div>
   );
 }

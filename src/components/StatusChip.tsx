@@ -8,5 +8,5 @@ interface StatusChipProps {
 }
 
 export default function StatusChip({ variant }: StatusChipProps) {
-  return <span className={`status-chip status-chip--${variant}`}>{LABELS[variant]}</span>;
+  return <span className={`status-chip status-chip--${variant}`} data-status={variant}>{LABELS[variant]}</span>;
 }

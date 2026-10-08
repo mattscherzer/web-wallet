@@ -20,3 +20,8 @@ export const ACCOUNTS: Account[] = [
 
 export const MAIN_ACCOUNTS = ACCOUNTS.filter((a) => !a.isReserve);
 export const RESERVE_ACCOUNTS = ACCOUNTS.filter((a) => a.isReserve);
+
+/** Display name for an account id. */
+export function getAccountLabel(id: AccountId): string {
+  return ACCOUNTS.find((a) => a.id === id)?.name ?? id;
+}

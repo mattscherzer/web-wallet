@@ -1,11 +1,17 @@
 import { supabase } from './supabase';
-import { ACCOUNTS, type AccountId } from './accounts';
+import type { AccountId } from './accounts';
 
 export type { AccountId, Account } from './accounts';
 
 // ─── Types ──────────────────────────────────────────────
 export type TransactionType = 'inflow' | 'outflow' | 'transfer';
-export type AuditAction = 'create' | 'update' | 'delete';
+// 'delete' is only found on entries removed before removals carried a reason.
+export type AuditAction = 'create' | 'update' | 'delete' | 'remove' | 'restore';
+
+export const REMOVE_REASONS = ['Duplicate', 'Entered by mistake', 'Wrong account', 'Other'] as const;
+export type RemoveReason = (typeof REMOVE_REASONS)[number];
+
+export const EDIT_REASONS = ['Wrong amount', 'Wrong account', 'Typo', 'Other'] as const;
 
 export interface Transaction {
   id: string;
@@ -21,6 +27,10 @@ export interface Transaction {
   created_at: string;
   updated_at: string;
   deleted: boolean;
+  removed_reason?: string | null;
+  removed_note?: string | null;
+  removed_by?: string | null;
+  removed_at?: string | null;
 }
 
 export interface AuditEntry {
@@ -31,15 +41,14 @@ export interface AuditEntry {
   timestamp: string;
   previous_data?: Partial<Transaction> | null;
   new_data?: Partial<Transaction> | null;
+  /** Who made the change; empty until sign-in exists. */
+  actor?: string | null;
+  reason?: string | null;
+  note?: string | null;
 }
 
 // ─── Static Account Data ────────────────────────────────
-export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from './accounts';
-
-// ─── Account label helper ───────────────────────────────
-export function getAccountLabel(id: AccountId): string {
-  return ACCOUNTS.find((a) => a.id === id)?.name ?? id;
-}
+export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS, getAccountLabel } from './accounts';
 
 // ─── Fetch PIN from Supabase ────────────────────────────
 export async function fetchPin(): Promise<string> {
@@ -58,7 +67,8 @@ export async function fetchPin(): Promise<string> {
 
 // ─── Create Transaction (inflow / outflow) ──────────────
 export async function createTransaction(
-  data: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'deleted'>
+  data: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'deleted'>,
+  actor?: string
 ): Promise<string> {
   const { data: inserted, error } = await supabase
     .from('transactions')
@@ -84,6 +94,8 @@ export async function createTransaction(
     wallet_id: data.wallet_id,
     transaction_id: id,
     action: 'create' as AuditAction,
+    timestamp: new Date().toISOString(),
+    actor: actor ?? null,
     new_data: { ...data, id },
   });
 
@@ -115,23 +127,24 @@ export async function createTransfer(data: {
 // ─── Update Transaction ─────────────────────────────────
 export async function updateTransaction(
   id: string,
-  updates: Partial<Omit<Transaction, 'id' | 'created_at' | 'deleted'>>
+  updates: Partial<Omit<Transaction, 'id' | 'created_at' | 'deleted'>>,
+  meta: { walletId?: string; reason?: string; actor?: string } = {}
 ): Promise<void> {
-  const { data: existing, error: fetchError } = await supabase
-    .from('transactions')
-    .select('*')
-    .eq('id', id)
-    .single();
+  let lookup = supabase.from('transactions').select('*').eq('id', id);
+  if (meta.walletId) lookup = lookup.eq('wallet_id', meta.walletId);
+  const { data: existing, error: fetchError } = await lookup.single();
 
   if (fetchError || !existing) throw new Error('Transaction not found');
 
+  const previous = { ...existing };
   const now = new Date().toISOString();
   const updateData = { ...updates, updated_at: now };
 
   const { error } = await supabase
     .from('transactions')
     .update(updateData)
-    .eq('id', id);
+    .eq('id', id)
+    .eq('wallet_id', existing.wallet_id);
 
   if (error) throw new Error(`Failed to update transaction: ${error.message}`);
 
@@ -139,34 +152,100 @@ export async function updateTransaction(
     wallet_id: existing.wallet_id,
     transaction_id: id,
     action: 'update' as AuditAction,
-    previous_data: existing,
-    new_data: { ...existing, ...updateData },
+    timestamp: now,
+    previous_data: previous,
+    new_data: { ...previous, ...updateData },
+    reason: meta.reason ?? null,
+    actor: meta.actor ?? null,
   });
 }
 
-// ─── Soft-Delete Transaction ────────────────────────────
-export async function deleteTransaction(id: string): Promise<void> {
-  const { data: existing, error: fetchError } = await supabase
-    .from('transactions')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (fetchError || !existing) throw new Error('Transaction not found');
+// ─── Soft-remove / restore ──────────────────────────────
+// A removed entry stays in the books, marked removed, and stops counting in balances.
+// The change history is written after the change; if it can't be written the change is undone,
+// so an entry is never removed or restored without a trace.
+export async function removeTransaction(
+  id: string,
+  { walletId, reason, note, actor }: { walletId: string; reason: string; note?: string; actor?: string }
+): Promise<void> {
+  if (!(REMOVE_REASONS as readonly string[]).includes(reason)) throw new Error('A reason is required');
 
   const now = new Date().toISOString();
-
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('transactions')
-    .update({ deleted: true, updated_at: now })
-    .eq('id', id);
+    .update({
+      deleted: true,
+      removed_reason: reason,
+      removed_note: note?.trim() || null,
+      removed_by: actor ?? null,
+      removed_at: now,
+    })
+    .eq('id', id)
+    .eq('wallet_id', walletId)
+    .eq('deleted', false)
+    .select('id');
 
-  if (error) throw new Error(`Failed to delete transaction: ${error.message}`);
+  if (error) throw new Error(`Failed to remove transaction: ${error.message}`);
+  if (!data || data.length === 0) throw new Error('Entry not found or already removed');
 
-  await supabase.from('audit_log').insert({
-    wallet_id: existing.wallet_id,
+  const { error: logError } = await supabase.from('audit_log').insert({
+    wallet_id: walletId,
     transaction_id: id,
-    action: 'delete' as AuditAction,
-    previous_data: existing,
+    action: 'remove' as AuditAction,
+    timestamp: now,
+    reason,
+    note: note?.trim() || null,
+    actor: actor ?? null,
   });
+
+  if (logError) {
+    await supabase
+      .from('transactions')
+      .update({ deleted: false, removed_reason: null, removed_note: null, removed_by: null, removed_at: null })
+      .eq('id', id)
+      .eq('wallet_id', walletId);
+    throw new Error(`Failed to remove transaction: ${logError.message}`);
+  }
+}
+
+export async function restoreTransaction(
+  id: string,
+  { walletId, actor }: { walletId: string; actor?: string }
+): Promise<void> {
+  const { data: removed } = await supabase
+    .from('transactions')
+    .select('removed_reason, removed_note, removed_by, removed_at')
+    .eq('id', id)
+    .eq('wallet_id', walletId)
+    .eq('deleted', true)
+    .single();
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('transactions')
+    .update({ deleted: false, removed_reason: null, removed_note: null, removed_by: null, removed_at: null })
+    .eq('id', id)
+    .eq('wallet_id', walletId)
+    .eq('deleted', true)
+    .select('id');
+
+  if (error) throw new Error(`Failed to restore transaction: ${error.message}`);
+  if (!data || data.length === 0) throw new Error('Entry not found or not removed');
+
+  const { error: logError } = await supabase.from('audit_log').insert({
+    wallet_id: walletId,
+    transaction_id: id,
+    action: 'restore' as AuditAction,
+    timestamp: now,
+    actor: actor ?? null,
+  });
+
+  if (logError) {
+    await supabase
+      .from('transactions')
+      .update({ deleted: true, ...(removed ?? {}) })
+      .eq('id', id)
+      .eq('wallet_id', walletId);
+    throw new Error(`Failed to restore transaction: ${logError.message}`);
+  }
 }
