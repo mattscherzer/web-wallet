@@ -48,7 +48,7 @@ export interface AuditEntry {
 }
 
 // ─── Static Account Data ────────────────────────────────
-export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS, getAccountLabel } from './accounts';
+export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS, getAccountLabel, fromAccountLabel } from './accounts';
 
 // ─── Fetch PIN from Supabase ────────────────────────────
 export async function fetchPin(): Promise<string> {
@@ -170,11 +170,15 @@ export async function updateTransaction(
 
   if (logError) {
     // An edit is never kept without its history: put the old values back.
-    await supabase
+    const original = Object.fromEntries(
+      [...Object.keys(updateData)].map((key) => [key, (previous as Record<string, unknown>)[key]])
+    );
+    const { error: rollbackError } = await supabase
       .from('transactions')
-      .update({ amount: previous.amount, notes: previous.notes, updated_at: previous.updated_at })
+      .update(original)
       .eq('id', id)
       .eq('wallet_id', existing.wallet_id);
+    if (rollbackError) console.error('Could not undo edit after a history failure', rollbackError);
     throw new Error(`Failed to update transaction: ${logError.message}`);
   }
 }
@@ -231,13 +235,17 @@ export async function restoreTransaction(
   id: string,
   { walletId, actor }: { walletId: string; actor?: string }
 ): Promise<void> {
-  const { data: removed } = await supabase
+  const { data: removed, error: lookupError } = await supabase
     .from('transactions')
     .select('removed_reason, removed_note, removed_by, removed_at')
     .eq('id', id)
     .eq('wallet_id', walletId)
     .eq('deleted', true)
     .single();
+
+  // Without this snapshot a failed history write could not put the removal back as it was.
+  if (lookupError) throw new Error(`Failed to restore transaction: ${lookupError.message}`);
+  if (!removed) throw new Error('Entry not found or not removed');
 
   const now = new Date().toISOString();
   const { data, error } = await supabase
@@ -260,11 +268,12 @@ export async function restoreTransaction(
   });
 
   if (logError) {
-    await supabase
+    const { error: rollbackError } = await supabase
       .from('transactions')
-      .update({ deleted: true, ...(removed ?? {}) })
+      .update({ deleted: true, ...removed })
       .eq('id', id)
       .eq('wallet_id', walletId);
+    if (rollbackError) console.error('Could not undo restore after a history failure', rollbackError);
     throw new Error(`Failed to restore transaction: ${logError.message}`);
   }
 }

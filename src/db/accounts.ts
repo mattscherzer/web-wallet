@@ -25,3 +25,8 @@ export const RESERVE_ACCOUNTS = ACCOUNTS.filter((a) => a.isReserve);
 export function getAccountLabel(id: AccountId): string {
   return ACCOUNTS.find((a) => a.id === id)?.name ?? id;
 }
+
+/** Label for the source account of a transfer; a missing source shows as "Unknown account". */
+export function fromAccountLabel(tx: { from_account_id?: AccountId | null }): string {
+  return tx.from_account_id ? getAccountLabel(tx.from_account_id) : 'Unknown account';
+}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { getAccountLabel, removeTransaction, type AccountId } from '../db/database';
+import { getAccountLabel, fromAccountLabel, removeTransaction } from '../db/database';
 import { useEntry } from '../db/hooks';
 import Amount from '../components/Amount';
 import PinModal from '../components/PinModal';
@@ -44,7 +44,7 @@ export default function RecordedPage() {
         <p className="receipt__amount"><Amount type={tx.type} amount={Number(tx.amount)} /></p>
         <dl className="detail-list">
           {isTransfer && (
-            <div><dt>From</dt><dd>{getAccountLabel(tx.from_account_id as AccountId)}</dd></div>
+            <div><dt>From</dt><dd>{fromAccountLabel(tx)}</dd></div>
           )}
           <div><dt>{isTransfer ? 'To' : tx.type === 'inflow' ? 'Into' : 'From'}</dt><dd>{getAccountLabel(tx.account_id)}</dd></div>
           {!isTransfer && <div><dt>Category</dt><dd>{categoryLabel(tx.category)}</dd></div>}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Download, Search } from 'lucide-react';
 import { useFilteredTransactions } from '../db/hooks';
-import { getAccountLabel, type AccountId, type Transaction } from '../db/database';
+import { getAccountLabel, fromAccountLabel, type Transaction } from '../db/database';
 import Amount from '../components/Amount';
 import StatusChip from '../components/StatusChip';
 import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
@@ -112,7 +112,7 @@ function HistoryRow({ tx }: { tx: Transaction }) {
   const isTransfer = tx.type === 'transfer';
   const wasEdited = tx.created_at !== tx.updated_at && !tx.deleted;
   const title = isTransfer
-    ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
+    ? `${fromAccountLabel(tx)} → ${getAccountLabel(tx.account_id)}`
     : categoryLabel(tx.category) || 'Entry';
   const where = isTransfer ? '' : `${tx.type === 'inflow' ? 'Into' : 'From'} ${getAccountLabel(tx.account_id)}`;
   const meta = [where, tx.notes].filter(Boolean).join(' · ');

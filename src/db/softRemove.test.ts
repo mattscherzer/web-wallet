@@ -70,3 +70,25 @@ describe('soft remove', () => {
     expect(log[2]).toMatchObject({ actor: 'Ben' });
   });
 });
+
+describe('failed history writes', () => {
+  it('does not restore when the removal details cannot be read', async () => {
+    await api.removeTransaction!('t1', { walletId: 'wa', reason: 'Duplicate', actor: 'Anna' });
+    ref.fake.failNext('transactions:select', { message: 'network blip' });
+    await expect(api.restoreTransaction!('t1', { walletId: 'wa', actor: 'Ben' })).rejects.toThrow(/restore/i);
+    expect(row('t1')).toMatchObject({ deleted: true, removed_reason: 'Duplicate' });
+  });
+
+  it('puts every edited field back when the history cannot be written', async () => {
+    const before = { ...row('t1') };
+    ref.fake.failNext('audit_log:insert', { message: 'boom' });
+    await expect(
+      (db as unknown as { updateTransaction: (id: string, u: object, m: object) => Promise<void> }).updateTransaction(
+        't1',
+        { date: '2020-01-01', amount: 1 },
+        { walletId: 'wa', reason: 'Typo' }
+      )
+    ).rejects.toThrow();
+    expect(row('t1')).toMatchObject({ date: before.date, amount: before.amount });
+  });
+});

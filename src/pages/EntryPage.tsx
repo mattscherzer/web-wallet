@@ -5,10 +5,10 @@ import {
   EDIT_REASONS,
   REMOVE_REASONS,
   getAccountLabel,
+  fromAccountLabel,
   removeTransaction,
   restoreTransaction,
   updateTransaction,
-  type AccountId,
   type AuditEntry,
   type Transaction,
 } from '../db/database';
@@ -102,7 +102,7 @@ export default function EntryPage() {
       </h1>
       <p className="entry__sub">
         {isTransfer
-          ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
+          ? `${fromAccountLabel(tx)} → ${getAccountLabel(tx.account_id)}`
           : `${tx.type === 'inflow' ? 'Into' : 'From'} ${getAccountLabel(tx.account_id)} · ${categoryLabel(tx.category)}`}
         {tx.created_at !== tx.updated_at && !removed && <StatusChip variant="edited" />}
         {removed && <StatusChip variant="removed" />}
@@ -118,7 +118,7 @@ export default function EntryPage() {
         <div><dt>Date</dt><dd>{formatDate(tx.date)}</dd></div>
         <div><dt>Account</dt><dd>{getAccountLabel(tx.account_id)}</dd></div>
         {isTransfer && tx.from_account_id && (
-          <div><dt>From account</dt><dd>{getAccountLabel(tx.from_account_id as AccountId)}</dd></div>
+          <div><dt>From account</dt><dd>{fromAccountLabel(tx)}</dd></div>
         )}
         {!isTransfer && <div><dt>Category</dt><dd>{categoryLabel(tx.category)}</dd></div>}
         {tx.notes && <div><dt>Notes</dt><dd>{tx.notes}</dd></div>}
