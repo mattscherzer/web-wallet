@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, type FakeSupabase } from '../test/fakeSupabase';
-import { createTransaction, createTransfer, deleteTransaction, updateTransaction } from './database';
+import { createTransaction, createTransfer, removeTransaction, updateTransaction } from './database';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
@@ -33,7 +33,7 @@ describe('writing to the chosen wallet', () => {
       audit_log: [],
     });
     await updateTransaction('t1', { notes: 'fixed' });
-    await deleteTransaction('t1');
+    await removeTransaction('t1', { walletId: 'wb', reason: 'Duplicate' });
     expect(ref.fake.tables.audit_log.map((l) => l.wallet_id)).toEqual(['wb', 'wb']);
   });
 });

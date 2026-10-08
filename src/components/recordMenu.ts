@@ -1,10 +1,21 @@
 import { ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight } from 'lucide-react';
 
 export const RECORD_ACTIONS = [
-  { to: '/add', label: 'Money in', icon: ArrowDownToLine },
-  { to: '/withdraw', label: 'Money out', icon: ArrowUpFromLine },
-  { to: '/transfer', label: 'Transfer', icon: ArrowLeftRight },
+  { to: '/record?type=in', label: 'Money in', icon: ArrowDownToLine },
+  { to: '/record?type=out', label: 'Money out', icon: ArrowUpFromLine },
+  { to: '/record?type=transfer', label: 'Transfer', icon: ArrowLeftRight },
 ];
+
+/** The three old form addresses and where they go now. */
+const LEGACY_REDIRECTS: Record<string, string> = {
+  '/add': '/record?type=in',
+  '/withdraw': '/record?type=out',
+  '/transfer': '/record?type=transfer',
+};
+
+export function legacyRedirect(pathname: string): string | null {
+  return LEGACY_REDIRECTS[pathname] ?? null;
+}
 
 const FAB_PATHS = ['/', '/history'];
 

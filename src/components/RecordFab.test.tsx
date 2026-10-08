@@ -68,13 +68,21 @@ describe('RecordFabView', () => {
     expect(html).toContain('record-scrim');
   });
 
-  it('menu items link to the add, withdraw and transfer forms', () => {
+  it('menu items open the Record screen with the chosen type', () => {
     const html = view(true);
     const href = (label: string) =>
       html.match(new RegExp(`<a [^>]*href="([^"]+)"[^>]*>(?:(?!</a>).)*>${label}<`))?.[1];
-    expect(href('Money in')).toBe('/add');
-    expect(href('Money out')).toBe('/withdraw');
-    expect(href('Transfer')).toBe('/transfer');
+    expect(href('Money in')).toBe('/record?type=in');
+    expect(href('Money out')).toBe('/record?type=out');
+    expect(href('Transfer')).toBe('/record?type=transfer');
+  });
+
+  it('keeps the old form addresses working by redirecting them to Record', () => {
+    const { legacyRedirect } = menuLib();
+    expect(legacyRedirect('/add')).toBe('/record?type=in');
+    expect(legacyRedirect('/withdraw')).toBe('/record?type=out');
+    expect(legacyRedirect('/transfer')).toBe('/record?type=transfer');
+    expect(legacyRedirect('/history')).toBeNull();
   });
 });
 

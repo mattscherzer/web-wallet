@@ -10,23 +10,34 @@ import {
   type AuditEntry,
 } from './database';
 import { emptyBalances } from './balances';
-import { fetchAccountBalances, fetchAuditLog, fetchTransactions } from './queries';
+import { fetchAccountBalances, fetchAuditLog, fetchTransaction, fetchTransactions } from './queries';
 import { useOptionalWallet } from '../wallet/useWallet';
 
 // ─── Generic hook for Supabase queries with real-time ───
 // Everything is scoped to the open wallet: the query gets its id, the live
 // channel only listens to its rows, and data fetched for another wallet is
 // never returned.
-function useSupabaseQuery<T>(
+interface QueryState<T> {
+  data: T;
+  /** True once the open wallet has answered at least once; a later failed refresh keeps the data on screen. */
+  loaded: boolean;
+  /** True only while the open wallet has never answered and its request failed. */
+  failed: boolean;
+  refresh: () => Promise<void>;
+}
+
+function useQueryState<T>(
   queryFn: (walletId: string) => Promise<T>,
   deps: unknown[],
   initialValue: T,
   realtimeTable?: string
-): T {
+): QueryState<T> {
   const walletId = useOptionalWallet()?.current?.id ?? null;
-  const [state, setState] = useState<{ walletId: string | null; data: T }>({
+  const [state, setState] = useState<{ walletId: string | null; data: T; loaded: boolean; failed: boolean }>({
     walletId: null,
     data: initialValue,
+    loaded: false,
+    failed: false,
   });
 
   // An answer for a wallet we have since left must not replace the current wallet's data.
@@ -39,9 +50,16 @@ function useSupabaseQuery<T>(
     if (!walletId) return;
     try {
       const result = await queryFn(walletId);
-      if (openWalletId.current === walletId) setState({ walletId, data: result });
+      if (openWalletId.current === walletId) setState({ walletId, data: result, loaded: true, failed: false });
     } catch (err) {
       console.error('Supabase query error:', err);
+      if (openWalletId.current !== walletId) return;
+      // Keep this wallet's data if it has some; never carry over another wallet's.
+      setState((prev) =>
+        prev.walletId === walletId
+          ? { ...prev, failed: true }
+          : { walletId, data: initialValue, loaded: false, failed: true },
+      );
     }
     // `deps` has a fixed length per hook, so the spread is stable between renders.
     // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
@@ -70,7 +88,22 @@ function useSupabaseQuery<T>(
     };
   }, [realtimeTable, walletId, refresh]);
 
-  return state.walletId === walletId ? state.data : initialValue;
+  const current = state.walletId === walletId;
+  return {
+    data: current ? state.data : initialValue,
+    loaded: current && state.loaded,
+    failed: current && state.failed && !state.loaded,
+    refresh,
+  };
+}
+
+function useSupabaseQuery<T>(
+  queryFn: (walletId: string) => Promise<T>,
+  deps: unknown[],
+  initialValue: T,
+  realtimeTable?: string
+): T {
+  return useQueryState(queryFn, deps, initialValue, realtimeTable).data;
 }
 
 // ─── PIN from database ──────────────────────────────────
@@ -92,12 +125,14 @@ export function useTransactions() {
 // ─── Filtered transactions ──────────────────────────────
 export function useFilteredTransactions(
   filter: 'all' | 'inflow' | 'outflow' | 'transfer',
-  searchQuery: string
+  searchQuery: string,
+  includeRemoved = false
 ) {
   return useSupabaseQuery<Transaction[]>(
     async (walletId) => {
       let results = await fetchTransactions(walletId, {
         type: filter === 'all' ? undefined : filter,
+        removed: includeRemoved ? 'include' : 'exclude',
       });
 
       if (searchQuery.trim()) {
@@ -112,7 +147,7 @@ export function useFilteredTransactions(
 
       return results;
     },
-    [filter, searchQuery],
+    [filter, searchQuery, includeRemoved],
     [],
     'transactions'
   );
@@ -189,4 +224,22 @@ export function useAccountsWithBalances() {
     ...account,
     balance: balances[account.id] ?? 0,
   }));
+}
+
+// ─── One entry with its change history ──────────────────
+export type EntryStatus = 'loading' | 'ready' | 'missing' | 'error';
+
+/** An entry (removed or not) and its history. `refresh` re-reads both after a change. */
+export function useEntry(id: string) {
+  const { data, loaded, failed, refresh } = useQueryState<{ tx: Transaction | null; audit: AuditEntry[] } | null>(
+    async (walletId) => {
+      const tx = await fetchTransaction(walletId, id);
+      return { tx, audit: tx ? await fetchAuditLog(walletId, id) : [] };
+    },
+    [id],
+    null,
+    'transactions'
+  );
+  const status: EntryStatus = failed ? 'error' : !loaded || !data ? 'loading' : data.tx ? 'ready' : 'missing';
+  return { status, tx: data?.tx ?? null, audit: data?.audit ?? [], refresh };
 }

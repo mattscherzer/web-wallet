@@ -20,6 +20,8 @@ export async function fetchAllRows<T>(
 
 export interface TransactionQuery {
   type?: TransactionType;
+  /** Removed entries are left out by default; they never count in balances. */
+  removed?: 'exclude' | 'include';
   limit?: number;
   /** Oldest first. Default is newest first. */
   ascending?: boolean;
@@ -27,22 +29,34 @@ export interface TransactionQuery {
 
 export async function fetchTransactions(
   walletId: string,
-  { type, limit, ascending = false }: TransactionQuery = {},
+  { type, removed = 'exclude', limit, ascending = false }: TransactionQuery = {},
 ): Promise<Transaction[]> {
   let query = supabase
     .from('transactions')
     .select('*')
     .eq('wallet_id', walletId)
-    .eq('deleted', false)
     .order('date', { ascending })
     .order('created_at', { ascending });
 
+  if (removed === 'exclude') query = query.eq('deleted', false);
   if (type) query = query.eq('type', type);
   if (limit !== undefined) query = query.limit(limit);
 
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []) as Transaction[];
+}
+
+/** One entry of this wallet, removed or not; null when there is none. */
+export async function fetchTransaction(walletId: string, id: string): Promise<Transaction | null> {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*')
+    .eq('wallet_id', walletId)
+    .eq('id', id)
+    .limit(1);
+  if (error) throw error;
+  return ((data ?? [])[0] as Transaction | undefined) ?? null;
 }
 
 export async function fetchAccountBalances(walletId: string): Promise<Record<AccountId, number>> {
