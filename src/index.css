@@ -446,6 +446,12 @@ img {
   color: var(--color-text-primary);
 }
 
+.account-card__label--reserve {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
 .account-card__balance {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
@@ -1568,6 +1574,13 @@ img {
 /* =============================================
    SECTION TITLES
    ============================================= */
+.section-header--recent-transactions {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-xs) var(--space-xs);
+}
+
 .section-title {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
@@ -1741,8 +1754,18 @@ img {
   font-size: var(--font-size-sm);
 }
 
-.view-all-link a:hover {
+.view-all-link a:hover, .see-all-link a:hover {
   color: var(--color-link-hover);
+}
+
+
+
+.see-all-link a {
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 /* =============================================

@@ -1,16 +1,15 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Wallet,
   CreditCard,
-  Landmark,
-  Shield,
-  ArrowDownLeft,
-  ArrowUpRight,
   ArrowLeftRight,
   ChevronDown,
   ChevronUp,
+  Coins,
+  QrCode,
+  PiggyBank,
+  ReceiptEuro,
+  HandCoins,
 } from 'lucide-react';
 import {
   useMainAccountsWithBalances,
@@ -24,10 +23,10 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { getAccountLabel, type Transaction, type AccountId } from '../db/database';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
-  cash: <Wallet size={22} />,
-  paypal: <CreditCard size={22} />,
-  bank: <Landmark size={22} />,
-  prudent_reserve: <Shield size={22} />,
+    cash: <Coins size={22} />,
+    paypal: <QrCode size={22} />,
+    bank: <CreditCard size={22} />,
+    prudent_reserve: <PiggyBank size={22} />
 };
 
 const ICON_CLASSES: Record<string, string> = {
@@ -47,12 +46,6 @@ export default function DashboardPage() {
 
   return (
       <>
-          {/* Page Header */}
-          <div className="page-header">
-              <LayoutDashboard size={24} className="page-header__icon" />
-              <h1 className="page-header__title">Dashboard</h1>
-          </div>
-
           {/* Hero Balance Card */}
           <div className="balance-hero" id="total-balance-card">
               <p className="balance-hero__label">Available to spend</p>
@@ -65,6 +58,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Main Account Cards */}
+          <p className="section-title">Accounts</p>
           <div className="segmented-list">
               {mainAccounts.map(account => (
                   <div
@@ -90,9 +84,6 @@ export default function DashboardPage() {
           {/* Reserve Accounts */}
           {reserveAccounts.length > 0 && (
               <>
-                  <p className="section-title" style={{ marginTop: "20px" }}>
-                      Reserve
-                  </p>
                   {reserveAccounts.map(account => (
                       <div
                           className="account-card account-card--reserve"
@@ -105,25 +96,34 @@ export default function DashboardPage() {
                               {ACCOUNT_ICONS[account.id]}
                           </div>
                           <div className="account-card__info">
-                              <p className="account-card__label">
-                                  {account.name}
-                              </p>
+                              <div className="account-card__label-container">
+                                  <p className="account-card__label">
+                                      {account.name}
+                                  </p>
+                                  <p className="account-card__label--reserve">
+                                      Not available for spending
+                                  </p>
+                              </div>
                               <p className="account-card__balance">
                                   {formatCurrency(account.balance)}
                               </p>
                           </div>
-                          <span className="account-card__reserve-badge">
-                              Reserve
-                          </span>
                       </div>
                   ))}
               </>
           )}
 
           {/* Recent Transactions */}
-          <p className="section-title" style={{ marginTop: "28px" }}>
-              Recent Transactions
-          </p>
+          <div className="section-header--recent-transactions">
+              <p className="section-title">Recent Activity</p>
+              {recentTransactions.length > 0 && (
+                  <div className="see-all-link">
+                      <Link to="/history" id="see-all-link">
+                          See all
+                      </Link>
+                  </div>
+              )}
+          </div>
 
           {recentTransactions.length === 0 && (
               <div className="empty-state">
@@ -167,53 +167,71 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
       : 'transaction-item__icon--outflow';
 
   return (
-    <div className="transaction-item">
-      <div
-        className="transaction-item__header"
-        onClick={() => setExpanded(!expanded)}
-      >
-        <div className={`transaction-item__icon ${iconClass}`}>
-          {isTransfer ? <ArrowLeftRight size={20} /> : isInflow ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
-        </div>
-        <div className="transaction-item__info">
-          <p className="transaction-item__name">{displayName}</p>
-        </div>
-        <span className="transaction-item__amount">
-          <Amount type={tx.type} amount={tx.amount} />
-        </span>
-        <span className={`transaction-item__chevron${expanded ? ' transaction-item__chevron--open' : ''}`}>
-          {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-        </span>
-      </div>
+      <div className="transaction-item">
+          <div
+              className="transaction-item__header"
+              onClick={() => setExpanded(!expanded)}
+          >
+              <div className={`transaction-item__icon ${iconClass}`}>
+                  {isTransfer ? (
+                      <ArrowLeftRight size={20} />
+                  ) : isInflow ? (
+                      <HandCoins size={20} />
+                  ) : (
+                      <ReceiptEuro size={20} />
+                  )}
+              </div>
+              <div className="transaction-item__info">
+                  <p className="transaction-item__name">{displayName}</p>
+              </div>
+              <span className="transaction-item__amount">
+                  <Amount type={tx.type} amount={tx.amount} />
+              </span>
+              <span
+                  className={`transaction-item__chevron${expanded ? " transaction-item__chevron--open" : ""}`}
+              >
+                  {expanded ? (
+                      <ChevronUp size={18} />
+                  ) : (
+                      <ChevronDown size={18} />
+                  )}
+              </span>
+          </div>
 
-      {expanded && (
-        <div className="transaction-item__details">
-          {tx.account_id && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label">
-                {isTransfer ? 'Destination' : 'Payment Method'}
-              </p>
-              <p className="transaction-item__detail-value">
-                {getAccountLabel(tx.account_id)}
-              </p>
-            </div>
+          {expanded && (
+              <div className="transaction-item__details">
+                  {tx.account_id && (
+                      <div className="transaction-item__detail-row">
+                          <p className="transaction-item__detail-label">
+                              {isTransfer ? "Destination" : "Payment Method"}
+                          </p>
+                          <p className="transaction-item__detail-value">
+                              {getAccountLabel(tx.account_id)}
+                          </p>
+                      </div>
+                  )}
+                  {isTransfer && tx.from_account_id && (
+                      <div className="transaction-item__detail-row">
+                          <p className="transaction-item__detail-label">
+                              Source
+                          </p>
+                          <p className="transaction-item__detail-value">
+                              {getAccountLabel(tx.from_account_id as AccountId)}
+                          </p>
+                      </div>
+                  )}
+                  {tx.notes && (
+                      <div className="transaction-item__detail-row">
+                          <p className="transaction-item__detail-label">
+                              Notes
+                          </p>
+                          <p className="transaction-item__detail-value">
+                              {tx.notes}
+                          </p>
+                      </div>
+                  )}
+              </div>
           )}
-          {isTransfer && tx.from_account_id && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label">Source</p>
-              <p className="transaction-item__detail-value">
-                {getAccountLabel(tx.from_account_id as AccountId)}
-              </p>
-            </div>
-          )}
-          {tx.notes && (
-            <div className="transaction-item__detail-row">
-              <p className="transaction-item__detail-label">Notes</p>
-              <p className="transaction-item__detail-value">{tx.notes}</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+      </div>
   );
 }
