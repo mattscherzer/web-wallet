@@ -136,14 +136,6 @@ export default function DashboardPage() {
                   <DashboardTransactionItem key={tx.id} transaction={tx} />
               ))}
           </div>
-
-          {recentTransactions.length > 0 && (
-              <div className="view-all-link">
-                  <Link to="/history" id="view-all-transactions-link">
-                      View All Transactions
-                  </Link>
-              </div>
-          )}
       </>
   );
 }

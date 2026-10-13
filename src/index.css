@@ -1735,31 +1735,8 @@ img {
 }
 
 /* =============================================
-   VIEW ALL LINK
+   SEE ALL LINK
    ============================================= */
-.view-all-link {
-  text-align: center;
-  padding: var(--space-md);
-  margin-top: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-
-.view-all-link a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--touch-min);
-  color: var(--color-focus);
-  text-decoration: underline;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-}
-
-.view-all-link a:hover, .see-all-link a:hover {
-  color: var(--color-link-hover);
-}
-
-
-
 .see-all-link a {
   font-weight: var(--font-weight-semibold);
   text-align: center;
