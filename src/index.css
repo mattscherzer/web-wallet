@@ -33,9 +33,6 @@
   --color-hero-decor: #173a66;
   --color-hero-text: #ffffff;
   --color-hero-text-secondary: #b9c6da;
-  --color-hero-action-bg: #d7e3f7;
-  --color-hero-action-text: #0b2545;
-  --color-hero-action-hover-bg: #ffffff;
   --color-hero-focus: #ffffff;
 
   /* Focus, links and overlays */
@@ -137,10 +134,7 @@
     --color-hero-decor: #1b3f6e;
     --color-hero-text: #ffffff;
     --color-hero-text-secondary: #b9c6da;
-    --color-hero-action-bg: #b9ccf5;
-    --color-hero-action-text: #0b2545;
-    --color-hero-action-hover-bg: #dce6fa;
-    --color-hero-focus: #8ab4f8;
+          --color-hero-focus: #8ab4f8;
 
     --color-focus: #8ab4f8;
     --color-link-hover: #b9ccf5;
@@ -397,6 +391,12 @@ img {
   margin-bottom: var(--space-xs);
 }
 
+.balance-hero__total {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-hero-text-secondary);
+}
+
 .balance-hero__amount {
   font-size: var(--font-size-hero);
   font-weight: var(--font-weight-extrabold);
@@ -446,7 +446,7 @@ img {
   color: var(--color-text-primary);
 }
 
-.account-card__label--reserve {
+.account-card__note {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
@@ -469,18 +469,6 @@ img {
 
 .account-card--reserve .account-card__icon {
   background: var(--color-card);
-}
-
-.account-card__reserve-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  padding: 0 var(--space-sm);
-  border-radius: var(--radius-sm);
 }
 
 /* =============================================
@@ -1574,9 +1562,9 @@ img {
 /* =============================================
    SECTION TITLES
    ============================================= */
-.section-header--recent-transactions {
+.section-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   padding: var(--space-sm) var(--space-xs) var(--space-xs);
 }
@@ -1738,11 +1726,17 @@ img {
    SEE ALL LINK
    ============================================= */
 .see-all-link a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  color: var(--color-focus);
+  text-decoration: underline;
   font-weight: var(--font-weight-semibold);
-  text-align: center;
-  padding: var(--space-md);
-  margin-top: var(--space-md);
-  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.see-all-link a:hover {
+  color: var(--color-link-hover);
 }
 
 /* =============================================

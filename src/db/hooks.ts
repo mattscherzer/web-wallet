@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "./supabase";
 import {
-    ACCOUNTS,
     MAIN_ACCOUNTS,
     RESERVE_ACCOUNTS,
     fetchPin,
     type Transaction,
+    type Account,
     type AccountId,
     type AuditEntry
 } from "./database";
@@ -204,24 +204,26 @@ export function useLoadedAccountBalances() {
     );
 }
 
-// ─── Total balance (excludes reserve) ───────────────────
-export function useTotalBalance() {
-    const balances = useAccountBalances();
-    return MAIN_ACCOUNTS.reduce((sum, a) => sum + (balances[a.id] ?? 0), 0);
-}
+// ─── Balances grouped for display (one query) ───────────
+const sumBalances = (accounts: { balance: number }[]) =>
+    accounts.reduce((sum, a) => sum + a.balance, 0);
 
-// ─── Total balance (includes reserve) ───────────────────
-export function useTotalAvailableBalance() {
+/** Main and reserve accounts with balances, plus the spendable (main) and overall totals. */
+export function useBalanceSummary() {
     const balances = useAccountBalances();
-    const mainBalance = MAIN_ACCOUNTS.reduce(
-        (sum, a) => sum + (balances[a.id] ?? 0),
-        0
-    );
-    const reserveBalance = RESERVE_ACCOUNTS.reduce(
-        (sum, a) => sum + (balances[a.id] ?? 0),
-        0
-    );
-    return mainBalance + reserveBalance;
+    const withBalance = (account: Account) => ({
+        ...account,
+        balance: balances[account.id] ?? 0
+    });
+    const main = MAIN_ACCOUNTS.map(withBalance);
+    const reserve = RESERVE_ACCOUNTS.map(withBalance);
+    const spendableTotal = sumBalances(main);
+    return {
+        main,
+        reserve,
+        spendableTotal,
+        grandTotal: spendableTotal + sumBalances(reserve)
+    };
 }
 
 // ─── Recent transactions ────────────────────────────────
@@ -243,33 +245,6 @@ export function useAuditLog(transactionId: string) {
         [],
         "audit_log"
     );
-}
-
-// ─── Main accounts with balances ────────────────────────
-export function useMainAccountsWithBalances() {
-    const balances = useAccountBalances();
-    return MAIN_ACCOUNTS.map(account => ({
-        ...account,
-        balance: balances[account.id] ?? 0
-    }));
-}
-
-// ─── Reserve accounts with balances ─────────────────────
-export function useReserveAccountsWithBalances() {
-    const balances = useAccountBalances();
-    return RESERVE_ACCOUNTS.map(account => ({
-        ...account,
-        balance: balances[account.id] ?? 0
-    }));
-}
-
-// ─── All accounts with balances (for backwards compat) ──
-export function useAccountsWithBalances() {
-    const balances = useAccountBalances();
-    return ACCOUNTS.map(account => ({
-        ...account,
-        balance: balances[account.id] ?? 0
-    }));
 }
 
 // ─── One entry with its change history ──────────────────

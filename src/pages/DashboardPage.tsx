@@ -9,18 +9,16 @@ import {
   QrCode,
   PiggyBank,
   ReceiptEuro,
-  HandCoins,
+    HandCoins
 } from 'lucide-react';
-import {
-  useMainAccountsWithBalances,
-  useReserveAccountsWithBalances,
-  useTotalBalance,
-  useRecentTransactions,
-  useTotalAvailableBalance,
-} from '../db/hooks';
+import { useBalanceSummary, useRecentTransactions } from '../db/hooks';
 import Amount from '../components/Amount';
 import { formatCurrency } from '../utils/formatCurrency';
-import { getAccountLabel, type Transaction, type AccountId } from '../db/database';
+import {
+    getAccountLabel,
+    type Transaction,
+    type AccountId
+} from '../db/database';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
     cash: <Coins size={22} />,
@@ -33,15 +31,16 @@ const ICON_CLASSES: Record<string, string> = {
   cash: 'account-card__icon--cash',
   paypal: 'account-card__icon--paypal',
   bank: 'account-card__icon--bank',
-  prudent_reserve: 'account-card__icon--reserve',
+    prudent_reserve: 'account-card__icon--reserve'
 };
 
 export default function DashboardPage() {
-  const mainAccounts = useMainAccountsWithBalances();
-  const reserveAccounts = useReserveAccountsWithBalances();
-  const totalAvailableBalance = useTotalAvailableBalance();
-  const totalBalance = useTotalBalance();
-
+    const {
+        main: mainAccounts,
+        reserve: reserveAccounts,
+        spendableTotal,
+        grandTotal
+    } = useBalanceSummary();
   const recentTransactions = useRecentTransactions(5);
 
   return (
@@ -50,10 +49,10 @@ export default function DashboardPage() {
           <div className="balance-hero" id="total-balance-card">
               <p className="balance-hero__label">Available to spend</p>
               <p className="balance-hero__amount">
-                  {formatCurrency(totalBalance)}
+                    {formatCurrency(spendableTotal)}
               </p>
-              <p className="balance-hero__label">
-                  Available in total: {formatCurrency(totalAvailableBalance)}
+                <p className="balance-hero__total">
+                    Available in total: {formatCurrency(grandTotal)}
               </p>
           </div>
 
@@ -72,7 +71,9 @@ export default function DashboardPage() {
                           {ACCOUNT_ICONS[account.id]}
                       </div>
                       <div className="account-card__info">
-                          <p className="account-card__label">{account.name}</p>
+                            <p className="account-card__label">
+                                {account.name}
+                            </p>
                           <p className="account-card__balance">
                               {formatCurrency(account.balance)}
                           </p>
@@ -96,11 +97,11 @@ export default function DashboardPage() {
                               {ACCOUNT_ICONS[account.id]}
                           </div>
                           <div className="account-card__info">
-                              <div className="account-card__label-container">
+                                <div>
                                   <p className="account-card__label">
                                       {account.name}
                                   </p>
-                                  <p className="account-card__label--reserve">
+                                    <p className="account-card__note">
                                       Not available for spending
                                   </p>
                               </div>
@@ -114,7 +115,7 @@ export default function DashboardPage() {
           )}
 
           {/* Recent Transactions */}
-          <div className="section-header--recent-transactions">
+            <div className="section-header">
               <p className="section-title">Recent Activity</p>
               {recentTransactions.length > 0 && (
                   <div className="see-all-link">
@@ -141,7 +142,11 @@ export default function DashboardPage() {
 }
 
 // ─── Dashboard Transaction Item ─────────────────────────
-function DashboardTransactionItem({ transaction: tx }: { transaction: Transaction }) {
+function DashboardTransactionItem({
+    transaction: tx
+}: {
+    transaction: Transaction;
+}) {
   const [expanded, setExpanded] = useState(false);
   const isInflow = tx.type === 'inflow';
   const isTransfer = tx.type === 'transfer';
@@ -149,7 +154,8 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
   const displayName = isTransfer
     ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
     : tx.category
-      ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
+          ? tx.category.charAt(0).toUpperCase() +
+            tx.category.slice(1).replace(/-/g, ' ')
       : tx.notes || 'Transaction';
 
   const iconClass = isTransfer
@@ -180,7 +186,7 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
                   <Amount type={tx.type} amount={tx.amount} />
               </span>
               <span
-                  className={`transaction-item__chevron${expanded ? " transaction-item__chevron--open" : ""}`}
+                    className={`transaction-item__chevron${expanded ? ' transaction-item__chevron--open' : ''}`}
               >
                   {expanded ? (
                       <ChevronUp size={18} />
@@ -195,7 +201,7 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
                   {tx.account_id && (
                       <div className="transaction-item__detail-row">
                           <p className="transaction-item__detail-label">
-                              {isTransfer ? "Destination" : "Payment Method"}
+                                {isTransfer ? 'Destination' : 'Payment Method'}
                           </p>
                           <p className="transaction-item__detail-value">
                               {getAccountLabel(tx.account_id)}
@@ -208,7 +214,9 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
                               Source
                           </p>
                           <p className="transaction-item__detail-value">
-                              {getAccountLabel(tx.from_account_id as AccountId)}
+                                {getAccountLabel(
+                                    tx.from_account_id as AccountId
+                                )}
                           </p>
                       </div>
                   )}
