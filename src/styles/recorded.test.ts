@@ -1,8 +1,8 @@
 /// <reference types="node" />
-import { readFileSync } from 'node:fs';
+import { readCss } from '../test/readCss';
 import { describe, expect, it } from 'vitest';
 
-const css = readFileSync(new URL('../index.css', import.meta.url), 'utf8');
+const css = readCss();
 
 describe('Recorded screen motion', () => {
   it('animates the burst only when the person has not asked for reduced motion', () => {

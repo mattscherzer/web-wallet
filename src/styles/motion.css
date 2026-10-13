@@ -1,0 +1,60 @@
+/* =============================================
+   MOTION · springs
+   Press: scale .94 and corners morph to 12px. Spatial spring for
+   movement, effects spring for shape and colour. Only when motion is allowed.
+   ============================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .record-menu__item {
+    animation: record-menu-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: calc(var(--i) * 40ms);
+  }
+
+  .btn,
+  .btn--cash-calc,
+  .record-fab,
+  .record-menu__item,
+  .chip,
+  .filter-pill,
+  .payment-card,
+  .transaction-item__action-btn,
+  .count-icon-btn,
+  .count-tile,
+  .count-apply,
+  .count-mode,
+  .bottom-nav__icon-wrap {
+    transition:
+      transform var(--transition-spring),
+      border-radius var(--transition-effects),
+      background-color var(--transition-effects);
+  }
+
+  .btn:not(:disabled):active,
+  .btn--cash-calc:not(:disabled):active,
+  .record-fab:not(:disabled):active,
+  .record-menu__item:not(:disabled):active,
+  .chip:not(:disabled):active,
+  .filter-pill:not(:disabled):active,
+  .payment-card:not(:disabled):active,
+  .transaction-item__action-btn:not(:disabled):active,
+  .count-icon-btn:not(:disabled):active,
+  .count-tile:not(:disabled):active,
+  .count-apply:not(:disabled):active,
+  .count-mode:not(:disabled):active {
+    transform: scale(0.94);
+    border-radius: var(--radius-md);
+  }
+
+  .bottom-nav__item:active .bottom-nav__icon-wrap {
+    transform: scale(0.94);
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

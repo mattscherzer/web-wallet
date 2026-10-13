@@ -1,0 +1,146 @@
+/* =============================================
+   CHIPS / PILLS
+   ============================================= */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-sm);
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-card);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chip::after,
+.filter-pill::after {
+  content: '';
+  position: absolute;
+  inset: -8px -2px;
+}
+
+.chip--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+/* Selected state also carries a check mark, not just a fill */
+.chip--active::before,
+.filter-pill--active::before {
+  content: '✓';
+  content: '✓' / '';
+}
+
+/* Payment method cards */
+.payment-card-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--space-sm);
+}
+
+.payment-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: var(--touch-min);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.payment-card:hover {
+  border-color: var(--color-text-primary);
+}
+
+.payment-card--active {
+  border-color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+.payment-card__icon {
+  font-size: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.payment-card--active .payment-card__icon {
+  color: var(--color-text-primary);
+}
+
+.payment-card__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: var(--touch-min);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn--primary {
+  width: 100%;
+  min-height: var(--touch-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-md);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn--outline {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: var(--color-primary-container);
+}
+
+.btn--cash-calc {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: var(--touch-min);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.btn--cash-calc:hover:not(:disabled) {
+  background: var(--color-primary-container);
+}
