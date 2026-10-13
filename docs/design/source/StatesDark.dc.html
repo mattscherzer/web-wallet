@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Loading, error, empty and validation states, dark</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background: #1B2230;color: #F2F4F7;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color: #8AB4F8;text-decoration:none}a:hover{color: #AECBFA}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline: 3px solid #8AB4F8;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.serif{font-family:'Geist',system-ui,sans-serif;letter-spacing:-0.025em}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.cap{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color: #98A2B3;margin:0}
+.ph{width:390px;height:780px;position:relative;overflow:hidden;background: #0B0F17;border-radius:28px}
+.sk{background: #232B3A;border-radius:8px}
+.lbl{font-size:13px;font-weight:600;color: #98A2B3}
+.hatch{}
+.loadind{animation:lspin 1.4s cubic-bezier(.34,1.56,.64,1) infinite}@keyframes lspin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(.82)}100%{transform:rotate(360deg) scale(1)}}@media (prefers-reduced-motion: reduce){.loadind{animation:none}}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}.spring:active{transform:scale(.94);border-radius:12px}@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}}</style>
+</helmet>
+<div style="width: 1450px;height: 900px;background: #1B2230;padding: 40px;display: flex;gap: 40px">
+
+<div style="display: flex;flex-direction: column;gap: 14px">
+<p class="cap">Empty · first run and no matches</p>
+<div class="ph">
+<div style="padding: 14px 20px;display: flex;flex-direction: column;gap: 14px">
+<span class="serif" style="font-size: 28px;font-weight: 700">Treasury</span>
+<div style="padding: 24px 20px;background: #141A24;border-radius: 28px;display: flex;flex-direction: column;gap: 10px">
+<h2 class="serif" style="margin: 0;font-size: 22px;font-weight: 700">Set up your books</h2>
+<p style="margin: 0;font-size: 15px;line-height: 1.45;color: #98A2B3">Start by adding the places the group’s money is kept: a cash box, a bank account, PayPal, and a reserve if you have one.</p>
+<button type="button" style="height: 56px;border-radius: 28px;border: 0;background: #B9CCF5;color: #0B2545;font-size: 16px;font-weight: 700">Add first account</button>
+</div>
+</div>
+<div style="margin: 20px 20px 0;padding-top: 4px;display: flex;flex-direction: column;gap: 10px;align-items: flex-start">
+<span class="lbl">History, with a search</span>
+<div style="width: 100%;height: 56px;padding: 0 16px;box-shadow: inset 0 0 0 1px #6B7587;border-radius: 16px;background: #141A24;display: flex;align-items: center;font-size: 16px">plumber</div>
+<p style="margin: 0;font-size: 15px;line-height: 1.45"><strong>No entries match “plumber”</strong> in September 2026 with Money out.</p>
+<button type="button" style="height: 48px;padding: 0 24px;border-radius: 24px;border: 0;background: #232B3A;color: #DCE6FA;font-size: 15px;font-weight: 600" class="spring">Clear filters</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex;flex-direction: column;gap: 14px">
+<p class="cap">Validation · transfer</p>
+<div class="ph">
+<div style="padding: 14px 16px;display: flex;flex-direction: column;gap: 14px">
+<span class="serif" style="font-size: 22px;font-weight: 700">Record · Transfer</span>
+<div role="alert" style="padding: 14px 16px;border-radius: 20px;background: #3B1714">
+<p style="margin: 0 0 6px;font-size: 15px;font-weight: 700;color: #F97066">2 things to fix</p>
+<ul style="margin: 0;padding-left: 18px;font-size: 14px;line-height: 1.6"><li><a href="#t-amt">Amount must be more than €0.00</a></li><li><a href="#t-to">Choose a different “To” account</a></li></ul>
+</div>
+<div style="display: flex;flex-direction: column;gap: 6px">
+<label for="t-amt" class="lbl">Amount</label>
+<div style="height: 64px;padding: 0 16px;background: #141A24;box-shadow: inset 0 0 0 2px #F97066;border-radius: 16px;display: flex;align-items: center;gap: 6px"><span class="serif" style="font-size: 28px;color: #98A2B3">€</span><input id="t-amt" type="text" inputmode="decimal" value="0.00" aria-invalid="true" aria-describedby="t-amt-e" class="serif num" style="border: 0;background: transparent;width: 100%;font-size: 32px"></div>
+<p id="t-amt-e" style="margin: 0;font-size: 13px;font-weight: 600;color: #F97066;display: flex;gap: 6px;align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>Enter an amount greater than €0.00</p>
+</div>
+<div style="display: grid;grid-template-columns: repeat(2, minmax(0, 1fr));gap: 10px">
+<div style="display: flex;flex-direction: column;gap: 6px"><span class="lbl">From</span><button type="button" style="height: 56px;border-radius: 16px;border: 0;box-shadow: inset 0 0 0 1px #6B7587;background: #141A24;font-size: 15px;font-weight: 600">Cash box</button></div>
+<div style="display: flex;flex-direction: column;gap: 6px"><span class="lbl">To</span><button id="t-to" type="button" aria-invalid="true" aria-describedby="t-to-e" style="height: 56px;border-radius: 16px;border: 0;box-shadow: inset 0 0 0 2px #F97066;background: #141A24;font-size: 15px;font-weight: 600">Cash box</button></div>
+</div>
+<p id="t-to-e" style="margin: -6px 0 0;font-size: 13px;font-weight: 600;color: #F97066;display: flex;gap: 6px;align-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>From and To must be different accounts</p>
+<p style="margin: 0;padding: 12px 16px;border-radius: 16px;background: #232B3A;font-size: 13px;line-height: 1.45">Tip: moving money into <strong>Prudent Reserve</strong> lowers Available by the same amount. The total held stays the same.</p>
+</div>
+<div style="position: absolute;left: 0;right: 0;bottom: 0;padding: 12px 16px 20px;background: #0B0F17">
+<button type="button" aria-disabled="true" style="width: 100%;height: 56px;border-radius: 28px;border: 0;background: #232B3A;color: #98A2B3;font-size: 16px;font-weight: 700">Fix 2 things to record</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex;flex-direction: column;gap: 14px">
+<p class="cap">Edit account · type change &amp; archive</p>
+<div class="ph">
+<div style="padding: 14px 16px;display: flex;flex-direction: column;gap: 14px">
+<span class="serif" style="font-size: 22px;font-weight: 700">Edit account</span>
+<div style="display: flex;flex-direction: column;gap: 6px">
+<label for="ea-n" class="lbl">Name</label>
+<input id="ea-n" type="text" value="PayPal" style="height: 56px;padding: 0 16px;border: 0;box-shadow: inset 0 0 0 1px #6B7587;border-radius: 16px;background: #141A24;font-size: 16px">
+</div>
+<fieldset style="margin: 0;padding: 0;border: 0;display: flex;flex-direction: column;gap: 8px">
+<legend class="lbl" style="padding: 0;margin-bottom: 8px">Type</legend>
+<label style="padding: 14px 16px;border-radius: 24px;background: #141A24;display: flex;gap: 12px;align-items: flex-start"><input type="radio" name="ea-k" style="width: 20px;height: 20px;margin: 2px 0 0;accent-color: #B9CCF5"><span style="display: flex;flex-direction: column;gap: 2px"><strong style="font-size: 15px">Operating</strong><span style="font-size: 13px;color: #98A2B3">Counts toward Available to spend</span></span></label>
+<label style="padding: 14px 16px;border-radius: 24px;background: #141A24;box-shadow: inset 0 0 0 2px #B9CCF5;display: flex;gap: 12px;align-items: flex-start"><input type="radio" name="ea-k" checked style="width: 20px;height: 20px;margin: 2px 0 0;accent-color: #B9CCF5"><span style="display: flex;flex-direction: column;gap: 2px"><strong style="font-size: 15px">Reserve</strong><span style="font-size: 13px;color: #98A2B3">Set aside, not available to spend</span></span></label>
+</fieldset>
+<div role="status" class="num" style="padding: 14px 16px;border-radius: 20px;background: #232B3A;font-size: 14px;line-height: 1.5">
+<strong>This moves €50.00 out of Available.</strong><br>Available €1,210.30 → €1,160.30. Total held stays €1,810.30. You’ll confirm on save, and the change is logged.
+</div>
+<div style="padding-top: 4px;display: flex;flex-direction: column;gap: 6px">
+<button type="button" aria-disabled="true" aria-describedby="ea-a" style="height: 48px;border-radius: 24px;border: 0;background: #232B3A;color: #98A2B3;font-size: 15px;font-weight: 600">Archive account</button>
+<p id="ea-a" class="num" style="margin: 0;font-size: 13px;line-height: 1.45;color: #98A2B3">Only accounts at €0.00 can be archived. PayPal holds €50.00; transfer it out first.</p>
+</div>
+</div>
+<div style="position: absolute;left: 0;right: 0;bottom: 0;padding: 12px 16px 20px;background: #0B0F17">
+<button type="button" style="width: 100%;height: 56px;border-radius: 28px;border: 0;background: #B9CCF5;color: #0B2545;font-size: 16px;font-weight: 700">Save changes</button>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1450,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

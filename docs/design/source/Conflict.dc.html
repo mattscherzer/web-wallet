@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Choose which version to keep</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1.1s linear infinite}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1000px; position: relative; overflow: hidden; background: #F7F8FA">
+<header style="height: 64px; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px"><a href="Main.dc.html" aria-label="Decide later" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a><h1 style="margin: 0; flex-grow: 1; font-size: 22px; font-weight: 700">Two versions of #0142</h1></header><div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 16px">
+<div role="status" style="padding: 12px 14px; border-radius: 16px; background: #E3E8F0; display: flex; gap: 12px; align-items: flex-start"><span style="color: #0B2545; flex-shrink: 0; margin-top: 1px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8v.01"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px; color: #101828">Ben changed this while you were offline</strong><span style="font-size: 14px; line-height: 20px; color: #3A4252">You edited Entry #0142 without a connection. Pick the version that should count. Only the differences are shown.</span></span></div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px"><legend class="sr">Version to keep</legend>
+<label for="v1" style="padding: 16px; border-radius: 20px; background: #FFFFFF; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; box-shadow: inset 0 0 0 2px #0B2545"><input id="v1" type="radio" name="v" checked style="width: 22px; height: 22px; margin: 2px 0 0; accent-color: #0B2545; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 16px; font-weight: 700">Ben’s version</span><span style="font-size: 14px; line-height: 20px; color: #5D6675">Saved Sat 19 Sep, 10:14</span><span style="margin-top: 8px; display: flex; flex-direction: column; gap: 2px"><span class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #E4E7EC; font-size: 14px"><span style="color: #5D6675">Amount</span><strong style="text-align: right">€135.00</strong></span><span class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #E4E7EC; font-size: 14px"><span style="color: #5D6675">Notes</span><strong style="text-align: right">Thursday meeting (recount)</strong></span></span></span></label>
+<label for="v2" style="padding: 16px; border-radius: 20px; background: #FFFFFF; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; box-shadow: inset 0 0 0 1px #C4CAD4"><input id="v2" type="radio" name="v" style="width: 22px; height: 22px; margin: 2px 0 0; accent-color: #0B2545; flex-shrink: 0"><span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 16px; font-weight: 700">Your version</span><span style="font-size: 14px; line-height: 20px; color: #5D6675">Edited offline Sat 19 Sep, 09:50 · waiting to sync</span><span style="margin-top: 8px; display: flex; flex-direction: column; gap: 2px"><span class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #E4E7EC; font-size: 14px"><span style="color: #5D6675">Amount</span><strong style="text-align: right">€132.40</strong></span><span class="num" style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #E4E7EC; font-size: 14px"><span style="color: #5D6675">Notes</span><strong style="text-align: right">Thursday meeting (recount, coins)</strong></span></span></span></label>
+</fieldset>
+<p class="num" style="margin: 0; padding: 12px 14px; border-radius: 16px; background: #FFFFFF; font-size: 14px; line-height: 20px"><strong>Effect:</strong> keeping Ben’s version leaves Cash box and Available <strong>+€2.60</strong> higher than yours.</p>
+<p style="margin: 0; display: flex; gap: 10px; font-size: 14px; line-height: 20px; color: #5D6675"><span style="flex-shrink: 0; color: #0B2545"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.500 8 8 9 4.500-1 8-4 8-9V6z"></path></svg></span>The version you don’t keep stays in the change history with your name. Nothing is lost.</p>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 24px; background: #F7F8FA; display: flex; flex-direction: column; gap: 8px"><a href="Entry.dc.html" class="spring" style="height: 56px; padding: 0 24px; border-radius: 28px; border: 0; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg>Keep Ben’s version</a><a href="Main.dc.html" class="spring" style="height: 48px; padding: 0 24px; border-radius: 24px; border: 0; background: transparent; color: #1F4E9E; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700">Decide later</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

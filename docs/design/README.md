@@ -1,129 +1,64 @@
 # Treasury — UI design reference
 
-Exported from the "Group Treasury — UI design" canvas (Clear Navy + Material 3 Expressive pass, updated 6 October 2026). Use it as the visual and behavioural reference when implementing screens. It is a design mockup, not production code.
+Screens for the Treasury web wallet, exported from the "Group Treasury — UI design" canvas (Clear Navy + Material 3 Expressive). This folder says **which journeys the app supports and which screen carries each step**. Colours, type, shape, motion, components and the product rules live in the design system, not here. A design mockup, not production code.
 
-## Folder layout
-
-| Folder | What it is | Use it for |
-|---|---|---|
-| `screens/*.png` | Rendered screenshot of every artboard (phones at 2×, wide boards at 1×, reduced motion) | Quick visual check, comparing a build against the design |
-| `preview/*.html` | Standalone static HTML of every artboard; open in a browser, links between screens work | Exact colours, sizes, spacing, radii, copy, ARIA markup |
-| `source/*.dc.html` | Original canvas source files (Design Component format) | Source of truth. Contains the working Count cash logic |
-| `source/canvas.json` | Canvas index: artboard sizes, titles, layout | Which artboard is which |
-
-About the `.dc.html` format: `<x-dc>` wraps the markup, `<helmet>` holds page CSS, `{{name}}` are template holes filled by `renderVals()` in the `<script type="text/x-dc">` block, `<sc-for>` repeats and `<sc-if>` branches. Rebuild the screens in this repo's stack (React 19 + TypeScript + vanilla CSS custom properties). Don't copy the mockup runtime. Inline styles in the mockups are for the design tool only; turn them into tokens and classes.
-
-## Screens
-
-| Artboard | Screen | Notes |
-|---|---|---|
-| `Main` | Overview | Flexible app bar (title + group subtitle), lock icon button, navy balance hero, segmented accounts list, reserve card, recent activity, medium FAB, nav bar |
-| `OverviewFab` | Overview, Record menu open | FAB menu: Money in / Money out / Transfer. Choosing one opens Unlock if locked, then Record with that type preset |
-| `Unlock` | Unlock sheet | Passkey first, 6-digit PIN fallback, "stay unlocked" 15 min / 1 hour / until I lock |
-| `Record` | Record · Money in | Connected button group for type, Display M amount field (`inputmode="decimal"`), Count cash, account/category/date chips, notes, before→after preview, primary button that states the action |
-| `RecordOut` | Record · Money out | Amount shown as "−€60.00" (minus never wraps), From account, money-out categories, required "Paid to or what for", before→after preview, "Record −€60.00 from Bank account" |
-| `RecordOther` | Money out, category "Other" | Choosing Other makes the description required (validation shown) |
-| `CategoryNew` | New category from the form | "+ New" chip opens a sheet: name, "Add and select"; added to the current type's list |
-| `CashCount` | Count cash (hero 1) | Working prototype. Tap tile = +1, Remove mode = −1, Type mode = numeric inputs, Undo, Clear, running total in `aria-live`. Denominations €50 down to 1c. No €100+ notes |
-| `Recorded` | Confirmation (hero 2) | Burst + "Recorded", full receipt incl. counted breakdown, Record another / Done, Undo (logged as a removal) |
-| `History` | History | Search app bar, filter chips, day groups as segmented lists, "Removed (1)" toggle |
-| `Entry` | Entry + change history | Amount as headline, details list, change history (who, exact time, before/after per field, reason, effect on balances), floating toolbar Edit / Remove |
-| `Reports` | Reports | Period group, summary (opening available → in → out → moved to reserve → closing; reserve total), split button Export CSV ▾, ledger preview |
-| `More` | Accounts & settings | Operating vs reserve sections, archived accounts, categories, trusted members, theme, change log |
-| `Categories` | Categories | Money in / Money out tabs, active list (drag to reorder), "Other" pinned last, archived with Restore, Add category |
-| `CategoryEdit` | Edit category sheet | Rename (updates past entries, old name kept in the log), Archive, Delete disabled while used |
-| `Members` | Members & invites | Members with role chips (Can edit / View only), open invite links with Revoke, "Invite with link" |
-| `InviteSheet` | Invite with link | Role (View only / Edit), expiry 1 / 7 / 30 days, QR code + short link, Copy / Share link |
-| `OverviewDark` | Overview, dark theme | Dark tokens |
-| `WalletSwitcher` | Switch wallet sheet | Opened from the wallet name in the app bar. Each wallet with role, available balance, pending-sync badge; New wallet / Join with link |
-| `Welcome` | First run, no wallet | Create a wallet / Join with a link |
-| `NewWallet` | New wallet | Name, first account and opening balance; creator becomes treasurer with edit rights |
-| `JoinWallet` | Join a wallet | Paste or open a link, preview of the wallet and the role it grants, Join |
-| `States` | States board | Loading (Expressive loading indicator), offline with pending sync, error with retry, empty first run, no search results, validation (zero amount, same-account transfer), remove sheet with reasons, removed entry, edit account (type change effect, archive blocked) |
-| `DesktopHistory` | Desktop history | Navigation rail, balance strip, dense table with separate Money in / Money out columns, entry panel with history |
-| `DesktopWallets` | Desktop wallet switcher | Wallet menu from the rail header |
-| `DesktopReport` | Monthly ledger | Printable report: date, description, money in, money out, running available, running reserve, totals, removed/edited entries noted |
-| `System` | Visual system | Tokens, type, shape, motion, component rules |
-| `AppIcon` | App icon | "The coin": navy tile, brass euro coin. Files in `icon/` (already in `public/`) |
-
-Not yet fully updated to the Expressive pass: `More`, `DesktopHistory` and `DesktopReport` use the same tokens but flatter components (no segmented lists). Build them with the same components as the phone screens. Reports and the desktop report header show the wallet name. On desktop the Record FAB menu should open from the rail.
-
-## Tokens (light)
-
-| Role | Value | Notes |
-|---|---|---|
-| Surface (page) | `#F7F8FA` | |
-| Surface container lowest (cards, list items) | `#FFFFFF` | |
-| Surface container | `#EEF0F4` | nav bar, docked toolbar, input fields |
-| Surface container high | `#E6E9EE` | search bar, neutral avatars |
-| On surface / ink | `#101828` | 16.3:1 |
-| On surface variant / ink 2 | `#5D6675` | ≥5:1 on all surfaces |
-| Outline | `#C4CAD4`; hairline `#E4E7EC` | |
-| Primary | `#0B2545` | balance hero, filled buttons, selected segments |
-| Primary container / on | `#D7E3F7` / `#0B2545` | FAB, FAB menu items |
-| Secondary container | `#E3E8F0` | tonal buttons, selected chips, nav indicator, reserve card |
-| Tertiary container / on | `#FFDF9E` / `#261A00` | **only** Count cash total and Recorded burst |
-| Income | `#067647`, container `#DDF3E6` | the only coloured amount |
-| Error | `#B42318` | errors, destructive actions, Remove mode |
-| Focus ring | 3px `#1F4E9E`, offset 2 | follows each element's corners |
-| Hero subtext on navy | `#B9C6DA` | |
-
-Dark: surface `#0B0F17`, container lowest `#141A24`, container `#1B2230`, high `#232B3A`, ink `#F2F4F7`, ink 2 `#98A2B3`, income `#47CD89` / `#0F2A1E`, primary container `#1E3A63`, tertiary container `#5C4300` / on `#FFDF9E`, focus `#8AB4F8`. See `OverviewDark` and `System`.
-
-## Type (Geist + Geist Mono)
-
-| Use | Style |
+| Question | Where to look |
 |---|---|
-| Balance | 57/64, w800, −3% tracking (Display L emphasized) |
-| Amounts being entered or counted, entry headline | 45/52, w800 (Display M) |
-| Overview title | 28/36, w800 (Headline M emphasized) |
-| Screen titles | 22, w700 (Title L) |
-| Row titles | 16, w600; meta 14; labels 12–14 |
-| Buttons | 15–17, w700–800 |
-| Timestamps, entry IDs, audit before/after | Geist Mono 12–13 |
+| What does the app have to do, and in what states? | [Journeys](#journeys) below, and `journeys.md` in the design system |
+| How does a screen look and behave? | `preview/<Board>.html` (open in a browser; links work), `screens/<Board>.png` |
+| Which colour, size, radius, duration? | Design system: tokens (`tokens.json`), light and dark |
+| Which component? | Design system: components, one README each, with feedback guidance |
+| Why is it designed this way? | Design system README, "Product rules that shape the UI" |
 
-All amounts use `font-variant-numeric: tabular-nums`. Format follows the device language (`Intl.NumberFormat`, EUR): €1,210.30 in English, 1.210,30 € in German.
+Design system: the "Treasury" design system artifact. Canvas: the "Group Treasury — UI design" artifact. Both are private to the team; this folder is the exported copy.
 
-## Shape and sizes
+## Folders
 
-- Corners: chips 8 · inputs 12–16 · cards and list groups 20 · amount field and receipt 28 · sheets and dialogs 28 (top) · Count cash total 32 · balance hero 48 top-start / 28 elsewhere. Buttons, connected groups, search bar and nav indicators are fully round.
-- Segmented lists: 2dp gaps, outer corners 20, inner 4.
-- Connected button group: 2dp gaps, outer fully round, inner 8 (S/M); selected becomes fully round, filled and gets a check.
-- Buttons: M = 56dp; pressed morph to 12dp corners. Chips 32dp tall with 48dp touch targets. All targets ≥ 48dp.
-- Nav bar 64dp, 4 labelled destinations, 56×32 indicator. Rail 96dp at ≥ 600dp. Medium FAB 80dp, corner 20, 16dp margins. FAB menu items 56dp, close button 56dp.
-- Decorative shapes (12-sided cookie on the hero, soft burst on Recorded, loading indicator) are decoration only. Never under or touching an amount, never carrying meaning.
+| Folder | What it is |
+|---|---|
+| `screens/*.png` | Screenshot of every board (phones at 2×, wide boards at 1×, reduced motion) |
+| `preview/*.html` | Standalone static HTML of every board, light and dark (`<Board>Dark.html`) |
+| `source/*.dc.html`, `source/canvas.json` | Canvas source (Design Component format) and the board index. Source of truth; contains the working Count cash logic |
+| `icon/` | App icon files (already in `public/`) |
 
-## Motion
+Rebuild screens in this repo's stack (React 19, TypeScript, CSS custom properties from the design system tokens). Don't copy the mockup runtime or its inline styles.
 
-- Spatial spring ≈ 350ms `cubic-bezier(.34, 1.56, .64, 1)` (slight overshoot): press, FAB menu items (40ms stagger), Recorded burst.
-- Effects spring ≈ 200ms `cubic-bezier(.2, 0, 0, 1)`, no overshoot: colour, opacity, corners.
-- Digits never bounce, scale or count up. The final value is written straight to an `aria-live` region.
-- `prefers-reduced-motion: reduce`: no springs, no burst animation, instant state changes.
+## Journeys
 
-## Product rules decided during design
+Board names are file names in `source/`. Every board also exists as `<Board>Dark`. A journey is done only when its error, empty, offline and locked states exist.
 
-1. **Available vs reserve.** Available = sum of operating accounts only. Reserves are shown separately and labelled "not available to spend". A transfer never changes the total held, but operating ↔ reserve transfers change Available, and rows say so ("Available −€50.00" / "Available unchanged").
-2. **Money in vs out is never colour-only.** Every amount has a sign (+ or true minus −), an arrow icon, a word ("In"/"Out"/"Transfer"), and screen-reader text "Money in"/"Money out". Spending stays ink; only income is green.
-3. **Viewing vs changing.** Anyone with the link can view. Creating, editing or removing needs a trusted member. Passkey first, PIN fallback, and the phone stays unlocked for a chosen window (default 1 hour) so a batch of entries needs one unlock. Lock state is always visible. Every change is signed with the member's name.
-4. **Change history.** Written automatically, never editable or deletable by anyone. Each event has who, an exact timestamp, before → after for every changed field, the reason and the effect on balances. Visible to everyone on the entry.
-5. **Reasons.** Removals require a quick reason (Duplicate, Entered by mistake, Wrong account, Other) plus an optional note. Edits prompt for one (e.g. "Wrong amount"). Reasons are mostly about fixing input errors.
-6. **Remove is soft.** Removed entries stop counting in balances and reports, stay in the history marked "Removed" with who, when and why, and can be restored.
-7. **Offline.** Recording, editing and removing work offline and sync later. If the same entry changed elsewhere, ask which version to keep. Both versions stay in the history.
-8. **Accounts.** Archiving is only allowed at €0.00. Changing an account between operating and reserve is allowed, shows its effect on Available, needs confirmation and is logged.
-9. **Cash counting.** Notes €50, €20, €10, €5 and coins €2 down to 1c (no €100+). The breakdown is saved with the entry.
-10. **Validation.** Amount > €0.00. Transfer From ≠ To. Errors are listed in a summary at the top that links to each field, plus a message on the field itself.
-11. **Reports.** The ledger for a period shows date, description, money in, money out, running available balance and running reserve balance, and exports as CSV. Removed and edited entries in the period are noted.
-12. **States for every data view:** loading, error with retry, empty, offline / pending sync.
-13. **Categories are data, not code.** Each wallet has its own Money in and Money out lists. They can be added (also from the form via "+ New"), renamed (past entries show the new name; the old name stays in the change log), reordered, archived (hidden from new entries, kept on past ones) and deleted only when unused. All changes are logged.
-14. **"Other".** Always last in each list and can't be removed. Choosing it makes the description required, so every entry says what it was. Frequent "Other" descriptions are a hint to add a category.
-15. **Money out.** Amount shown with a true minus, From account, a required "Paid to or what for", and a preview of the account and Available after.
-16. **Wallets.** A person can belong to several wallets (one per group). Each wallet has its own accounts, categories, members, history and reports. The wallet name sits in the app bar and opens the switcher. Unlocking applies to one wallet; switching never unlocks another. A new user with no wallet sees Welcome (Create / Join).
-17. **Invites.** Treasurers invite with a link or QR code. The link sets the role (View only by default, or Edit) and an expiry (1, 7 or 30 days). Open links are listed in Members with use count and can be revoked. Joining, role changes and revokes are logged. Anyone with the wallet's view link can still view, per decision 3.
+| # | Journey | Boards |
+|---|---|---|
+| 1 | First run: create a wallet | `Welcome` → `NewWallet` → `Main` |
+| 2 | Join with an invite link | `JoinWallet`, `JoinExpired` |
+| 3 | Unlock to change things | `Unlock` → `UnlockPasskey` → `UnlockFailed` → `UnlockPin`; `AutoLocked` |
+| 4 | Record money in | `Record` → `CashCount` → `Recorded`; `CategoryNew`; `RecordSaving`, `RecordFailed` |
+| 5 | Record money out | `RecordOut`, `RecordOther` → `Recorded` |
+| 6 | Transfer between accounts | `Record` (Transfer) → `Recorded`; `States` (validation) |
+| 7 | Correct an entry | `Entry` → `EntryEdit` → `EditReason`; `Conflict` |
+| 8 | Remove and restore | `Entry` → `EntryRemove` → `EntryRemoved`; `HistoryRemoved` |
+| 9 | Review history | `History`, `LoadingHistory`, `HistoryEmpty`; desktop `DesktopHistory` |
+| 10 | Work offline, then sync | `OfflineHistory`, `SyncProgress`, `SyncProblem`, `Conflict`, `PullRefresh` |
+| 11 | Report and export | `Reports` → `ReportPeriod` → `ReportExport`; `ReportsEmpty`; desktop `DesktopReport` |
+| 12 | Manage accounts | `More`; `States` (edit account, empty first run) |
+| 13 | Manage categories | `Categories`, `CategoryEdit`, `CategoryNew` |
+| 14 | Manage members and invites | `Members` → `MemberRole` → `MemberRemove`; `InviteSheet` |
+| 15 | Switch or leave a wallet | `WalletSwitcher`, `WalletUnavailable`; desktop `DesktopWallets` |
+| 16 | Audit and settings | `ChangeLog`, `ThemeSettings` |
 
-## Accessibility (WCAG 2.2 AA)
+Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCount` and `Recorded` are the two hero moments.
 
-- Real `<button>`, `<a href>`, `<input>` + `<label>` throughout; icon-only buttons have `aria-label`s; the FAB's accessible name is "Record".
-- Contrast: all text ≥ 4.5:1 (values in the token table); state indicators ≥ 3:1.
-- Keyboard: full support. Desktop shortcuts: N = record, / = search, ↑↓ + Enter in the table.
-- Selected states never rely on shape alone; they also use a fill, a check or a badge.
-- Brass (tertiary) never sits next to income green, because the two can be confused with colour-vision deficiency.
+## Reference boards (not screens)
+
+| Board | What it is |
+|---|---|
+| `System` | Visual system sheet (light tokens only; the design system has both themes) |
+| `FeedbackCatalog` | Snackbar, banners, notices, loading and progress indicators, skeleton, full-page states |
+| `Transitions` | The six transition patterns with live demos |
+| `AppIcon` | "The coin": navy tile, brass euro coin |
+
+## Notes
+
+- Desktop boards (`Desktop*`) use the navigation rail, balance strip and an entry side panel. On desktop the Record FAB menu opens from the rail.
+- Exports (CSV, printed or shared PDF) always use the light theme.
+- Loading and progress follow Material 3 Expressive; timings are proposals (`motion.md` in the design system).

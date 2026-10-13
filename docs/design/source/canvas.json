@@ -91,7 +91,7 @@
     "States.dc.html": {
       "h": 900,
       "title": "States",
-      "w": 3480,
+      "w": 1450,
       "x": 0,
       "y": 2920
     },
@@ -220,6 +220,666 @@
       "h": 844,
       "title": "Invite with link",
       "is_interactive": true
+    },
+    "UnlockPasskey.dc.html": {
+      "x": 0,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · waiting for passkey",
+      "is_interactive": true
+    },
+    "UnlockFailed.dc.html": {
+      "x": 470,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · passkey failed",
+      "is_interactive": true
+    },
+    "UnlockPin.dc.html": {
+      "x": 940,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · PIN pad, wrong PIN",
+      "is_interactive": true
+    },
+    "EntryEdit.dc.html": {
+      "x": 1410,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Edit entry",
+      "is_interactive": true
+    },
+    "EditReason.dc.html": {
+      "x": 1880,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Edit entry · reason sheet",
+      "is_interactive": true
+    },
+    "Conflict.dc.html": {
+      "x": 2350,
+      "y": 8000,
+      "w": 390,
+      "h": 1000,
+      "title": "Sync conflict · choose a version",
+      "is_interactive": true
+    },
+    "JoinExpired.dc.html": {
+      "x": 2820,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Join · link expired",
+      "is_interactive": true
+    },
+    "MemberRole.dc.html": {
+      "x": 3290,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Members · change role",
+      "is_interactive": true
+    },
+    "MemberRemove.dc.html": {
+      "x": 3760,
+      "y": 8000,
+      "w": 390,
+      "h": 844,
+      "title": "Members · remove confirmation",
+      "is_interactive": true
+    },
+    "ChangeLog.dc.html": {
+      "x": 4230,
+      "y": 8000,
+      "w": 390,
+      "h": 1180,
+      "title": "Full change log",
+      "is_interactive": true
+    },
+    "LoadingOverview.dc.html": {
+      "x": 0,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Loading · Overview",
+      "is_interactive": true
+    },
+    "LoadingHistory.dc.html": {
+      "x": 470,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Loading · History",
+      "is_interactive": true
+    },
+    "HistoryEmpty.dc.html": {
+      "x": 940,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Empty · History, no entries",
+      "is_interactive": true
+    },
+    "ReportsEmpty.dc.html": {
+      "x": 1410,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Empty · Reports, nothing in period",
+      "is_interactive": true
+    },
+    "RecordSaving.dc.html": {
+      "x": 1880,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Record · saving",
+      "is_interactive": true
+    },
+    "RecordFailed.dc.html": {
+      "x": 2350,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Record · couldn’t save",
+      "is_interactive": true
+    },
+    "OfflineHistory.dc.html": {
+      "x": 2820,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Offline · History",
+      "is_interactive": true
+    },
+    "SyncProblem.dc.html": {
+      "x": 3290,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Sync · needs a decision",
+      "is_interactive": true
+    },
+    "AutoLocked.dc.html": {
+      "x": 3760,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Locked automatically",
+      "is_interactive": true
+    },
+    "WalletUnavailable.dc.html": {
+      "x": 4230,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Wallet unavailable",
+      "is_interactive": true
+    },
+    "FeedbackCatalog.dc.html": {
+      "x": 0,
+      "y": 10524,
+      "w": 1440,
+      "h": 1380,
+      "title": "Feedback components"
+    },
+    "SyncProgress.dc.html": {
+      "x": 4700,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Sync · in progress",
+      "is_interactive": true
+    },
+    "PullRefresh.dc.html": {
+      "x": 5170,
+      "y": 9560,
+      "w": 390,
+      "h": 844,
+      "title": "Pull to refresh",
+      "is_interactive": true
+    },
+    "Transitions.dc.html": {
+      "x": 0,
+      "y": 12024,
+      "w": 1440,
+      "h": 1060,
+      "title": "Transitions"
+    },
+    "EntryRemove.dc.html": {
+      "x": 0,
+      "y": 13500,
+      "w": 390,
+      "h": 844,
+      "title": "Remove · reason sheet",
+      "is_interactive": true
+    },
+    "EntryRemoved.dc.html": {
+      "x": 470,
+      "y": 13500,
+      "w": 390,
+      "h": 1000,
+      "title": "Removed entry",
+      "is_interactive": true
+    },
+    "HistoryRemoved.dc.html": {
+      "x": 940,
+      "y": 13500,
+      "w": 390,
+      "h": 844,
+      "title": "History · removed shown",
+      "is_interactive": true
+    },
+    "ReportPeriod.dc.html": {
+      "x": 1410,
+      "y": 13500,
+      "w": 390,
+      "h": 844,
+      "title": "Reports · period",
+      "is_interactive": true
+    },
+    "ReportExport.dc.html": {
+      "x": 1880,
+      "y": 13500,
+      "w": 390,
+      "h": 844,
+      "title": "Reports · export",
+      "is_interactive": true
+    },
+    "ThemeSettings.dc.html": {
+      "x": 2350,
+      "y": 13500,
+      "w": 390,
+      "h": 844,
+      "title": "Theme",
+      "is_interactive": true
+    },
+    "AutoLockedDark.dc.html": {
+      "x": 3760,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Locked automatically · dark",
+      "is_interactive": true
+    },
+    "CashCountDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Count cash (working) · dark",
+      "w": 390,
+      "x": 1880,
+      "y": 15200
+    },
+    "CategoriesDark.dc.html": {
+      "x": 2350,
+      "y": 16540,
+      "w": 390,
+      "h": 844,
+      "title": "Categories · dark",
+      "is_interactive": true
+    },
+    "CategoryEditDark.dc.html": {
+      "x": 2820,
+      "y": 16540,
+      "w": 390,
+      "h": 844,
+      "title": "Categories · edit sheet · dark",
+      "is_interactive": true
+    },
+    "CategoryNewDark.dc.html": {
+      "x": 3290,
+      "y": 16540,
+      "w": 390,
+      "h": 844,
+      "title": "Record · new category sheet · dark",
+      "is_interactive": true
+    },
+    "ChangeLogDark.dc.html": {
+      "x": 4230,
+      "y": 23200,
+      "w": 390,
+      "h": 1180,
+      "title": "Full change log · dark",
+      "is_interactive": true
+    },
+    "ConflictDark.dc.html": {
+      "x": 2350,
+      "y": 23200,
+      "w": 390,
+      "h": 1000,
+      "title": "Sync conflict · choose a version · dark",
+      "is_interactive": true
+    },
+    "DesktopHistoryDark.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "Desktop · History · dark",
+      "w": 1440,
+      "x": 0,
+      "y": 19400
+    },
+    "DesktopReportDark.dc.html": {
+      "h": 1060,
+      "title": "Desktop · Monthly ledger · dark",
+      "w": 1440,
+      "x": 1520,
+      "y": 19400
+    },
+    "DesktopWalletsDark.dc.html": {
+      "x": 3040,
+      "y": 19400,
+      "w": 1440,
+      "h": 900,
+      "title": "Desktop · switch wallet · dark",
+      "is_interactive": true
+    },
+    "EditReasonDark.dc.html": {
+      "x": 1880,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Edit entry · reason sheet · dark",
+      "is_interactive": true
+    },
+    "EntryDark.dc.html": {
+      "h": 1200,
+      "is_interactive": true,
+      "title": "Entry + change history · dark",
+      "w": 390,
+      "x": 470,
+      "y": 16540
+    },
+    "EntryEditDark.dc.html": {
+      "x": 1410,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Edit entry · dark",
+      "is_interactive": true
+    },
+    "EntryRemoveDark.dc.html": {
+      "x": 0,
+      "y": 28700,
+      "w": 390,
+      "h": 844,
+      "title": "Remove · reason sheet · dark",
+      "is_interactive": true
+    },
+    "EntryRemovedDark.dc.html": {
+      "x": 470,
+      "y": 28700,
+      "w": 390,
+      "h": 1000,
+      "title": "Removed entry · dark",
+      "is_interactive": true
+    },
+    "HistoryDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "History · dark",
+      "w": 390,
+      "x": 0,
+      "y": 16540
+    },
+    "HistoryEmptyDark.dc.html": {
+      "x": 940,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Empty · History, no entries · dark",
+      "is_interactive": true
+    },
+    "HistoryRemovedDark.dc.html": {
+      "x": 940,
+      "y": 28700,
+      "w": 390,
+      "h": 844,
+      "title": "History · removed shown · dark",
+      "is_interactive": true
+    },
+    "InviteSheetDark.dc.html": {
+      "x": 4230,
+      "y": 16540,
+      "w": 390,
+      "h": 844,
+      "title": "Invite with link · dark",
+      "is_interactive": true
+    },
+    "JoinExpiredDark.dc.html": {
+      "x": 2820,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Join · link expired · dark",
+      "is_interactive": true
+    },
+    "JoinWalletDark.dc.html": {
+      "x": 5170,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Join a wallet · dark",
+      "is_interactive": true
+    },
+    "LoadingHistoryDark.dc.html": {
+      "x": 470,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Loading · History · dark",
+      "is_interactive": true
+    },
+    "LoadingOverviewDark.dc.html": {
+      "x": 0,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Loading · Overview · dark",
+      "is_interactive": true
+    },
+    "MainDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Overview · dark",
+      "w": 390,
+      "x": 0,
+      "y": 15200
+    },
+    "MemberRemoveDark.dc.html": {
+      "x": 3760,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Members · remove confirmation · dark",
+      "is_interactive": true
+    },
+    "MemberRoleDark.dc.html": {
+      "x": 3290,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Members · change role · dark",
+      "is_interactive": true
+    },
+    "MembersDark.dc.html": {
+      "x": 3760,
+      "y": 16540,
+      "w": 390,
+      "h": 844,
+      "title": "Members & invites · dark",
+      "is_interactive": true
+    },
+    "MoreDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Accounts & settings · dark",
+      "w": 390,
+      "x": 1410,
+      "y": 16540
+    },
+    "NewWalletDark.dc.html": {
+      "x": 4700,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "New wallet · dark",
+      "is_interactive": true
+    },
+    "OfflineHistoryDark.dc.html": {
+      "x": 2820,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Offline · History · dark",
+      "is_interactive": true
+    },
+    "OverviewFabDark.dc.html": {
+      "x": 470,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Overview · Record menu open · dark",
+      "is_interactive": true
+    },
+    "PullRefreshDark.dc.html": {
+      "x": 5170,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Pull to refresh · dark",
+      "is_interactive": true
+    },
+    "RecordDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Record · Money in · dark",
+      "w": 390,
+      "x": 1410,
+      "y": 15200
+    },
+    "RecordFailedDark.dc.html": {
+      "x": 2350,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Record · couldn’t save · dark",
+      "is_interactive": true
+    },
+    "RecordOtherDark.dc.html": {
+      "x": 3290,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Record · Money out, category “Other” · dark",
+      "is_interactive": true
+    },
+    "RecordOutDark.dc.html": {
+      "x": 2820,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Record · Money out · dark",
+      "is_interactive": true
+    },
+    "RecordSavingDark.dc.html": {
+      "x": 1880,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Record · saving · dark",
+      "is_interactive": true
+    },
+    "RecordedDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Recorded · dark",
+      "w": 390,
+      "x": 2350,
+      "y": 15200
+    },
+    "ReportExportDark.dc.html": {
+      "x": 1880,
+      "y": 28700,
+      "w": 390,
+      "h": 844,
+      "title": "Reports · export · dark",
+      "is_interactive": true
+    },
+    "ReportPeriodDark.dc.html": {
+      "x": 1410,
+      "y": 28700,
+      "w": 390,
+      "h": 844,
+      "title": "Reports · period · dark",
+      "is_interactive": true
+    },
+    "ReportsDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Reports · dark",
+      "w": 390,
+      "x": 940,
+      "y": 16540
+    },
+    "ReportsEmptyDark.dc.html": {
+      "x": 1410,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Empty · Reports, nothing in period · dark",
+      "is_interactive": true
+    },
+    "StatesDark.dc.html": {
+      "h": 900,
+      "title": "States · dark",
+      "w": 1450,
+      "x": 0,
+      "y": 18120
+    },
+    "SyncProblemDark.dc.html": {
+      "x": 3290,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Sync · needs a decision · dark",
+      "is_interactive": true
+    },
+    "SyncProgressDark.dc.html": {
+      "x": 4700,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Sync · in progress · dark",
+      "is_interactive": true
+    },
+    "ThemeSettingsDark.dc.html": {
+      "x": 2350,
+      "y": 28700,
+      "w": 390,
+      "h": 844,
+      "title": "Theme · dark",
+      "is_interactive": true
+    },
+    "UnlockDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Unlock to make changes · dark",
+      "w": 390,
+      "x": 940,
+      "y": 15200
+    },
+    "UnlockFailedDark.dc.html": {
+      "x": 470,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · passkey failed · dark",
+      "is_interactive": true
+    },
+    "UnlockPasskeyDark.dc.html": {
+      "x": 0,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · waiting for passkey · dark",
+      "is_interactive": true
+    },
+    "UnlockPinDark.dc.html": {
+      "x": 940,
+      "y": 23200,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · PIN pad, wrong PIN · dark",
+      "is_interactive": true
+    },
+    "WalletSwitcherDark.dc.html": {
+      "x": 3760,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Overview · switch wallet · dark",
+      "is_interactive": true
+    },
+    "WalletUnavailableDark.dc.html": {
+      "x": 4230,
+      "y": 24760,
+      "w": 390,
+      "h": 844,
+      "title": "Wallet unavailable · dark",
+      "is_interactive": true
+    },
+    "WelcomeDark.dc.html": {
+      "x": 4230,
+      "y": 15200,
+      "w": 390,
+      "h": 844,
+      "title": "Welcome · no wallet yet · dark",
+      "is_interactive": true
     }
   },
   "createdOnFiles": {
@@ -270,6 +930,86 @@
       "w": 240,
       "x": 0,
       "y": 5370
+    },
+    "t6": {
+      "kind": "title1",
+      "maxW": 4620,
+      "text": "6 · Journey gaps: unlock, correct, sync conflict, members, change log",
+      "w": 240,
+      "x": 0,
+      "y": 7730
+    },
+    "t7": {
+      "kind": "title1",
+      "maxW": 5560,
+      "text": "7 · Feedback: loading, empty, saving, offline & sync, access",
+      "w": 240,
+      "x": 0,
+      "y": 9290
+    },
+    "t8": {
+      "kind": "title1",
+      "maxW": 2790,
+      "text": "8 · Remove & restore, reports, theme",
+      "w": 240,
+      "x": 0,
+      "y": 13230
+    },
+    "t1d": {
+      "kind": "title1",
+      "maxW": 5560,
+      "text": "1 · Wallets & recording a collection · dark",
+      "w": 240,
+      "x": 0,
+      "y": 14930
+    },
+    "t2d": {
+      "kind": "title1",
+      "maxW": 4620,
+      "text": "2 · Check the books, categories & members · dark",
+      "w": 240,
+      "x": 0,
+      "y": 16270
+    },
+    "t3d": {
+      "kind": "title1",
+      "maxW": 3480,
+      "text": "3 · States: loading, offline, error, empty, validation, removal, account edits · dark",
+      "w": 240,
+      "x": 0,
+      "y": 17850
+    },
+    "t4d": {
+      "kind": "title1",
+      "maxW": 4480,
+      "text": "4 · Desktop · dark",
+      "w": 240,
+      "x": 0,
+      "y": 19130
+    },
+    "t6d": {
+      "kind": "title1",
+      "maxW": 4620,
+      "text": "6 · Journey gaps: unlock, correct, sync conflict, members, change log · dark",
+      "w": 240,
+      "x": 0,
+      "y": 22930
+    },
+    "t7d": {
+      "kind": "title1",
+      "maxW": 5560,
+      "text": "7 · Feedback: loading, empty, saving, offline & sync, access · dark",
+      "w": 240,
+      "x": 0,
+      "y": 24490
+    },
+    "t8d": {
+      "kind": "title1",
+      "maxW": 2790,
+      "text": "8 · Remove & restore, reports, theme · dark",
+      "w": 240,
+      "x": 0,
+      "y": 28430
     }
   },
   "order": [
@@ -300,7 +1040,90 @@
     "DesktopWallets.dc.html",
     "DesktopReport.dc.html",
     "System.dc.html",
-    "AppIcon.dc.html"
+    "AppIcon.dc.html",
+    "UnlockPasskey.dc.html",
+    "UnlockFailed.dc.html",
+    "UnlockPin.dc.html",
+    "EntryEdit.dc.html",
+    "EditReason.dc.html",
+    "Conflict.dc.html",
+    "JoinExpired.dc.html",
+    "MemberRole.dc.html",
+    "MemberRemove.dc.html",
+    "ChangeLog.dc.html",
+    "LoadingOverview.dc.html",
+    "LoadingHistory.dc.html",
+    "HistoryEmpty.dc.html",
+    "ReportsEmpty.dc.html",
+    "RecordSaving.dc.html",
+    "RecordFailed.dc.html",
+    "OfflineHistory.dc.html",
+    "SyncProblem.dc.html",
+    "AutoLocked.dc.html",
+    "WalletUnavailable.dc.html",
+    "FeedbackCatalog.dc.html",
+    "SyncProgress.dc.html",
+    "PullRefresh.dc.html",
+    "Transitions.dc.html",
+    "EntryRemove.dc.html",
+    "EntryRemoved.dc.html",
+    "HistoryRemoved.dc.html",
+    "ReportPeriod.dc.html",
+    "ReportExport.dc.html",
+    "ThemeSettings.dc.html",
+    "AutoLockedDark.dc.html",
+    "CashCountDark.dc.html",
+    "CategoriesDark.dc.html",
+    "CategoryEditDark.dc.html",
+    "CategoryNewDark.dc.html",
+    "ChangeLogDark.dc.html",
+    "ConflictDark.dc.html",
+    "DesktopHistoryDark.dc.html",
+    "DesktopReportDark.dc.html",
+    "DesktopWalletsDark.dc.html",
+    "EditReasonDark.dc.html",
+    "EntryDark.dc.html",
+    "EntryEditDark.dc.html",
+    "EntryRemoveDark.dc.html",
+    "EntryRemovedDark.dc.html",
+    "HistoryDark.dc.html",
+    "HistoryEmptyDark.dc.html",
+    "HistoryRemovedDark.dc.html",
+    "InviteSheetDark.dc.html",
+    "JoinExpiredDark.dc.html",
+    "JoinWalletDark.dc.html",
+    "LoadingHistoryDark.dc.html",
+    "LoadingOverviewDark.dc.html",
+    "MainDark.dc.html",
+    "MemberRemoveDark.dc.html",
+    "MemberRoleDark.dc.html",
+    "MembersDark.dc.html",
+    "MoreDark.dc.html",
+    "NewWalletDark.dc.html",
+    "OfflineHistoryDark.dc.html",
+    "OverviewFabDark.dc.html",
+    "PullRefreshDark.dc.html",
+    "RecordDark.dc.html",
+    "RecordFailedDark.dc.html",
+    "RecordOtherDark.dc.html",
+    "RecordOutDark.dc.html",
+    "RecordSavingDark.dc.html",
+    "RecordedDark.dc.html",
+    "ReportExportDark.dc.html",
+    "ReportPeriodDark.dc.html",
+    "ReportsDark.dc.html",
+    "ReportsEmptyDark.dc.html",
+    "StatesDark.dc.html",
+    "SyncProblemDark.dc.html",
+    "SyncProgressDark.dc.html",
+    "ThemeSettingsDark.dc.html",
+    "UnlockDark.dc.html",
+    "UnlockFailedDark.dc.html",
+    "UnlockPasskeyDark.dc.html",
+    "UnlockPinDark.dc.html",
+    "WalletSwitcherDark.dc.html",
+    "WalletUnavailableDark.dc.html",
+    "WelcomeDark.dc.html"
   ],
   "pages": [],
   "title": "Group Treasury — UI design"
