@@ -13,15 +13,7 @@ interface RecordFabViewProps {
   menuRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function RecordFabView({
-  open,
-  onToggle,
-  onScrim,
-  onPick,
-  fabRef,
-  firstItemRef,
-  menuRef,
-}: RecordFabViewProps) {
+export function RecordFabView({ open, onToggle, onScrim, onPick, fabRef, firstItemRef, menuRef }: RecordFabViewProps) {
   return (
     <>
       {open && <div className="record-scrim" aria-hidden="true" onClick={onScrim} />}

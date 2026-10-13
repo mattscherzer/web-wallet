@@ -9,7 +9,21 @@ export function transactionRows() {
     app_config: [{ key: 'pin', value: '1234' }],
     transactions: [
       ...rows.transactions,
-      { id: 't5', wallet_id: 'wa', type: 'outflow', amount: 80, date: '2026-03-05', account_id: 'cash', from_account_id: null, category: 'rent', notes: 'a5 dup', deleted: true, removed_reason: 'Duplicate', removed_by: 'Anna', created_at: '2026-03-05T10:00:00Z' },
+      {
+        id: 't5',
+        wallet_id: 'wa',
+        type: 'outflow',
+        amount: 80,
+        date: '2026-03-05',
+        account_id: 'cash',
+        from_account_id: null,
+        category: 'rent',
+        notes: 'a5 dup',
+        deleted: true,
+        removed_reason: 'Duplicate',
+        removed_by: 'Anna',
+        created_at: '2026-03-05T10:00:00Z',
+      },
     ],
   };
 }
@@ -22,7 +36,8 @@ export async function enterPin(pin: string, fake: { queries: { table: string }[]
     if (!fake.queries.some((q) => q.table === 'app_config')) throw new Error('PIN not loaded');
     // The modal clears its digits shortly after opening; typing before that would be wiped or ignored.
     for (let i = 0; i < 4; i++) {
-      if ((document.getElementById(`pin-input-${i}`) as HTMLInputElement).value !== '') throw new Error('PIN not cleared');
+      if ((document.getElementById(`pin-input-${i}`) as HTMLInputElement).value !== '')
+        throw new Error('PIN not cleared');
     }
   });
   [...pin].forEach((d, i) => fireEvent.change(document.getElementById(`pin-input-${i}`)!, { target: { value: d } }));

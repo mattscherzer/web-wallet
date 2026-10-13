@@ -28,7 +28,11 @@ export default function App() {
               <Route path="record" element={<RecordPage />} />
               <Route path="recorded/:id" element={<RecordedPage />} />
               {['add', 'withdraw', 'transfer'].map((old) => (
-                <Route key={old} path={old} element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />} />
+                <Route
+                  key={old}
+                  path={old}
+                  element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />}
+                />
               ))}
               <Route path="history" element={<HistoryPage />} />
               <Route path="history/:id" element={<EntryPage />} />

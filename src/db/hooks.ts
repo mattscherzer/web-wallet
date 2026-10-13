@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from './supabase';
 import {
-  ACCOUNTS,
   MAIN_ACCOUNTS,
   RESERVE_ACCOUNTS,
   fetchPin,
   type Transaction,
+  type Account,
   type AccountId,
   type AuditEntry,
 } from './database';
@@ -30,10 +30,15 @@ function useQueryState<T>(
   queryFn: (walletId: string) => Promise<T>,
   deps: unknown[],
   initialValue: T,
-  realtimeTable?: string
+  realtimeTable?: string,
 ): QueryState<T> {
   const walletId = useOptionalWallet()?.current?.id ?? null;
-  const [state, setState] = useState<{ walletId: string | null; data: T; loaded: boolean; failed: boolean }>({
+  const [state, setState] = useState<{
+    walletId: string | null;
+    data: T;
+    loaded: boolean;
+    failed: boolean;
+  }>({
     walletId: null,
     data: initialValue,
     loaded: false,
@@ -50,7 +55,13 @@ function useQueryState<T>(
     if (!walletId) return;
     try {
       const result = await queryFn(walletId);
-      if (openWalletId.current === walletId) setState({ walletId, data: result, loaded: true, failed: false });
+      if (openWalletId.current === walletId)
+        setState({
+          walletId,
+          data: result,
+          loaded: true,
+          failed: false,
+        });
     } catch (err) {
       console.error('Supabase query error:', err);
       if (openWalletId.current !== walletId) return;
@@ -58,7 +69,12 @@ function useQueryState<T>(
       setState((prev) =>
         prev.walletId === walletId
           ? { ...prev, failed: true }
-          : { walletId, data: initialValue, loaded: false, failed: true },
+          : {
+              walletId,
+              data: initialValue,
+              loaded: false,
+              failed: true,
+            },
       );
     }
     // `deps` has a fixed length per hook, so the spread is stable between renders.
@@ -76,10 +92,15 @@ function useQueryState<T>(
       .channel(`${realtimeTable}-changes-${Math.random()}`)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: realtimeTable, filter: `wallet_id=eq.${walletId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: realtimeTable,
+          filter: `wallet_id=eq.${walletId}`,
+        },
         () => {
           refresh();
-        }
+        },
       )
       .subscribe();
 
@@ -101,7 +122,7 @@ function useSupabaseQuery<T>(
   queryFn: (walletId: string) => Promise<T>,
   deps: unknown[],
   initialValue: T,
-  realtimeTable?: string
+  realtimeTable?: string,
 ): T {
   return useQueryState(queryFn, deps, initialValue, realtimeTable).data;
 }
@@ -126,7 +147,7 @@ export function useTransactions() {
 export function useFilteredTransactions(
   filter: 'all' | 'inflow' | 'outflow' | 'transfer',
   searchQuery: string,
-  includeRemoved = false
+  includeRemoved = false,
 ) {
   return useSupabaseQuery<Transaction[]>(
     async (walletId) => {
@@ -141,7 +162,7 @@ export function useFilteredTransactions(
           (t) =>
             t.category.toLowerCase().includes(q) ||
             t.notes.toLowerCase().includes(q) ||
-            (t.reason && t.reason.toLowerCase().includes(q))
+            (t.reason && t.reason.toLowerCase().includes(q)),
         );
       }
 
@@ -149,34 +170,39 @@ export function useFilteredTransactions(
     },
     [filter, searchQuery, includeRemoved],
     [],
-    'transactions'
+    'transactions',
   );
 }
 
 // ─── Account balances (handles transfers correctly) ─────
 export function useAccountBalances() {
-  return useSupabaseQuery<Record<AccountId, number>>(
-    fetchAccountBalances,
-    [],
-    emptyBalances(),
-    'transactions'
-  );
+  return useSupabaseQuery<Record<AccountId, number>>(fetchAccountBalances, [], emptyBalances(), 'transactions');
 }
 
 /** Like useAccountBalances, but `null` until balances have actually been fetched. */
 export function useLoadedAccountBalances() {
-  return useSupabaseQuery<Record<AccountId, number> | null>(
-    fetchAccountBalances,
-    [],
-    null,
-    'transactions'
-  );
+  return useSupabaseQuery<Record<AccountId, number> | null>(fetchAccountBalances, [], null, 'transactions');
 }
 
-// ─── Total balance (excludes reserve) ───────────────────
-export function useTotalBalance() {
+// ─── Balances grouped for display (one query) ───────────
+const sumBalances = (accounts: { balance: number }[]) => accounts.reduce((sum, a) => sum + a.balance, 0);
+
+/** Main and reserve accounts with balances, plus the spendable (main) and overall totals. */
+export function useBalanceSummary() {
   const balances = useAccountBalances();
-  return MAIN_ACCOUNTS.reduce((sum, a) => sum + (balances[a.id] ?? 0), 0);
+  const withBalance = (account: Account) => ({
+    ...account,
+    balance: balances[account.id] ?? 0,
+  });
+  const main = MAIN_ACCOUNTS.map(withBalance);
+  const reserve = RESERVE_ACCOUNTS.map(withBalance);
+  const spendableTotal = sumBalances(main);
+  return {
+    main,
+    reserve,
+    spendableTotal,
+    grandTotal: spendableTotal + sumBalances(reserve),
+  };
 }
 
 // ─── Recent transactions ────────────────────────────────
@@ -185,7 +211,7 @@ export function useRecentTransactions(limit = 5) {
     (walletId) => fetchTransactions(walletId, { limit }),
     [limit],
     [],
-    'transactions'
+    'transactions',
   );
 }
 
@@ -195,35 +221,8 @@ export function useAuditLog(transactionId: string) {
     async (walletId) => (transactionId ? fetchAuditLog(walletId, transactionId) : []),
     [transactionId],
     [],
-    'audit_log'
+    'audit_log',
   );
-}
-
-// ─── Main accounts with balances ────────────────────────
-export function useMainAccountsWithBalances() {
-  const balances = useAccountBalances();
-  return MAIN_ACCOUNTS.map((account) => ({
-    ...account,
-    balance: balances[account.id] ?? 0,
-  }));
-}
-
-// ─── Reserve accounts with balances ─────────────────────
-export function useReserveAccountsWithBalances() {
-  const balances = useAccountBalances();
-  return RESERVE_ACCOUNTS.map((account) => ({
-    ...account,
-    balance: balances[account.id] ?? 0,
-  }));
-}
-
-// ─── All accounts with balances (for backwards compat) ──
-export function useAccountsWithBalances() {
-  const balances = useAccountBalances();
-  return ACCOUNTS.map((account) => ({
-    ...account,
-    balance: balances[account.id] ?? 0,
-  }));
 }
 
 // ─── One entry with its change history ──────────────────
@@ -231,14 +230,17 @@ export type EntryStatus = 'loading' | 'ready' | 'missing' | 'error';
 
 /** An entry (removed or not) and its history. `refresh` re-reads both after a change. */
 export function useEntry(id: string) {
-  const { data, loaded, failed, refresh } = useQueryState<{ tx: Transaction | null; audit: AuditEntry[] } | null>(
+  const { data, loaded, failed, refresh } = useQueryState<{
+    tx: Transaction | null;
+    audit: AuditEntry[];
+  } | null>(
     async (walletId) => {
       const tx = await fetchTransaction(walletId, id);
       return { tx, audit: tx ? await fetchAuditLog(walletId, id) : [] };
     },
     [id],
     null,
-    'transactions'
+    'transactions',
   );
   const status: EntryStatus = failed ? 'error' : !loaded || !data ? 'loading' : data.tx ? 'ready' : 'missing';
   return { status, tx: data?.tx ?? null, audit: data?.audit ?? [], refresh };

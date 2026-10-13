@@ -19,7 +19,8 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
   const tables: Record<string, Row[]> = {};
   for (const [name, rows] of Object.entries(initial)) tables[name] = rows.map((r) => ({ ...r }));
 
-  const queries: { table: string; op: string; filters: [string, unknown][]; limit?: number; ascending?: boolean }[] = [];
+  const queries: { table: string; op: string; filters: [string, unknown][]; limit?: number; ascending?: boolean }[] =
+    [];
   const channels: FakeChannel[] = [];
   const failures = new Map<string, Failure>();
   const holds = new Map<string, Promise<void>>();
@@ -131,9 +132,7 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
       matched = this.window ? matched.slice(this.window[0], this.window[1] + 1) : matched.slice(0, 1000);
       if (this.max !== undefined) matched = matched.slice(0, this.max);
       if (this.single_) {
-        return matched[0]
-          ? { data: matched[0], error: null }
-          : { data: null, error: { message: 'not found' } };
+        return matched[0] ? { data: matched[0], error: null } : { data: null, error: { message: 'not found' } };
       }
       return { data: matched, error: null };
     }
@@ -145,7 +144,9 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
       const key = `${this.table}:${this.op}`;
       const held = holds.get(key);
       holds.delete(key);
-      return Promise.resolve(held).then(() => this.run()).then(onfulfilled, onrejected);
+      return Promise.resolve(held)
+        .then(() => this.run())
+        .then(onfulfilled, onrejected);
     }
   }
 
@@ -197,10 +198,58 @@ export function twoWalletRows() {
       { id: 'wb', name: 'Spring Convention 2027', currency: 'EUR', created_at: '2026-02-01T00:00:00Z' },
     ],
     transactions: [
-      { id: 't1', wallet_id: 'wa', type: 'inflow', amount: 1000, date: '2026-03-01', account_id: 'bank', from_account_id: null, category: 'sales', notes: 'a1', deleted: false, created_at: '2026-03-01T10:00:00Z' },
-      { id: 't2', wallet_id: 'wa', type: 'outflow', amount: 100.2, date: '2026-03-02', account_id: 'bank', from_account_id: null, category: 'rent', notes: 'a2', deleted: false, created_at: '2026-03-02T10:00:00Z' },
-      { id: 't3', wallet_id: 'wa', type: 'inflow', amount: 50, date: '2026-03-03', account_id: 'cash', from_account_id: null, category: 'sales', notes: 'a3', deleted: false, created_at: '2026-03-03T10:00:00Z' },
-      { id: 't4', wallet_id: 'wb', type: 'inflow', amount: 7, date: '2026-03-04', account_id: 'cash', from_account_id: null, category: 'sales', notes: 'b1', deleted: false, created_at: '2026-03-04T10:00:00Z' },
+      {
+        id: 't1',
+        wallet_id: 'wa',
+        type: 'inflow',
+        amount: 1000,
+        date: '2026-03-01',
+        account_id: 'bank',
+        from_account_id: null,
+        category: 'sales',
+        notes: 'a1',
+        deleted: false,
+        created_at: '2026-03-01T10:00:00Z',
+      },
+      {
+        id: 't2',
+        wallet_id: 'wa',
+        type: 'outflow',
+        amount: 100.2,
+        date: '2026-03-02',
+        account_id: 'bank',
+        from_account_id: null,
+        category: 'rent',
+        notes: 'a2',
+        deleted: false,
+        created_at: '2026-03-02T10:00:00Z',
+      },
+      {
+        id: 't3',
+        wallet_id: 'wa',
+        type: 'inflow',
+        amount: 50,
+        date: '2026-03-03',
+        account_id: 'cash',
+        from_account_id: null,
+        category: 'sales',
+        notes: 'a3',
+        deleted: false,
+        created_at: '2026-03-03T10:00:00Z',
+      },
+      {
+        id: 't4',
+        wallet_id: 'wb',
+        type: 'inflow',
+        amount: 7,
+        date: '2026-03-04',
+        account_id: 'cash',
+        from_account_id: null,
+        category: 'sales',
+        notes: 'b1',
+        deleted: false,
+        created_at: '2026-03-04T10:00:00Z',
+      },
     ],
     audit_log: [
       { id: 'l1', wallet_id: 'wa', transaction_id: 't1', action: 'create', timestamp: '2026-03-01T10:00:00Z' },

@@ -56,11 +56,7 @@ export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS, getAccountLabel, fromAccount
 
 // ─── Fetch PIN from Supabase ────────────────────────────
 export async function fetchPin(): Promise<string> {
-  const { data, error } = await supabase
-    .from('app_config')
-    .select('value')
-    .eq('key', 'pin')
-    .single();
+  const { data, error } = await supabase.from('app_config').select('value').eq('key', 'pin').single();
 
   if (error || !data) {
     console.error('Failed to fetch PIN, falling back to default:', error);
@@ -72,7 +68,7 @@ export async function fetchPin(): Promise<string> {
 // ─── Create Transaction (inflow / outflow) ──────────────
 export async function createTransaction(
   data: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'deleted'>,
-  actor?: string
+  actor?: string,
 ): Promise<string> {
   const { data: inserted, error } = await supabase
     .from('transactions')
@@ -143,7 +139,7 @@ export async function createTransfer(data: {
 export async function updateTransaction(
   id: string,
   updates: Partial<Omit<Transaction, 'id' | 'created_at' | 'deleted'>>,
-  meta: { walletId?: string; reason?: string; actor?: string } = {}
+  meta: { walletId?: string; reason?: string; actor?: string } = {},
 ): Promise<void> {
   let lookup = supabase.from('transactions').select('*').eq('id', id);
   if (meta.walletId) lookup = lookup.eq('wallet_id', meta.walletId);
@@ -196,7 +192,7 @@ export async function updateTransaction(
 // so an entry is never removed or restored without a trace.
 export async function removeTransaction(
   id: string,
-  { walletId, reason, note, actor }: { walletId: string; reason: string; note?: string; actor?: string }
+  { walletId, reason, note, actor }: { walletId: string; reason: string; note?: string; actor?: string },
 ): Promise<void> {
   if (!isRemoveReason(reason)) throw new Error('A reason is required');
 
@@ -241,7 +237,7 @@ export async function removeTransaction(
 
 export async function restoreTransaction(
   id: string,
-  { walletId, actor }: { walletId: string; actor?: string }
+  { walletId, actor }: { walletId: string; actor?: string },
 ): Promise<void> {
   const { data: removed, error: lookupError } = await supabase
     .from('transactions')

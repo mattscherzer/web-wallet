@@ -2,8 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { pickCurrentWallet, readCurrentWalletId, writeCurrentWalletId } from './walletStore';
 
 const broken = {
-  getItem: () => { throw new Error('denied'); },
-  setItem: () => { throw new Error('denied'); },
+  getItem: () => {
+    throw new Error('denied');
+  },
+  setItem: () => {
+    throw new Error('denied');
+  },
 };
 
 afterEach(() => vi.restoreAllMocks());

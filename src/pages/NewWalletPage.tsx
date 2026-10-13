@@ -36,7 +36,9 @@ export default function NewWalletPage() {
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
-          <label className="form-label" htmlFor="wallet-name">Wallet name</label>
+          <label className="form-label" htmlFor="wallet-name">
+            Wallet name
+          </label>
           <input
             id="wallet-name"
             className="form-input"
@@ -46,11 +48,15 @@ export default function NewWalletPage() {
             aria-invalid={error ? true : undefined}
             autoFocus
           />
-          <p id="wallet-name-hint" className="form-hint">Shown to members, on reports and on exported files.</p>
+          <p id="wallet-name-hint" className="form-hint">
+            Shown to members, on reports and on exported files.
+          </p>
         </div>
 
         {error && (
-          <p role="alert" className="form-error">{error}</p>
+          <p role="alert" className="form-error">
+            {error}
+          </p>
         )}
 
         <button type="submit" className="btn btn--primary" disabled={saving}>

@@ -7,12 +7,28 @@ import WalletGate from './WalletGate';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get:
+        (_t, p) =>
+        (...a: unknown[]) =>
+          (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a),
+    },
+  ),
 }));
 
 afterEach(cleanup);
 
-const gate = (path = '/') => render(walletApp(<WalletGate><p>the app</p></WalletGate>, { path }));
+const gate = (path = '/') =>
+  render(
+    walletApp(
+      <WalletGate>
+        <p>the app</p>
+      </WalletGate>,
+      { path },
+    ),
+  );
 
 describe('wallet gate', () => {
   it('shows the Welcome screen when there is no wallet yet', async () => {

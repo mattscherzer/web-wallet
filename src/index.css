@@ -33,9 +33,6 @@
   --color-hero-decor: #173a66;
   --color-hero-text: #ffffff;
   --color-hero-text-secondary: #b9c6da;
-  --color-hero-action-bg: #d7e3f7;
-  --color-hero-action-text: #0b2545;
-  --color-hero-action-hover-bg: #ffffff;
   --color-hero-focus: #ffffff;
 
   /* Focus, links and overlays */
@@ -137,10 +134,7 @@
     --color-hero-decor: #1b3f6e;
     --color-hero-text: #ffffff;
     --color-hero-text-secondary: #b9c6da;
-    --color-hero-action-bg: #b9ccf5;
-    --color-hero-action-text: #0b2545;
-    --color-hero-action-hover-bg: #dce6fa;
-    --color-hero-focus: #8ab4f8;
+          --color-hero-focus: #8ab4f8;
 
     --color-focus: #8ab4f8;
     --color-link-hover: #b9ccf5;
@@ -397,6 +391,12 @@ img {
   margin-bottom: var(--space-xs);
 }
 
+.balance-hero__total {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-hero-text-secondary);
+}
+
 .balance-hero__amount {
   font-size: var(--font-size-hero);
   font-weight: var(--font-weight-extrabold);
@@ -405,30 +405,6 @@ img {
   font-variant-numeric: tabular-nums lining-nums;
   overflow-wrap: anywhere;
   margin-bottom: var(--space-md);
-}
-
-.balance-hero__action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: var(--touch-min);
-  padding: 0 var(--space-lg);
-  background: var(--color-hero-action-bg);
-  border-radius: var(--radius-xl);
-  color: var(--color-hero-action-text);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-md);
-}
-
-.balance-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-.balance-hero__action:hover {
-  background: var(--color-hero-action-hover-bg);
 }
 
 /* =============================================
@@ -470,6 +446,12 @@ img {
   color: var(--color-text-primary);
 }
 
+.account-card__note {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
 .account-card__balance {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
@@ -487,18 +469,6 @@ img {
 
 .account-card--reserve .account-card__icon {
   background: var(--color-card);
-}
-
-.account-card__reserve-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  padding: 0 var(--space-sm);
-  border-radius: var(--radius-sm);
 }
 
 /* =============================================
@@ -987,7 +957,7 @@ img {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-fab);
-  z-index: 70;
+  z-index: 120;
 }
 
 .record-fab--open {
@@ -1005,7 +975,7 @@ img {
   position: fixed;
   inset: 0;
   background: var(--color-scrim);
-  z-index: 60;
+  z-index: 110;
 }
 
 .record-menu {
@@ -1016,7 +986,7 @@ img {
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-xs);
-  z-index: 70;
+  z-index: 120;
 }
 
 .record-menu__item {
@@ -1592,6 +1562,13 @@ img {
 /* =============================================
    SECTION TITLES
    ============================================= */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-xs) var(--space-xs);
+}
+
 .section-title {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
@@ -1746,16 +1723,9 @@ img {
 }
 
 /* =============================================
-   VIEW ALL LINK
+   SEE ALL LINK
    ============================================= */
-.view-all-link {
-  text-align: center;
-  padding: var(--space-md);
-  margin-top: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-
-.view-all-link a {
+.see-all-link a {
   display: inline-flex;
   align-items: center;
   min-height: var(--touch-min);
@@ -1765,7 +1735,7 @@ img {
   font-size: var(--font-size-sm);
 }
 
-.view-all-link a:hover {
+.see-all-link a:hover {
   color: var(--color-link-hover);
 }
 
@@ -1889,7 +1859,6 @@ img {
 
   .btn,
   .btn--cash-calc,
-  .balance-hero__action,
   .record-fab,
   .record-menu__item,
   .chip,
@@ -1909,7 +1878,6 @@ img {
 
   .btn:not(:disabled):active,
   .btn--cash-calc:not(:disabled):active,
-  .balance-hero__action:not(:disabled):active,
   .record-fab:not(:disabled):active,
   .record-menu__item:not(:disabled):active,
   .chip:not(:disabled):active,

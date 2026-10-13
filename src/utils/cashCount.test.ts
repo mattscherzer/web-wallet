@@ -20,11 +20,20 @@ describe('denominations', () => {
   it('lists 4 notes then 8 coins, largest first, in integer cents', () => {
     const { DENOMINATIONS } = api();
     expect(DENOMINATIONS.map((d) => d.label)).toEqual([
-      '€50', '€20', '€10', '€5', '€2', '€1', '50c', '20c', '10c', '5c', '2c', '1c',
+      '€50',
+      '€20',
+      '€10',
+      '€5',
+      '€2',
+      '€1',
+      '50c',
+      '20c',
+      '10c',
+      '5c',
+      '2c',
+      '1c',
     ]);
-    expect(DENOMINATIONS.map((d) => d.cents)).toEqual([
-      5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1,
-    ]);
+    expect(DENOMINATIONS.map((d) => d.cents)).toEqual([5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1]);
     expect(DENOMINATIONS.slice(0, 4).every((d) => d.kind === 'notes')).toBe(true);
     expect(DENOMINATIONS.slice(4).every((d) => d.kind === 'coins')).toBe(true);
   });
@@ -40,7 +49,11 @@ describe('denominations', () => {
 
 describe('add', () => {
   it('increments only the tapped denomination', () => {
-    const s = run([{ type: 'add', index: 0 }, { type: 'add', index: 0 }, { type: 'add', index: 7 }]);
+    const s = run([
+      { type: 'add', index: 0 },
+      { type: 'add', index: 0 },
+      { type: 'add', index: 7 },
+    ]);
     expect(s.counts[0]).toBe(2);
     expect(s.counts[7]).toBe(1);
     expect(s.counts.reduce((a, b) => a + b, 0)).toBe(3);
@@ -51,7 +64,13 @@ describe('remove', () => {
   it('decrements and floors at zero', () => {
     const s = run([{ type: 'remove', index: 3 }], withCounts([0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0]));
     expect(s.counts[3]).toBe(1);
-    const z = run([{ type: 'remove', index: 3 }, { type: 'remove', index: 3 }], s);
+    const z = run(
+      [
+        { type: 'remove', index: 3 },
+        { type: 'remove', index: 3 },
+      ],
+      s,
+    );
     expect(z.counts[3]).toBe(0);
   });
 });
@@ -85,9 +104,16 @@ describe('parseCount', () => {
 
 describe('modes', () => {
   it('switching mode keeps counts and undo history untouched', () => {
-    const before = run([{ type: 'add', index: 0 }, { type: 'add', index: 5 }]);
+    const before = run([
+      { type: 'add', index: 0 },
+      { type: 'add', index: 5 },
+    ]);
     const after = run(
-      [{ type: 'setMode', mode: 'remove' }, { type: 'setMode', mode: 'type' }, { type: 'setMode', mode: 'add' }],
+      [
+        { type: 'setMode', mode: 'remove' },
+        { type: 'setMode', mode: 'type' },
+        { type: 'setMode', mode: 'add' },
+      ],
       before,
     );
     expect(after.counts).toEqual(before.counts);
@@ -104,7 +130,10 @@ describe('undo and clear', () => {
   });
 
   it('clear zeroes everything and can be undone', () => {
-    const counted = run([{ type: 'add', index: 0 }, { type: 'add', index: 9 }]);
+    const counted = run([
+      { type: 'add', index: 0 },
+      { type: 'add', index: 9 },
+    ]);
     const cleared = run([{ type: 'clear' }], counted);
     expect(cleared.counts).toEqual(new Array(12).fill(0));
     expect(run([{ type: 'undo' }], cleared).counts).toEqual(counted.counts);
@@ -122,7 +151,10 @@ describe('undo and clear', () => {
     const s = run(adds);
     expect(s.counts[0]).toBe(150);
     expect(s.history).toHaveLength(HISTORY_LIMIT);
-    const undone = run(Array.from({ length: 200 }, () => ({ type: 'undo' as const })), s);
+    const undone = run(
+      Array.from({ length: 200 }, () => ({ type: 'undo' as const })),
+      s,
+    );
     expect(undone.counts[0]).toBe(50);
     expect(undone.history).toHaveLength(0);
   });

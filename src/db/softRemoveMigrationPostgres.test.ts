@@ -31,7 +31,9 @@ describe('soft remove migration on a real Postgres engine', () => {
     await expect(insert('explode', null)).rejects.toThrow(/check|constraint|violates/i);
 
     // Entries removed before this change keep their old 'delete' history and stay removed.
-    const legacy = (await db.query(`SELECT count(*)::int AS n FROM audit_log WHERE action = 'delete'`)).rows[0] as { n: number };
+    const legacy = (await db.query(`SELECT count(*)::int AS n FROM audit_log WHERE action = 'delete'`)).rows[0] as {
+      n: number;
+    };
     expect(legacy.n).toBe(1);
     const removed = (await db.query(`SELECT removed_reason, removed_by FROM transactions WHERE deleted = true`)).rows;
     expect(removed).toHaveLength(1);

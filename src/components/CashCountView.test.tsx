@@ -152,7 +152,10 @@ function findButton(node: ReactNode, label: string, tag = 'button'): ReactElemen
     return undefined;
   }
   if (!isValidElement<Record<string, unknown>>(node)) return undefined;
-  const text = [node.props.children].flat().filter((c) => typeof c === 'string').join('');
+  const text = [node.props.children]
+    .flat()
+    .filter((c) => typeof c === 'string')
+    .join('');
   if (node.type === tag && (node.props['aria-label'] === label || text === label)) return node;
   return findButton(node.props.children as ReactNode, label, tag);
 }
@@ -221,8 +224,14 @@ describe('CashCountView wiring', () => {
 
 describe('CashCountView handlers', () => {
   it('tapping a tile adds one in Add mode', () => {
-    expect(press('€50 notes: 0. Tap to add one', counted({}, 'add')).dispatch).toHaveBeenCalledWith({ type: 'add', index: 0 });
-    expect(press('1c coins: 0. Tap to add one', counted({}, 'add')).dispatch).toHaveBeenCalledWith({ type: 'add', index: 11 });
+    expect(press('€50 notes: 0. Tap to add one', counted({}, 'add')).dispatch).toHaveBeenCalledWith({
+      type: 'add',
+      index: 0,
+    });
+    expect(press('1c coins: 0. Tap to add one', counted({}, 'add')).dispatch).toHaveBeenCalledWith({
+      type: 'add',
+      index: 11,
+    });
   });
 
   it('tapping a tile removes one in Remove mode', () => {

@@ -19,12 +19,8 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
     const isMainDest = MAIN_ACCOUNTS.some((a) => a.id === tx.account_id);
     const isReserveDest = RESERVE_ACCOUNTS.some((a) => a.id === tx.account_id);
 
-    const isMainSrc = tx.from_account_id
-      ? MAIN_ACCOUNTS.some((a) => a.id === tx.from_account_id)
-      : false;
-    const isReserveSrc = tx.from_account_id
-      ? RESERVE_ACCOUNTS.some((a) => a.id === tx.from_account_id)
-      : false;
+    const isMainSrc = tx.from_account_id ? MAIN_ACCOUNTS.some((a) => a.id === tx.from_account_id) : false;
+    const isReserveSrc = tx.from_account_id ? RESERVE_ACCOUNTS.some((a) => a.id === tx.from_account_id) : false;
 
     let displayIn = '';
     let displayOut = '';
@@ -87,14 +83,7 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
 
     const whatStr = `"${what.replace(/"/g, '""')}"`;
 
-    rows.push([
-      dateStr,
-      displayIn,
-      displayOut,
-      whatStr,
-      mainBalance.toFixed(2),
-      `+${reserveBalance.toFixed(2)}`,
-    ]);
+    rows.push([dateStr, displayIn, displayOut, whatStr, mainBalance.toFixed(2), `+${reserveBalance.toFixed(2)}`]);
   }
 
   return rows;

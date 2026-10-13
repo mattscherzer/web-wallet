@@ -119,7 +119,9 @@ export default function RecordPage() {
   });
   const message = (field: FieldError['field']) =>
     errorFor(field) && (
-      <p id={`${FIELD_IDS[field]}-error`} className="field-error">{errorFor(field)}</p>
+      <p id={`${FIELD_IDS[field]}-error`} className="field-error">
+        {errorFor(field)}
+      </p>
     );
 
   const isTransfer = form.type === 'transfer';
@@ -162,20 +164,32 @@ export default function RecordPage() {
       </div>
 
       {errors.length > 0 && <ErrorSummary ref={summaryRef} errors={errors} fieldIds={FIELD_IDS} />}
-      {saveError && <p className="field-error" role="alert">{saveError}</p>}
+      {saveError && (
+        <p className="field-error" role="alert">
+          {saveError}
+        </p>
+      )}
 
       <form onSubmit={submit} noValidate>
         <div className="type-group" role="radiogroup" aria-label="Type of entry">
           {TYPES.map((t) => (
             <label key={t.id} className={`type-group__item${form.type === t.id ? ' type-group__item--on' : ''}`}>
-              <input type="radio" name="type" value={t.id} checked={form.type === t.id} onChange={() => setType(t.id)} />
+              <input
+                type="radio"
+                name="type"
+                value={t.id}
+                checked={form.type === t.id}
+                onChange={() => setType(t.id)}
+              />
               <span>{t.label}</span>
             </label>
           ))}
         </div>
 
         <div className="form-section">
-          <label className="form-label" htmlFor={FIELD_IDS.amount}>Amount</label>
+          <label className="form-label" htmlFor={FIELD_IDS.amount}>
+            Amount
+          </label>
           <div className="amount-field">
             <span className="amount-field__sign" aria-hidden="true">
               {form.type === 'outflow' ? '−€' : '€'}
@@ -215,10 +229,8 @@ export default function RecordPage() {
         ) : (
           <div className="form-section">
             <span className="form-label">{form.type === 'inflow' ? 'Into account' : 'From account'}</span>
-            {accountChoices(
-              form.type === 'inflow' ? 'Into account' : 'From account',
-              form.accountId,
-              (id) => set({ accountId: id }),
+            {accountChoices(form.type === 'inflow' ? 'Into account' : 'From account', form.accountId, (id) =>
+              set({ accountId: id }),
             )}
           </div>
         )}
@@ -229,7 +241,13 @@ export default function RecordPage() {
             <div className="choice-group" role="radiogroup" aria-label="Category">
               {categories.map((c) => (
                 <label key={c.id} className={`choice${form.category === c.id ? ' choice--on' : ''}`}>
-                  <input type="radio" name="category" value={c.id} checked={form.category === c.id} onChange={() => set({ category: c.id })} />
+                  <input
+                    type="radio"
+                    name="category"
+                    value={c.id}
+                    checked={form.category === c.id}
+                    onChange={() => set({ category: c.id })}
+                  />
                   <span>{c.label}</span>
                 </label>
               ))}
@@ -238,7 +256,9 @@ export default function RecordPage() {
         )}
 
         <div className="form-section">
-          <label className="form-label" htmlFor={FIELD_IDS.description}>{descriptionLabel}</label>
+          <label className="form-label" htmlFor={FIELD_IDS.description}>
+            {descriptionLabel}
+          </label>
           <input
             {...fieldProps('description')}
             type="text"
@@ -250,7 +270,9 @@ export default function RecordPage() {
         </div>
 
         <div className="form-section">
-          <label className="form-label" htmlFor={FIELD_IDS.date}>Date</label>
+          <label className="form-label" htmlFor={FIELD_IDS.date}>
+            Date
+          </label>
           <input
             {...fieldProps('date')}
             type="date"
@@ -263,12 +285,13 @@ export default function RecordPage() {
 
         <div className="preview" aria-live="polite">
           {loadedBalances === null && <p className="preview__line">Checking balances…</p>}
-          {loadedBalances !== null && preview.lines.map((line, i) => (
-            <p key={`${line.accountId}-${i}`} className="preview__line">
-              <span>{getAccountLabel(line.accountId)}</span>
-              <span className="num">→ {formatCurrency(line.after)}</span>
-            </p>
-          ))}
+          {loadedBalances !== null &&
+            preview.lines.map((line, i) => (
+              <p key={`${line.accountId}-${i}`} className="preview__line">
+                <span>{getAccountLabel(line.accountId)}</span>
+                <span className="num">→ {formatCurrency(line.after)}</span>
+              </p>
+            ))}
           {loadedBalances !== null && (
             <p className="preview__line">
               <span>Available</span>
@@ -283,7 +306,9 @@ export default function RecordPage() {
           </p>
         )}
 
-        <button type="submit" className="btn btn--primary" disabled={saving}>{recordActionLabel(form)}</button>
+        <button type="submit" className="btn btn--primary" disabled={saving}>
+          {recordActionLabel(form)}
+        </button>
       </form>
 
       <PinModal isOpen={showPin} onSuccess={save} onCancel={() => setShowPin(false)} title="Confirm entry" />
