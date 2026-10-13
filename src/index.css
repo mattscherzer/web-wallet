@@ -957,7 +957,7 @@ img {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-fab);
-  z-index: 70;
+  z-index: 120;
 }
 
 .record-fab--open {
@@ -975,7 +975,7 @@ img {
   position: fixed;
   inset: 0;
   background: var(--color-scrim);
-  z-index: 60;
+  z-index: 110;
 }
 
 .record-menu {
@@ -986,7 +986,7 @@ img {
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-xs);
-  z-index: 70;
+  z-index: 120;
 }
 
 .record-menu__item {

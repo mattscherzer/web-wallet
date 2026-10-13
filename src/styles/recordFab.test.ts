@@ -52,12 +52,12 @@ describe('record menu motion and layering', () => {
     expect(css).toMatch(/@keyframes\s+record-menu-in/);
   });
 
-  it('stacks scrim under the menu and FAB, and all under the nav bar', () => {
+  it('stacks the scrim over the nav bar, and the menu and FAB over the scrim', () => {
     const scrim = zIndex('.record-scrim');
+    expect(scrim).toBeGreaterThan(zIndex('.bottom-nav'));
     expect(scrim).toBeGreaterThan(0);
     expect(zIndex('.record-menu')).toBeGreaterThan(scrim);
     expect(zIndex('.record-fab')).toBeGreaterThan(scrim);
-    expect(zIndex('.record-fab')).toBeLessThan(zIndex('.bottom-nav'));
   });
 
   it('keeps the global reduced-motion rule that disables animations', () => {
