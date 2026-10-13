@@ -8,12 +8,7 @@ interface PinModalProps {
   title?: string;
 }
 
-export default function PinModal({
-  isOpen,
-  onSuccess,
-  onCancel,
-  title = 'Enter PIN to Confirm',
-}: PinModalProps) {
+export default function PinModal({ isOpen, onSuccess, onCancel, title = 'Enter PIN to Confirm' }: PinModalProps) {
   const correctPin = usePin();
   const [digits, setDigits] = useState<string[]>(['', '', '', '']);
   const [error, setError] = useState(false);
@@ -67,15 +62,15 @@ export default function PinModal({
     <div className="modal-overlay" onClick={onCancel} id="pin-modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2 className="pin-modal__title">{title}</h2>
-        <p className="pin-modal__subtitle">
-          Enter your 4-digit confirmation code
-        </p>
+        <p className="pin-modal__subtitle">Enter your 4-digit confirmation code</p>
 
         <div className="pin-inputs">
           {digits.map((digit, i) => (
             <input
               key={i}
-              ref={(el) => { inputRefs.current[i] = el; }}
+              ref={(el) => {
+                inputRefs.current[i] = el;
+              }}
               type="tel"
               inputMode="numeric"
               maxLength={1}
@@ -89,9 +84,7 @@ export default function PinModal({
           ))}
         </div>
 
-        {error && (
-          <p className="pin-modal__error">Incorrect PIN. Please try again.</p>
-        )}
+        {error && <p className="pin-modal__error">Incorrect PIN. Please try again.</p>}
 
         <button className="pin-modal__cancel" onClick={onCancel} id="pin-cancel-btn">
           Cancel

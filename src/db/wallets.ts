@@ -16,10 +16,7 @@ export interface Wallet {
 export class WalletNameError extends Error {}
 
 export async function fetchWallets(): Promise<Wallet[]> {
-  const { data, error } = await supabase
-    .from('wallets')
-    .select('*')
-    .order('created_at', { ascending: true });
+  const { data, error } = await supabase.from('wallets').select('*').order('created_at', { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as Wallet[];
 }
@@ -42,10 +39,7 @@ export async function createWallet(rawName: string): Promise<Wallet> {
 type WalletBalanceRow = BalanceInput & { wallet_id: string };
 
 /** Available money (operating accounts only) per wallet; wallets without entries are 0. */
-export function availableByWallet(
-  walletIds: string[],
-  rows: WalletBalanceRow[],
-): Record<string, number> {
+export function availableByWallet(walletIds: string[], rows: WalletBalanceRow[]): Record<string, number> {
   const result: Record<string, number> = {};
   for (const id of walletIds) {
     const balances = computeAccountBalances(rows.filter((r) => r.wallet_id === id));
@@ -55,9 +49,7 @@ export function availableByWallet(
   return result;
 }
 
-export async function fetchWalletAvailableBalances(
-  walletIds: string[],
-): Promise<Record<string, number>> {
+export async function fetchWalletAvailableBalances(walletIds: string[]): Promise<Record<string, number>> {
   const rows = await fetchAllRows<WalletBalanceRow>((from, to) =>
     supabase
       .from('transactions')

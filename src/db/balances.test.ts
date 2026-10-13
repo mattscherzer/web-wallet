@@ -14,7 +14,7 @@ const outflow = (account_id: BalanceInput['account_id'], amount: number | string
 const transfer = (
   from_account_id: BalanceInput['from_account_id'],
   account_id: BalanceInput['account_id'],
-  amount: number | string
+  amount: number | string,
 ): BalanceInput => ({ type: 'transfer', amount, account_id, from_account_id });
 
 describe('computeAccountBalances', () => {
@@ -39,19 +39,13 @@ describe('computeAccountBalances', () => {
   });
 
   it('moves money between main accounts without changing their combined total', () => {
-    const balances = computeAccountBalances([
-      inflow('bank', 500),
-      transfer('bank', 'cash', 120),
-    ]);
+    const balances = computeAccountBalances([inflow('bank', 500), transfer('bank', 'cash', 120)]);
 
     expect(balances).toEqual({ cash: 120, paypal: 0, bank: 380, prudent_reserve: 0 });
   });
 
   it('moves money from a main account into the reserve', () => {
-    const balances = computeAccountBalances([
-      inflow('bank', 1000),
-      transfer('bank', 'prudent_reserve', 300),
-    ]);
+    const balances = computeAccountBalances([inflow('bank', 1000), transfer('bank', 'prudent_reserve', 300)]);
 
     expect(balances).toEqual({ cash: 0, paypal: 0, bank: 700, prudent_reserve: 300 });
   });
@@ -107,10 +101,7 @@ describe('computeAccountBalances', () => {
 
   it('credits only the destination when a transfer has a null source', () => {
     // Current behaviour, pinned so any change is deliberate (see #12).
-    const balances = computeAccountBalances([
-      transfer(null, 'cash', 40),
-      transfer(undefined, 'prudent_reserve', 10),
-    ]);
+    const balances = computeAccountBalances([transfer(null, 'cash', 40), transfer(undefined, 'prudent_reserve', 10)]);
 
     expect(balances).toEqual({ cash: 40, paypal: 0, bank: 0, prudent_reserve: 10 });
   });

@@ -82,11 +82,7 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
                   <span className="wallet-row__text">
                     <span className="wallet-row__name">{w.name}</span>
                     <span className="wallet-row__balance">
-                      {balances
-                        ? formatCurrency(balances[w.id] ?? 0)
-                        : failed
-                          ? 'Balance unavailable'
-                          : '…'}
+                      {balances ? formatCurrency(balances[w.id] ?? 0) : failed ? 'Balance unavailable' : '…'}
                     </span>
                   </span>
                   {isCurrent && <Check size={24} aria-hidden="true" />}
@@ -99,7 +95,9 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
         {failed && (
           <p role="alert" className="form-error">
             Couldn’t load the balances.{' '}
-            <button type="button" className="wallet-sheet__retry" onClick={retry}>Retry</button>
+            <button type="button" className="wallet-sheet__retry" onClick={retry}>
+              Retry
+            </button>
           </p>
         )}
 

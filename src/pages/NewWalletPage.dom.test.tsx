@@ -9,7 +9,15 @@ import NewWalletPage from './NewWalletPage';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get:
+        (_t, p) =>
+        (...a: unknown[]) =>
+          (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a),
+    },
+  ),
 }));
 
 beforeEach(() => {
@@ -35,8 +43,7 @@ function setup() {
   return storage;
 }
 
-const type = (v: string) =>
-  fireEvent.change(screen.getByLabelText('Wallet name'), { target: { value: v } });
+const type = (v: string) => fireEvent.change(screen.getByLabelText('Wallet name'), { target: { value: v } });
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Create wallet' }));
 
 describe('New wallet', () => {

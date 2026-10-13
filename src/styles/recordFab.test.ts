@@ -31,7 +31,10 @@ function blocks(text: string): Array<[string, string]> {
 
 const top = blocks(css);
 const motionOk = blocks(
-  top.filter(([h]) => h === '@media (prefers-reduced-motion: no-preference)').map(([, b]) => b).join('\n'),
+  top
+    .filter(([h]) => h === '@media (prefers-reduced-motion: no-preference)')
+    .map(([, b]) => b)
+    .join('\n'),
 );
 const outsideMedia = top.filter(([h]) => !h.startsWith('@media'));
 const baseRule = (sel: string) => outsideMedia.find(([h]) => h === sel)?.[1] ?? '';

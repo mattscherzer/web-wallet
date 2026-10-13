@@ -108,9 +108,7 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
         <h2 className="count-section__title" id={`count-${title.toLowerCase()}`}>
           {title}
         </h2>
-        <div className="count-grid">
-          {indexes.map(mode === 'type' ? renderEntry : renderTile)}
-        </div>
+        <div className="count-grid">{indexes.map(mode === 'type' ? renderEntry : renderTile)}</div>
       </section>
     );
   };
@@ -118,12 +116,7 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
   return (
     <div className="count-screen" role="dialog" aria-modal="true" aria-labelledby="count-title">
       <header className="count-header">
-        <button
-          type="button"
-          className="count-icon-btn"
-          aria-label="Back to the form"
-          onClick={onClose}
-        >
+        <button type="button" className="count-icon-btn" aria-label="Back to the form" onClick={onClose}>
           <ArrowLeft size={24} aria-hidden="true" />
         </button>
         <h1 className="count-header__title" id="count-title">
@@ -150,12 +143,7 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
       </div>
 
       <footer className="count-footer">
-        <button
-          type="button"
-          className="count-apply"
-          disabled={cents === 0}
-          onClick={() => onApply(cents / 100)}
-        >
+        <button type="button" className="count-apply" disabled={cents === 0} onClick={() => onApply(cents / 100)}>
           {`Use ${money(cents)} as amount`}
         </button>
         <div className="count-toolbar" role="toolbar" aria-label="Counting tools">

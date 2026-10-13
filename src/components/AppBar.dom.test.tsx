@@ -8,7 +8,15 @@ import AppBar from './AppBar';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get:
+        (_t, p) =>
+        (...a: unknown[]) =>
+          (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a),
+    },
+  ),
 }));
 
 beforeEach(() => {
@@ -24,7 +32,15 @@ function setup() {
   render(
     walletApp(
       <Routes>
-        <Route path="*" element={<><AppBar /><Where /></>} />
+        <Route
+          path="*"
+          element={
+            <>
+              <AppBar />
+              <Where />
+            </>
+          }
+        />
       </Routes>,
       { path: '/history', current: 'wa' },
     ),
@@ -61,8 +77,16 @@ describe('wallet switcher', () => {
 
   it('marks the current wallet', async () => {
     const dialog = await open();
-    expect(within(dialog).getByRole('button', { name: /Thursday SLAA Meeting/ }).getAttribute('aria-current')).toBe('true');
-    expect(within(dialog).getByRole('button', { name: /Spring Convention 2027/ }).getAttribute('aria-current')).toBeNull();
+    expect(
+      within(dialog)
+        .getByRole('button', { name: /Thursday SLAA Meeting/ })
+        .getAttribute('aria-current'),
+    ).toBe('true');
+    expect(
+      within(dialog)
+        .getByRole('button', { name: /Spring Convention 2027/ })
+        .getAttribute('aria-current'),
+    ).toBeNull();
   });
 
   it('switches wallet, closes the sheet and returns to the overview', async () => {

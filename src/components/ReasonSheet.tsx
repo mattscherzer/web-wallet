@@ -94,7 +94,9 @@ export default function ReasonSheet({
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id={titleId} className="sheet__title">{title}</h2>
+        <h2 id={titleId} className="sheet__title">
+          {title}
+        </h2>
         {children}
         <div role="radiogroup" aria-label={reasonLabel} className="sheet__reasons">
           {reasons.map((r) => (
@@ -106,13 +108,29 @@ export default function ReasonSheet({
         </div>
         {withNote && (
           <div className="form-section">
-            <label className="form-label" htmlFor="reason-note">Note (optional)</label>
-            <textarea id="reason-note" className="form-textarea" rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
+            <label className="form-label" htmlFor="reason-note">
+              Note (optional)
+            </label>
+            <textarea
+              id="reason-note"
+              className="form-textarea"
+              rows={2}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
           </div>
         )}
-        {(problem || error) && <p className="field-error" role="status">{problem ?? error}</p>}
-        <button type="button" className="btn btn--primary" onClick={submit}>{confirmLabel}</button>
-        <button type="button" className="pin-modal__cancel" onClick={onCancel}>Cancel</button>
+        {(problem || error) && (
+          <p className="field-error" role="status">
+            {problem ?? error}
+          </p>
+        )}
+        <button type="button" className="btn btn--primary" onClick={submit}>
+          {confirmLabel}
+        </button>
+        <button type="button" className="pin-modal__cancel" onClick={onCancel}>
+          Cancel
+        </button>
       </div>
     </div>
   );

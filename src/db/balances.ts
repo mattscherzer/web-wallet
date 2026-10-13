@@ -23,9 +23,7 @@ export function emptyBalances(): Record<AccountId, number> {
  *
  * Soft-deleted transactions are skipped.
  */
-export function computeAccountBalances(
-  transactions: Iterable<BalanceInput>
-): Record<AccountId, number> {
+export function computeAccountBalances(transactions: Iterable<BalanceInput>): Record<AccountId, number> {
   const balances = emptyBalances();
 
   for (const t of transactions) {

@@ -22,7 +22,10 @@ const base = (over: Partial<Form> = {}): Form => ({
   ...over,
 });
 
-const fieldsOf = (form: Form) => lib().validateRecord(form).map((e) => e.field);
+const fieldsOf = (form: Form) =>
+  lib()
+    .validateRecord(form)
+    .map((e) => e.field);
 
 const BALANCES: Record<AccountId, number> = { cash: 100, paypal: 0, bank: 802.5, prudent_reserve: 500 };
 
@@ -76,7 +79,9 @@ describe('record preview and action', () => {
       { accountId: 'prudent_reserve', after: 550 },
     ]);
     expect(r.availableAfter).toBeCloseTo(852.5);
-    expect(availableDelta({ type: 'transfer', amount: 50, accountId: 'prudent_reserve', fromAccountId: 'bank' })).toBe(-50);
+    expect(availableDelta({ type: 'transfer', amount: 50, accountId: 'prudent_reserve', fromAccountId: 'bank' })).toBe(
+      -50,
+    );
     expect(availableDelta({ type: 'transfer', amount: 150, accountId: 'bank', fromAccountId: 'cash' })).toBe(0);
     expect(availableDelta({ type: 'inflow', amount: 10, accountId: 'cash', fromAccountId: null })).toBe(10);
     expect(availableDelta({ type: 'outflow', amount: 10, accountId: 'cash', fromAccountId: null })).toBe(-10);

@@ -21,7 +21,8 @@ function scratchEnvDir(extra: Record<string, string> = {}) {
   delete process.env.VITE_SUPABASE_ANON_KEY;
   const dir = mkdtempSync(join(tmpdir(), 'wallet-env-'));
   writeFileSync(join(dir, '.env'), `VITE_SUPABASE_URL=${PROD_URL}\nVITE_SUPABASE_ANON_KEY=${PROD_KEY}\n`);
-  if (existsSync(join(root, '.env.development'))) copyFileSync(join(root, '.env.development'), join(dir, '.env.development'));
+  if (existsSync(join(root, '.env.development')))
+    copyFileSync(join(root, '.env.development'), join(dir, '.env.development'));
   for (const [name, body] of Object.entries(extra)) writeFileSync(join(dir, name), body);
   return dir;
 }
@@ -29,7 +30,10 @@ function scratchEnvDir(extra: Record<string, string> = {}) {
 function migrationsSql() {
   const dir = join(root, 'supabase/migrations');
   if (!existsSync(dir)) return '';
-  return readdirSync(dir).filter((f) => f.endsWith('.sql')).map((f) => readFileSync(join(dir, f), 'utf8')).join('\n');
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.sql'))
+    .map((f) => readFileSync(join(dir, f), 'utf8'))
+    .join('\n');
 }
 
 describe('local Supabase dev environment', () => {
@@ -80,10 +84,19 @@ describe('local Supabase dev environment', () => {
 
   it('T5 production needs the explicit dev:prod command, with its own gitignored credentials file', () => {
     expect(scripts()['dev:prod']).toMatch(/vite\s+--mode\s+prod\b/);
-    const env = loadEnv('prod', scratchEnvDir({ '.env.prod.local': 'VITE_SUPABASE_URL=https://real.supabase.co\nVITE_SUPABASE_ANON_KEY=real\n' }), 'VITE_');
+    const env = loadEnv(
+      'prod',
+      scratchEnvDir({ '.env.prod.local': 'VITE_SUPABASE_URL=https://real.supabase.co\nVITE_SUPABASE_ANON_KEY=real\n' }),
+      'VITE_',
+    );
     expect(env.VITE_SUPABASE_URL).toBe('https://real.supabase.co');
     const ignored = (p: string) => {
-      try { execFileSync('git', ['check-ignore', '-q', p], { cwd: root }); return true; } catch { return false; }
+      try {
+        execFileSync('git', ['check-ignore', '-q', p], { cwd: root });
+        return true;
+      } catch {
+        return false;
+      }
     };
     expect(ignored('.env.prod.local')).toBe(true);
     expect(ignored('.env.development')).toBe(false);
@@ -112,7 +125,8 @@ describe('local Supabase dev environment', () => {
     const seed = read('supabase/seed.sql');
     await db.exec(seed);
     await db.exec(seed); // re-running must be harmless (db:seed)
-    const count = async (t: string) => Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
+    const count = async (t: string) =>
+      Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
     expect(await count('transactions')).toBeGreaterThan(0);
     expect(await count('audit_log')).toBeGreaterThan(0);
     expect(await count("app_config WHERE key = 'pin'")).toBe(1);

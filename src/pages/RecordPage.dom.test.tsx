@@ -8,7 +8,15 @@ import { enterPin, transactionRows } from '../test/transactionsTestKit';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get:
+        (_t, p) =>
+        (...a: unknown[]) =>
+          (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a),
+    },
+  ),
 }));
 
 // Loaded dynamically so missing modules fail the assertion instead of crashing the file.
@@ -87,7 +95,13 @@ describe('Record screen', () => {
 
     expect(await screen.findByRole('heading', { name: 'Recorded' })).toBeTruthy();
     const saved = ref.fake.tables.transactions.at(-1)!;
-    expect(saved).toMatchObject({ wallet_id: 'wa', type: 'outflow', amount: 60, account_id: 'cash', notes: 'Hall rent' });
+    expect(saved).toMatchObject({
+      wallet_id: 'wa',
+      type: 'outflow',
+      amount: 60,
+      account_id: 'cash',
+      notes: 'Hall rent',
+    });
     expect(ref.fake.tables.audit_log.at(-1)).toMatchObject({ action: 'create', transaction_id: saved.id });
     expect(screen.getByRole('button', { name: /Undo this entry/ })).toBeTruthy();
   });
@@ -97,11 +111,18 @@ describe('Record screen', () => {
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '50' } });
     fireEvent.click(group('From account').getByRole('radio', { name: 'Bank Account' }));
     fireEvent.click(group('To account').getByRole('radio', { name: 'Prudent Reserve' }));
-    fireEvent.click(await screen.findByRole('button', { name: /^Record €50\.00 from Bank Account to Prudent Reserve/ }));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /^Record €50\.00 from Bank Account to Prudent Reserve/ }),
+    );
     await enterPin('1234', ref.fake);
 
     expect(await screen.findByRole('heading', { name: 'Recorded' })).toBeTruthy();
-    expect(ref.fake.tables.transactions.at(-1)).toMatchObject({ type: 'transfer', amount: 50, account_id: 'prudent_reserve', from_account_id: 'bank' });
+    expect(ref.fake.tables.transactions.at(-1)).toMatchObject({
+      type: 'transfer',
+      amount: 50,
+      account_id: 'prudent_reserve',
+      from_account_id: 'bank',
+    });
   });
 
   it('shows an error and no receipt when saving fails', async () => {

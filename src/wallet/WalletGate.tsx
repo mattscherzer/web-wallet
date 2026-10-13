@@ -20,7 +20,9 @@ export default function WalletGate({ children }: { children: ReactNode }) {
     return (
       <div className="wallet-error" role="alert">
         <p>Couldn’t load your wallets.</p>
-        <button type="button" className="btn btn--primary" onClick={reload}>Retry</button>
+        <button type="button" className="btn btn--primary" onClick={reload}>
+          Retry
+        </button>
       </div>
     );
   }
