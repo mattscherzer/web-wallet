@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from './test/fakeSupabase';
 import { memoryStorage } from './test/walletTestKit';
 import { CURRENT_WALLET_KEY } from './wallet/walletStore';
