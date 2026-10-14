@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router';
 import { Check } from 'lucide-react';
 import { getAccountLabel, fromAccountLabel, removeTransaction } from '../db/database';
 import { useEntry } from '../db/hooks';

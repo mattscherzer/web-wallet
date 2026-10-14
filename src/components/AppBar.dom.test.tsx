@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
 import AppBar from './AppBar';

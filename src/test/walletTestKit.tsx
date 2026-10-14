@@ -1,6 +1,6 @@
 // Shared setup for component tests that run against the fake Supabase client.
 import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { WalletProvider } from '../wallet/WalletProvider';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
 

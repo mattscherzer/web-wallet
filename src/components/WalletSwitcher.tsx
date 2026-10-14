@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Check, Plus, X } from 'lucide-react';
 import { fetchWalletAvailableBalances } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
