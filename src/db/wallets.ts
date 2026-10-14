@@ -21,37 +21,23 @@ export async function fetchWallets(): Promise<Wallet[]> {
   return (data ?? []) as Wallet[];
 }
 
-/** Inserts the wallet only (admins use this for wallets other people will use). */
-export async function insertWallet(rawName: string): Promise<Wallet> {
+/** Creates a wallet with the logged-in owner as its owner, in one step in the database. */
+export async function createWallet(rawName: string): Promise<Wallet> {
   const name = rawName.trim();
   if (!name) throw new WalletNameError('Enter a wallet name');
   if (name.length > MAX_WALLET_NAME) {
     throw new WalletNameError(`That name is too long (max ${MAX_WALLET_NAME} characters)`);
   }
 
-  const { data, error } = await supabase.from('wallets').insert({ name }).select('*').single();
+  const { data: id, error } = await supabase.rpc('create_wallet', { name });
   if (error) {
     if (error.code === '23505') throw new WalletNameError('A wallet with that name already exists');
+    if (error.code === '42501') throw new WalletNameError('Only owners can create wallets');
     throw new Error(error.message);
   }
+  const { data, error: readError } = await supabase.from('wallets').select('*').eq('id', id).single();
+  if (readError) throw new Error(readError.message);
   return data as Wallet;
-}
-
-/** Creates a wallet and makes the person creating it a member, so they can use it right away. */
-export async function createWallet(rawName: string): Promise<Wallet> {
-  const wallet = await insertWallet(rawName);
-  const { data } = await supabase.auth.getSession();
-  const userId = data.session?.user.id;
-  if (userId) {
-    const { error } = await supabase.from('wallet_members').insert({ user_id: userId, wallet_id: wallet.id });
-    if (error) {
-      // Don't leave an unusable wallet behind (a retry would then hit a duplicate name).
-      const { error: cleanupError } = await supabase.from('wallets').delete().eq('id', wallet.id);
-      if (cleanupError) console.error('Could not remove the wallet after a membership failure', cleanupError);
-      throw new Error(error.message);
-    }
-  }
-  return wallet;
 }
 
 type WalletBalanceRow = BalanceInput & { wallet_id: string };

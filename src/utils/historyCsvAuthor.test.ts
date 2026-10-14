@@ -18,21 +18,24 @@ const tx = (over: Partial<Transaction>): Transaction =>
     ...over,
   }) as Transaction;
 
+const by = (name: string | null, role: string | null) =>
+  ({ created_by_name: name, created_by_role: role, created_by: name ? 'u1' : null }) as Partial<Transaction>;
+
 describe('CSV author column', () => {
-  it('T13 ends every row with who made the entry, "Unknown / N/A" when nobody is recorded', () => {
-    const lines = buildHistoryCsv(
-      [tx({ id: 'a', created_by: 'u1' } as Partial<Transaction>), tx({ id: 'b' }), tx({ id: 'c', created_by: 'gone' } as Partial<Transaction>)],
-      undefined,
-      { u1: 'Anna' },
-    ).split('\n');
+  it('T13 ends every row with the stored name and role of who made the entry, "Unknown / N/A" for old entries', () => {
+    const lines = buildHistoryCsv([
+      tx({ id: 'a', ...by('Anna', 'staff') }),
+      tx({ id: 'b', ...by('Olga', 'owner') }),
+      tx({ id: 'c' }),
+    ]).split('\n');
     expect(lines[0]).toBe('Date,In,Out,What,Balance,Prudent Reserve,Created by');
-    expect(lines[1].endsWith(',"Anna"')).toBe(true);
-    expect(lines[2].endsWith(',"Unknown / N/A"')).toBe(true);
+    expect(lines[1].endsWith(',"Anna (staff)"')).toBe(true);
+    expect(lines[2].endsWith(',"Olga (owner)"')).toBe(true);
     expect(lines[3].endsWith(',"Unknown / N/A"')).toBe(true);
   });
 
   it('T13b quotes author names that contain commas or quotes', () => {
-    const csv = buildHistoryCsv([tx({ created_by: 'u1' } as Partial<Transaction>)], undefined, { u1: 'Anna, "A"' });
-    expect(csv.split('\n')[1].endsWith(',"Anna, ""A"""')).toBe(true);
+    const csv = buildHistoryCsv([tx({ ...by('Anna, "A"', 'staff') })]);
+    expect(csv.split('\n')[1].endsWith(',"Anna, ""A"" (staff)"')).toBe(true);
   });
 });

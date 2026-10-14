@@ -37,6 +37,9 @@ export interface Transaction {
   removed_at?: string | null;
   /** Who made the entry (profile id); null for entries from before login existed. */
   created_by?: string | null;
+  /** Role and name of the author as they were when the entry was made (kept if the account is removed). */
+  created_by_role?: 'owner' | 'staff' | null;
+  created_by_name?: string | null;
 }
 
 export interface AuditEntry {
@@ -51,6 +54,8 @@ export interface AuditEntry {
   actor?: string | null;
   /** Who made the change (profile id); null for history from before login existed. */
   created_by?: string | null;
+  created_by_role?: 'owner' | 'staff' | null;
+  created_by_name?: string | null;
   reason?: string | null;
   note?: string | null;
 }

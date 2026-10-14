@@ -4,10 +4,7 @@ import { createWallet } from './wallets';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
-  supabase: new Proxy(
-    {},
-    { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] },
-  ),
+  supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
 
 beforeEach(() => {
@@ -15,11 +12,13 @@ beforeEach(() => {
 });
 
 describe('createWallet', () => {
-  it('T15 makes the person who created the wallet a member, so they can use it right away', async () => {
-    ref.fake.signIn('u-admin');
+  it('T15 creates the wallet and its owner in one database step, so nothing is left half-made and the owner can use it right away', async () => {
+    ref.fake.signIn('u-owner');
     const wallet = await createWallet('Autumn Retreat');
-    const members = ref.fake.tables.wallet_members;
-    expect(members).toHaveLength(1);
-    expect(members[0]).toMatchObject({ user_id: 'u-admin', wallet_id: wallet.id });
+    expect(ref.fake.rpcCalls).toEqual([{ name: 'create_wallet', args: { name: 'Autumn Retreat' } }]);
+    expect(wallet.name).toBe('Autumn Retreat');
+    expect(ref.fake.tables.wallet_members).toEqual([{ user_id: 'u-owner', wallet_id: wallet.id, role: 'owner' }]);
+    // No separate client-side inserts that could fail halfway.
+    expect(ref.fake.queries.filter((q) => q.op === 'insert')).toEqual([]);
   });
 });

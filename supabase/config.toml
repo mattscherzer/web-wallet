@@ -173,7 +173,7 @@ enable_refresh_token_rotation = true
 # Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
 # Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
-# Allow/disallow new user signups to your project. Only admins create users (admin-create-user function).
+# Allow/disallow new user signups to your project. Owners are created in the dashboard; staff are created by owners (staff-admin function).
 enable_signup = false
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
@@ -414,7 +414,13 @@ enabled = true
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
 
-[functions.admin-create-user]
+[functions.staff-login]
+enabled = true
+# Called before anyone is logged in: it checks the PIN itself, on the server.
+verify_jwt = false
+entrypoint = "./functions/staff-login/index.ts"
+
+[functions.staff-admin]
 enabled = true
 verify_jwt = true
-entrypoint = "./functions/admin-create-user/index.ts"
+entrypoint = "./functions/staff-admin/index.ts"

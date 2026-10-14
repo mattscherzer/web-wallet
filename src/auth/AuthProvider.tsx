@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { supabase } from '../db/supabase';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
-import { AuthContext, type AuthProfile, type AuthUser, type AuthValue } from './authContext';
+import { AuthContext, type AuthProfile, type AuthUser, type AuthValue, type Role } from './authContext';
+import { functionErrorMessage } from './functionError';
+import { useIdleLock } from './idleLock';
 
-type State = Pick<AuthValue, 'status' | 'user' | 'profile'>;
-const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null };
+type State = Pick<AuthValue, 'status' | 'user' | 'profile'> & { permissions: ReadonlySet<string> };
+const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null, permissions: new Set() };
 
 function forgetWallet() {
   try {
@@ -14,17 +16,24 @@ function forgetWallet() {
   }
 }
 
-async function loadProfile(user: AuthUser): Promise<AuthProfile> {
-  const { data, error } = await supabase.from('profiles').select('display_name, is_admin').eq('id', user.id).single();
+async function loadProfile(user: AuthUser): Promise<{ profile: AuthProfile; permissions: ReadonlySet<string> }> {
+  const { data, error } = await supabase.from('profiles').select('display_name, kind').eq('id', user.id).single();
   if (error || !data) {
     console.error('Failed to load the profile:', error);
-    return { displayName: user.email, isAdmin: false };
+    // Without a profile nothing is offered; the database refuses anyway.
+    return { profile: { displayName: user.email, kind: 'staff' }, permissions: new Set() };
   }
-  return { displayName: String(data.display_name) || user.email, isAdmin: data.is_admin === true };
+  const kind: Role = data.kind === 'owner' ? 'owner' : 'staff';
+  const perms = await supabase.from('role_permissions').select('action').eq('role', kind);
+  if (perms.error) console.error('Failed to load the permissions:', perms.error);
+  return {
+    profile: { displayName: String(data.display_name) || user.email, kind },
+    permissions: new Set((perms.data ?? []).map((p) => String(p.action))),
+  };
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>({ status: 'loading', user: null, profile: null });
+  const [state, setState] = useState<State>({ ...SIGNED_OUT, status: 'loading' });
 
   useEffect(() => {
     let live = true;
@@ -35,8 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       const user = { id: session.user.id, email: session.user.email ?? '' };
-      const profile = await loadProfile(user);
-      if (live) setState({ status: 'signedIn', user, profile });
+      const { profile, permissions } = await loadProfile(user);
+      if (live) setState({ status: 'signedIn', user, profile, permissions });
     };
 
     supabase.auth.getSession().then(
@@ -68,13 +77,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return error ? error.message : null;
   }, []);
 
+  const signInStaff = useCallback(async (username: string, pin: string) => {
+    const { data, error } = await supabase.functions.invoke('staff-login', {
+      body: { username: username.trim(), pin },
+    });
+    if (error) return functionErrorMessage(error, 'Could not sign in. Try again.');
+    const session = (data as { session?: { access_token?: string; refresh_token?: string } } | null)?.session;
+    if (!session?.access_token || !session.refresh_token) return 'Could not sign in. Try again.';
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
+    return sessionError ? sessionError.message : null;
+  }, []);
+
+  // Ends the session on this device only: other devices of the same account stay signed in.
   const signOut = useCallback(async () => {
     forgetWallet();
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
     if (error) console.error('Failed to sign out:', error);
     setState(SIGNED_OUT);
   }, []);
 
-  const value = useMemo<AuthValue>(() => ({ ...state, signIn, signOut }), [state, signIn, signOut]);
+  useIdleLock(state.status === 'signedIn', () => void signOut());
+
+  const can = useCallback((action: string) => state.permissions.has(action), [state.permissions]);
+  const value = useMemo<AuthValue>(
+    () => ({
+      status: state.status,
+      user: state.user,
+      profile: state.profile,
+      can,
+      signIn,
+      signInStaff,
+      signOut,
+      lock: signOut,
+    }),
+    [state.status, state.user, state.profile, can, signIn, signInStaff, signOut],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

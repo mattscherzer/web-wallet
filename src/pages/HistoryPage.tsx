@@ -10,6 +10,8 @@ import { getDateGroupLabel, groupByDate } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
 import { availableDelta, categoryLabel } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
+import { useOwnerConfirm } from '../auth/OwnerConfirm';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
 
@@ -22,6 +24,8 @@ const FILTER_LABELS: Record<FilterType, string> = {
 
 export default function HistoryPage() {
   const { current: wallet } = useWallet();
+  const { can } = useAuth();
+  const confirmOwner = useOwnerConfirm();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showRemoved, setShowRemoved] = useState(false);
@@ -36,13 +40,20 @@ export default function HistoryPage() {
     <>
       <div className="page-header">
         <h1 className="page-header__title">History</h1>
-        <button
-          className="btn btn--outline page-header__action"
-          onClick={() => wallet && generateHistoryCsv(wallet.id, wallet.name)}
-          id="export-csv-btn"
-        >
-          <Download size={18} aria-hidden="true" /> Export CSV
-        </button>
+        {can('export') && (
+          <button
+            className="btn btn--outline page-header__action"
+            onClick={() =>
+              wallet &&
+              void confirmOwner().then((ok) => {
+                if (ok) return generateHistoryCsv(wallet.id, wallet.name);
+              })
+            }
+            id="export-csv-btn"
+          >
+            <Download size={18} aria-hidden="true" /> Export CSV
+          </button>
+        )}
       </div>
 
       <div className="search-bar" id="history-search-bar">

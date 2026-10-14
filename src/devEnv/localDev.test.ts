@@ -142,8 +142,9 @@ describe('local Supabase dev environment', () => {
       Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
     expect(await count('transactions')).toBeGreaterThan(0);
     expect(await count('audit_log')).toBeGreaterThan(0);
-    expect(await count('profiles WHERE is_admin')).toBe(1);
-    expect(await count('wallet_members')).toBe(2);
+    expect(await count(`profiles WHERE kind = 'owner'`)).toBe(1);
+    expect(await count(`wallet_members WHERE role = 'staff'`)).toBe(1);
+    expect(await count('staff_credentials')).toBe(1);
     expect(await count('audit_log a LEFT JOIN transactions t ON t.id = a.transaction_id WHERE t.id IS NULL')).toBe(0);
     await db.close();
   });

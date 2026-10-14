@@ -6,6 +6,7 @@ import WalletGate from './wallet/WalletGate';
 import { legacyRedirect } from './components/recordMenu';
 import { AuthProvider } from './auth/AuthProvider';
 import { AuthGate } from './auth/AuthGate';
+import { OwnerConfirmProvider } from './auth/OwnerConfirm';
 
 // Routes are code-split so the initial load only pulls the dashboard.
 // Layout renders the Suspense boundary, which keeps the bottom nav mounted
@@ -30,11 +31,7 @@ export function AppRoutes() {
           <Route path="record" element={<RecordPage />} />
           <Route path="recorded/:id" element={<RecordedPage />} />
           {['add', 'withdraw', 'transfer'].map((old) => (
-            <Route
-              key={old}
-              path={old}
-              element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />}
-            />
+            <Route key={old} path={old} element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />} />
           ))}
           <Route path="history" element={<HistoryPage />} />
           <Route path="history/:id" element={<EntryPage />} />
@@ -53,9 +50,11 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AuthGate>
-          <WalletProvider>
-            <AppRoutes />
-          </WalletProvider>
+          <OwnerConfirmProvider>
+            <WalletProvider>
+              <AppRoutes />
+            </WalletProvider>
+          </OwnerConfirmProvider>
         </AuthGate>
       </AuthProvider>
     </BrowserRouter>

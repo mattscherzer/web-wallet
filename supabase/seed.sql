@@ -1,24 +1,26 @@
 -- Local development data. Safe to re-run: every insert is ON CONFLICT DO NOTHING.
 -- Applied by `npm run db:reset` (automatically) and `npm run db:seed` (re-run only).
 
--- Local logins (password for both: password123). Never used in production.
---   admin@example.test  admin of every wallet, member of the default wallet
---   anna@example.test   plain member of the default wallet
+-- Local logins. Never used in production.
+--   owner@example.test   owner of the default wallet; password: password123
+--   anna (staff)         staff of the default wallet; username: anna, PIN: 123456
 INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change_token_new, email_change) VALUES
-  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'admin@example.test', '$2a$10$MQODK60PfqvsAl2K9UlU8.qEY45PazM0eyOzeYOPOTeakvv7t01W2', now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Admin"}', now(), now(), '', '', '', ''),
-  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'anna@example.test', '$2a$10$MQODK60PfqvsAl2K9UlU8.qEY45PazM0eyOzeYOPOTeakvv7t01W2', now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Anna"}', now(), now(), '', '', '', '')
+  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'owner@example.test', '$2a$10$MQODK60PfqvsAl2K9UlU8.qEY45PazM0eyOzeYOPOTeakvv7t01W2', now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Owner","kind":"owner"}', now(), now(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000000', 'a0000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'a0000000-0000-4000-8000-000000000002@staff.invalid', '$2a$10$MQODK60PfqvsAl2K9UlU8.qEY45PazM0eyOzeYOPOTeakvv7t01W2', now(), '{"provider":"email","providers":["email"]}', '{"display_name":"Anna","kind":"staff"}', now(), now(), '', '', '', '')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at) VALUES
-  ('a0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'email', '{"sub":"a0000000-0000-4000-8000-000000000001","email":"admin@example.test"}', now(), now(), now()),
-  ('a0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', 'email', '{"sub":"a0000000-0000-4000-8000-000000000002","email":"anna@example.test"}', now(), now(), now())
+  ('a0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'email', '{"sub":"a0000000-0000-4000-8000-000000000001","email":"owner@example.test"}', now(), now(), now()),
+  ('a0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', 'email', '{"sub":"a0000000-0000-4000-8000-000000000002","email":"a0000000-0000-4000-8000-000000000002@staff.invalid"}', now(), now(), now())
 ON CONFLICT DO NOTHING;
 
-UPDATE profiles SET is_admin = true WHERE id = 'a0000000-0000-4000-8000-000000000001';
+INSERT INTO wallet_members (user_id, wallet_id, role) VALUES
+  ('a0000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000001', 'owner'),
+  ('a0000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000001', 'staff')
+ON CONFLICT DO NOTHING;
 
-INSERT INTO wallet_members (user_id, wallet_id) VALUES
-  ('a0000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000001'),
-  ('a0000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000001')
+INSERT INTO staff_credentials (user_id, wallet_id, username, pin_hash) VALUES
+  ('a0000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000001', 'anna', '$2a$10$uE1KOFMe7KfUuvdsC9s6mOMH1Ts2eJ/p.o4sE48BrHSKXlnLh2Rpy')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO transactions (id, type, amount, date, account_id, from_account_id, category, notes, reason, created_at, updated_at, deleted, created_by) VALUES

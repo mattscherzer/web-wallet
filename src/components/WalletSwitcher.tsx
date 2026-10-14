@@ -12,8 +12,8 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { wallets, current, switchWallet } = useWallet();
   const navigate = useNavigate();
   const { profile } = useAuth();
-  // Only admins create wallets; the database refuses everyone else.
-  const canCreate = !profile || profile.isAdmin; // outside a login (isolated tests) nothing is hidden
+  // Only owners create wallets; the database refuses everyone else.
+  const canCreate = !profile || profile.kind === 'owner'; // outside a login (isolated tests) nothing is hidden
   const [balances, setBalances] = useState<Record<string, number> | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);

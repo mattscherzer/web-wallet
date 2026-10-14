@@ -21,7 +21,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import { categoryLabel, parseAmount } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
-import { useAuthorNames } from '../db/useAuthorNames';
+import { useOwnerConfirm } from '../auth/OwnerConfirm';
 import { authorLabel } from '../utils/authorLabel';
 
 type Sheet = 'edit' | 'remove' | null;
@@ -35,8 +35,8 @@ export default function EntryPage() {
   const { id = '' } = useParams();
   const { current: wallet } = useWallet();
   const { status, tx, audit, refresh } = useEntry(id);
-  const { profile } = useAuth();
-  const authors = useAuthorNames();
+  const { profile, user, can } = useAuth();
+  const confirmOwner = useOwnerConfirm();
   const actor = profile?.displayName;
 
   const [sheet, setSheet] = useState<Sheet>(null);
@@ -153,7 +153,7 @@ export default function EntryPage() {
       <p className="entry__hint">Written automatically. It can't be edited or deleted.</p>
       <ol className="history-log" aria-label="Change history">
         {history.map((e) => (
-          <HistoryEvent key={e.id} entry={e} author={authorLabel(e.created_by, authors)} />
+          <HistoryEvent key={e.id} entry={e} author={authorLabel(e)} />
         ))}
       </ol>
 
@@ -165,28 +165,36 @@ export default function EntryPage() {
 
       <div className="entry__toolbar" role="group" aria-label="Entry actions">
         {removed ? (
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={() => void run(() => restoreTransaction(tx.id, { walletId, actor }))}
-          >
-            <RotateCcw size={18} aria-hidden="true" /> Restore
-          </button>
+          can('restore_entry') && (
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() =>
+                void confirmOwner().then((ok) => {
+                  if (ok) return run(() => restoreTransaction(tx.id, { walletId, actor }));
+                })
+              }
+            >
+              <RotateCcw size={18} aria-hidden="true" /> Restore
+            </button>
+          )
         ) : (
           <>
             <button type="button" className="btn btn--outline" onClick={openEdit}>
               <Pencil size={18} aria-hidden="true" /> Edit
             </button>
-            <button
-              type="button"
-              className="btn btn--outline entry__remove"
-              onClick={() => {
-                setProblem(null);
-                setSheet('remove');
-              }}
-            >
-              <Trash2 size={18} aria-hidden="true" /> Remove
-            </button>
+            {(can('remove_entry') || (can('remove_own_entry') && (!user || tx.created_by === user.id))) && (
+              <button
+                type="button"
+                className="btn btn--outline entry__remove"
+                onClick={() => {
+                  setProblem(null);
+                  setSheet('remove');
+                }}
+              >
+                <Trash2 size={18} aria-hidden="true" /> Remove
+              </button>
+            )}
           </>
         )}
       </div>
