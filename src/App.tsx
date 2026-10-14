@@ -17,31 +17,38 @@ const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const MorePage = lazy(() => import('./pages/MorePage'));
 const NewWalletPage = lazy(() => import('./pages/NewWalletPage'));
 
+/** The route table with its wallet gate; the router and wallet provider come from the caller. */
+export function AppRoutes() {
+  return (
+    <WalletGate>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="record" element={<RecordPage />} />
+          <Route path="recorded/:id" element={<RecordedPage />} />
+          {['add', 'withdraw', 'transfer'].map((old) => (
+            <Route
+              key={old}
+              path={old}
+              element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />}
+            />
+          ))}
+          <Route path="history" element={<HistoryPage />} />
+          <Route path="history/:id" element={<EntryPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="more" element={<MorePage />} />
+          <Route path="wallets/new" element={<NewWalletPage />} />
+        </Route>
+      </Routes>
+    </WalletGate>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <WalletProvider>
-        <WalletGate>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route index element={<DashboardPage />} />
-              <Route path="record" element={<RecordPage />} />
-              <Route path="recorded/:id" element={<RecordedPage />} />
-              {['add', 'withdraw', 'transfer'].map((old) => (
-                <Route
-                  key={old}
-                  path={old}
-                  element={<Navigate to={legacyRedirect(`/${old}`) ?? '/record'} replace />}
-                />
-              ))}
-              <Route path="history" element={<HistoryPage />} />
-              <Route path="history/:id" element={<EntryPage />} />
-              <Route path="reports" element={<ReportsPage />} />
-              <Route path="more" element={<MorePage />} />
-              <Route path="wallets/new" element={<NewWalletPage />} />
-            </Route>
-          </Routes>
-        </WalletGate>
+        <AppRoutes />
       </WalletProvider>
     </BrowserRouter>
   );

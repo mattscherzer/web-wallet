@@ -32,5 +32,7 @@ describe('BottomNav destinations', () => {
     expect(currentLabels(nav('/history'))).toEqual(['History']);
     expect(currentLabels(nav('/reports'))).toEqual(['Reports']);
     expect(currentLabels(nav('/more'))).toEqual(['More']);
+    expect(currentLabels(nav('/record'))).toEqual([]);
+    expect(currentLabels(nav('/history/abc'))).toEqual(['History']);
   });
 });
