@@ -58,6 +58,23 @@ describe('App routes', () => {
     expect(((await screen.findByRole('radio', { name: label })) as HTMLInputElement).checked).toBe(true);
   });
 
+  it.each([
+    ['/reports', 'heading', 'Reports'],
+    ['/more', 'heading', 'More'],
+    ['/wallets/new', 'heading', 'New wallet'],
+  ])('shows the page for %s', async (path, role, name) => {
+    appAt(path);
+    expect(await screen.findByRole(role as 'heading', { name })).toBeTruthy();
+  });
+
+  it.each([
+    ['/recorded/nope', 'Entry not found'],
+    ['/history/nope', 'Entry not found'],
+  ])('reaches the entry page for %s and reports an unknown entry', async (path, text) => {
+    appAt(path);
+    expect(await screen.findByText(text)).toBeTruthy();
+  });
+
   it('draws no page and no navigation bar for an unknown address', async () => {
     appAt('/nope');
     await waitFor(() => expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull());
