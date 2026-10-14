@@ -136,7 +136,7 @@ describe('auth migration: wallet isolation', () => {
   it('T1b nobody can move an entry to another wallet or change who made it', async () => {
     const db = await migratedDb();
     await expect(as(db, STAFF_A1, `UPDATE transactions SET wallet_id = '${W2}' WHERE id = '${E1}'`)).rejects.toThrow(
-      /row-level security/i,
+      /row-level security|cannot move/i,
     );
     await expect(
       as(db, STAFF_A1, `UPDATE transactions SET created_by = '${STAFF_A2}' WHERE id = '${E1}'`),
@@ -146,6 +146,19 @@ describe('auth migration: wallet isolation', () => {
     ).rejects.toThrow();
     const row = await db.query(`SELECT wallet_id, created_by FROM transactions WHERE id = '${E1}'`);
     expect(row.rows).toEqual([{ wallet_id: W1, created_by: STAFF_A1 }]);
+    await db.close();
+  });
+});
+
+describe('auth migration: one person in two wallets', () => {
+  it('T1c an owner who belongs to two wallets still cannot move an entry from one to the other', async () => {
+    const db = await migratedDb();
+    await db.exec(`DROP INDEX one_owner_per_wallet`);
+    await db.exec(`INSERT INTO wallet_members (user_id, wallet_id, role) VALUES ('${OWNER_B}', '${W1}', 'owner')`);
+    // OWNER_B now owns W2 and W1, so both policies would allow the update; the database must still refuse.
+    await expect(as(db, OWNER_B, `UPDATE transactions SET wallet_id = '${W2}' WHERE id = '${E1}'`)).rejects.toThrow();
+    const row = await db.query(`SELECT wallet_id FROM transactions WHERE id = '${E1}'`);
+    expect(row.rows).toEqual([{ wallet_id: W1 }]);
     await db.close();
   });
 });

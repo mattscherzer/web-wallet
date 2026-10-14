@@ -3,7 +3,7 @@ import { supabase } from '../db/supabase';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
 import { AuthContext, type AuthProfile, type AuthUser, type AuthValue, type Role } from './authContext';
 import { functionErrorMessage } from './functionError';
-import { useIdleLock } from './idleLock';
+import { idleExpired, useIdleLock } from './idleLock';
 
 type State = Pick<AuthValue, 'status' | 'user' | 'profile'> & { permissions: ReadonlySet<string> };
 const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null, permissions: new Set() };
@@ -49,7 +49,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     supabase.auth.getSession().then(
-      ({ data }) => enter(data.session),
+      async ({ data }) => {
+        // The app was closed or reloaded after the idle limit: the device is locked, sign in again.
+        if (data.session && idleExpired()) {
+          forgetWallet();
+          await supabase.auth.signOut({ scope: 'local' });
+          if (live) setState(SIGNED_OUT);
+          return;
+        }
+        return enter(data.session);
+      },
       (err) => {
         console.error('Failed to read the session:', err);
         if (live) setState(SIGNED_OUT);

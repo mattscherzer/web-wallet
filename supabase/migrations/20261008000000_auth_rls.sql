@@ -199,10 +199,13 @@ DO $$ BEGIN
 END $$;
 
 -- Authorship and removal rules, enforced by the database ---------------------------
--- created_by and its snapshot never change (except when the account is deleted, which clears created_by only).
+-- wallet_id, created_by and its snapshot never change (except when the account is deleted, which clears created_by only).
 CREATE OR REPLACE FUNCTION keep_created_by() RETURNS TRIGGER
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 BEGIN
+  IF NEW.wallet_id IS DISTINCT FROM OLD.wallet_id THEN
+    RAISE EXCEPTION 'an entry cannot move to another wallet';
+  END IF;
   IF NEW.created_by_role IS DISTINCT FROM OLD.created_by_role OR NEW.created_by_name IS DISTINCT FROM OLD.created_by_name THEN
     RAISE EXCEPTION 'the author of an entry cannot be changed';
   END IF;
@@ -314,7 +317,7 @@ CREATE POLICY "members change transactions" ON transactions FOR UPDATE TO authen
 -- Only so the app can undo an entry whose history row failed to save, right after creating it. Removing
 -- an entry is a soft remove (above), never a delete.
 CREATE POLICY "authors undo new transactions" ON transactions FOR DELETE TO authenticated
-  USING (can(wallet_id, 'add_entry') AND created_by = auth.uid() AND created_at > now() - interval '1 minute');
+  USING (can(wallet_id, 'add_entry') AND created_by = auth.uid() AND created_at > now() - interval '30 seconds');
 
 DROP POLICY IF EXISTS "members read audit_log" ON audit_log;
 DROP POLICY IF EXISTS "members add audit_log" ON audit_log;

@@ -13,7 +13,7 @@ import {
 } from '../test/fakeSupabase';
 import { AuthProvider } from './AuthProvider';
 import { AuthGate } from './AuthGate';
-import { IDLE_LOCK_MS } from './idleLock';
+import { IDLE_LOCK_MS, LAST_ACTIVITY_KEY } from './idleLock';
 import { useAuth } from './useAuth';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
@@ -100,5 +100,37 @@ describe('inactivity lock', () => {
     document.dispatchEvent(new Event('visibilitychange'));
     await pass(10);
     expect(locked()).toBe(true);
+  });
+});
+
+describe('inactivity lock across a closed app', () => {
+  it('T18d an app reopened after more than 30 minutes asks for the login again, one reopened sooner does not', async () => {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now() - 45 * MIN));
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <AuthGate>
+            <p>secret app</p>
+          </AuthGate>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    await pass(50);
+    expect(locked()).toBe(true);
+    cleanup();
+
+    ref.fake.signIn('u-anna');
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now() - 10 * MIN));
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <AuthGate>
+            <p>secret app</p>
+          </AuthGate>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    await pass(50);
+    expect(screen.queryByText('secret app')).not.toBeNull();
   });
 });
