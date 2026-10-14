@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { WalletNameError } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
 
 export default function NewWalletPage() {
   const { addWallet } = useWallet();
+  const { profile } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +26,8 @@ export default function NewWalletPage() {
       setSaving(false);
     }
   };
+
+  if (profile && !profile.isAdmin) return <p className="empty-state__text">Admins only</p>;
 
   return (
     <>

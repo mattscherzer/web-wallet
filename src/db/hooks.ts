@@ -126,7 +126,6 @@ function useSupabaseQuery<T>(
   return useQueryState(queryFn, deps, initialValue, realtimeTable).data;
 }
 
-
 // ─── All active transactions ────────────────────────────
 export function useTransactions() {
   return useSupabaseQuery<Transaction[]>((walletId) => fetchTransactions(walletId), [], [], 'transactions');

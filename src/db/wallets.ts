@@ -44,7 +44,12 @@ export async function createWallet(rawName: string): Promise<Wallet> {
   const userId = data.session?.user.id;
   if (userId) {
     const { error } = await supabase.from('wallet_members').insert({ user_id: userId, wallet_id: wallet.id });
-    if (error) throw new Error(error.message);
+    if (error) {
+      // Don't leave an unusable wallet behind (a retry would then hit a duplicate name).
+      const { error: cleanupError } = await supabase.from('wallets').delete().eq('id', wallet.id);
+      if (cleanupError) console.error('Could not remove the wallet after a membership failure', cleanupError);
+      throw new Error(error.message);
+    }
   }
   return wallet;
 }

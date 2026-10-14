@@ -21,7 +21,7 @@ Deno.serve((req) =>
         email_confirm: true,
         user_metadata: { display_name: displayName },
       });
-      if (error || !data.user) return { error: /already|registered|exists/i.test(error?.message ?? '') ? 'duplicate' : 'failed' };
+      if (error || !data.user) return { error: error?.code === 'email_exists' || error?.status === 422 ? 'duplicate' : 'failed' };
       return { id: data.user.id };
     },
     async addMemberships(userId, walletIds) {

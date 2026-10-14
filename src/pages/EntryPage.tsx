@@ -260,7 +260,6 @@ export default function EntryPage() {
           </div>
         </ReasonSheet>
       )}
-
     </div>
   );
 }

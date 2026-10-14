@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Check, Plus, X } from 'lucide-react';
 import { fetchWalletAvailableBalances } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
 import { walletInitials } from '../wallet/walletStore';
 import { formatCurrency } from '../utils/formatCurrency';
 
@@ -10,6 +11,9 @@ import { formatCurrency } from '../utils/formatCurrency';
 export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { wallets, current, switchWallet } = useWallet();
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  // Only admins create wallets; the database refuses everyone else.
+  const canCreate = !profile || profile.isAdmin;
   const [balances, setBalances] = useState<Record<string, number> | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -101,16 +105,18 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
           </p>
         )}
 
-        <button
-          type="button"
-          className="btn btn--outline wallet-sheet__new"
-          onClick={() => {
-            onClose();
-            navigate('/wallets/new');
-          }}
-        >
-          <Plus size={20} aria-hidden="true" /> New wallet
-        </button>
+        {canCreate && (
+          <button
+            type="button"
+            className="btn btn--outline wallet-sheet__new"
+            onClick={() => {
+              onClose();
+              navigate('/wallets/new');
+            }}
+          >
+            <Plus size={20} aria-hidden="true" /> New wallet
+          </button>
+        )}
       </div>
     </div>
   );
