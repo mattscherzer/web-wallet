@@ -1,0 +1,197 @@
+/* =============================================
+   TRANSACTION ITEM
+   ============================================= */
+.transaction-item {
+  background: var(--color-card);
+  overflow: hidden;
+}
+
+.transaction-item__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 72px;
+  padding: 12px var(--space-md);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.transaction-item__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-avatar);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.transaction-item__icon--inflow {
+  background: var(--color-in-surface);
+  color: var(--color-in);
+}
+
+.transaction-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-item__name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-item__time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2xs);
+}
+
+.transaction-item__amount {
+  flex-shrink: 0;
+}
+
+/* Amount: sign + figure + word tag + screen-reader text */
+.amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2xs);
+  text-align: right;
+}
+
+.amount__figure {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.amount--inflow .amount__figure {
+  color: var(--color-in);
+}
+
+.amount__tag {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Segmented lists: 2px gaps, large outer corners, small inner corners */
+.segmented-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmented-list > * {
+  border-radius: var(--radius-xs);
+}
+
+.segmented-list > :first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-xs);
+}
+
+.segmented-list > :last-child {
+  border-radius: var(--radius-xs) var(--radius-xs) var(--radius-lg) var(--radius-lg);
+}
+
+.segmented-list > :only-child {
+  border-radius: var(--radius-lg);
+}
+
+.transaction-item__chevron {
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.transaction-item__chevron--open {
+  transform: rotate(180deg);
+}
+
+.transaction-item__details {
+  padding: 0 var(--space-md) var(--space-md);
+  border-top: 1px solid var(--color-rule);
+  animation: slideDown var(--transition-fast) ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transaction-item__detail-row {
+  padding: var(--space-sm) 0;
+}
+
+.transaction-item__detail-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2xs);
+}
+
+.transaction-item__detail-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.transaction-item__actions {
+  display: flex;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-rule);
+  margin-top: var(--space-sm);
+}
+
+.transaction-item__action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: var(--touch-min);
+  padding: var(--space-sm);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+}
+
+.form-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: calc(-1 * var(--space-sm)) 0 var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+/* =============================================
+   DATE GROUP
+   ============================================= */
+.date-group {
+  margin-bottom: var(--space-md);
+}
+
+.date-group__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  padding: var(--space-sm) var(--space-xs);
+}

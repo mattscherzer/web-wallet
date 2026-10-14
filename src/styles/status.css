@@ -1,0 +1,66 @@
+/* =============================================
+   ROUTE FALLBACK
+   ============================================= */
+.route-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.route-fallback__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-rule);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: routeSpin 0.7s linear infinite;
+}
+
+@keyframes routeSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =============================================
+   STATUS MARKS
+   ============================================= */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.status-chip--edited {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.status-chip--removed {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.lock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-secondary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.lock-pill--unlocked {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}

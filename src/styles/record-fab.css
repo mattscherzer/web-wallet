@@ -1,0 +1,85 @@
+/* =============================================
+   RECORD FAB AND MENU
+   ============================================= */
+.record-fab {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-md));
+  right: max(var(--page-padding), calc(50% - var(--max-width) / 2 + var(--page-padding)));
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-fab);
+  z-index: 120;
+}
+
+.record-fab--open {
+  width: var(--touch-primary);
+  height: var(--touch-primary);
+  /* Keeps the smaller close button centred where the larger FAB was */
+  margin: calc((var(--fab-size) - var(--touch-primary)) / 2);
+  border-radius: var(--radius-xl);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: none;
+}
+
+.record-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  z-index: 110;
+}
+
+.record-menu {
+  position: fixed;
+  right: max(var(--page-padding), calc(50% - var(--max-width) / 2 + var(--page-padding)));
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-lg) + var(--space-md));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  z-index: 120;
+}
+
+.record-menu__item {
+  height: var(--touch-primary);
+  padding: 0 var(--space-lg) 0 20px;
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-fab);
+}
+
+@keyframes record-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.85);
+  }
+}
+
+@media (min-width: 600px) {
+  .record-fab {
+    right: auto;
+    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--fab-size) - var(--page-padding));
+    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .record-menu {
+    right: auto;
+    /* Anchored by its right edge to the FAB's right edge */
+    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--page-padding));
+    width: max-content;
+    transform: translateX(-100%);
+    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md));
+  }
+}
