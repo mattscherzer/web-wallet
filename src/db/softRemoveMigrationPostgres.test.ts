@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { describe, expect, it } from 'vitest';
+import { LEGACY_SEED_SQL } from '../test/legacySeed';
 
 const sql = (file: string) => readFileSync(join(process.cwd(), 'supabase', file), 'utf8');
 const DEFAULT_WALLET = '00000000-0000-0000-0000-000000000001';
@@ -15,7 +16,7 @@ describe('soft remove migration on a real Postgres engine', () => {
     const db = new PGlite();
     await db.exec('CREATE PUBLICATION supabase_realtime;');
     await db.exec(sql('migrations/20260101000000_initial_schema.sql'));
-    await db.exec(sql('seed.sql'));
+    await db.exec(LEGACY_SEED_SQL);
     await db.exec(sql('migrations/20261006120000_wallets.sql'));
     await db.exec(sql(`migrations/${file}`));
 

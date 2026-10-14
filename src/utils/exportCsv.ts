@@ -1,4 +1,5 @@
 import { fetchTransactions } from '../db/queries';
+import { fetchAuthorNames } from '../db/admin';
 import type { Transaction } from '../db/database';
 import { buildHistoryCsv } from './historyCsv';
 
@@ -12,7 +13,12 @@ export async function generateHistoryCsv(walletId: string, walletName: string) {
     return;
   }
 
-  const csvContent = buildHistoryCsv(data, walletName);
+  // Without names the export still works: authors then read "Unknown / N/A".
+  const authors = await fetchAuthorNames().catch((error) => {
+    console.error('Failed to fetch author names for export:', error);
+    return {};
+  });
+  const csvContent = buildHistoryCsv(data, walletName, authors);
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

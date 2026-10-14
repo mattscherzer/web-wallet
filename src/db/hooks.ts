@@ -3,7 +3,6 @@ import { supabase } from './supabase';
 import {
   MAIN_ACCOUNTS,
   RESERVE_ACCOUNTS,
-  fetchPin,
   type Transaction,
   type Account,
   type AccountId,
@@ -127,16 +126,6 @@ function useSupabaseQuery<T>(
   return useQueryState(queryFn, deps, initialValue, realtimeTable).data;
 }
 
-// ─── PIN from database ──────────────────────────────────
-export function usePin() {
-  const [pin, setPin] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchPin().then(setPin);
-  }, []);
-
-  return pin;
-}
 
 // ─── All active transactions ────────────────────────────
 export function useTransactions() {

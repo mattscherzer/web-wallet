@@ -4,18 +4,18 @@ import { Check } from 'lucide-react';
 import { getAccountLabel, fromAccountLabel, removeTransaction } from '../db/database';
 import { useEntry } from '../db/hooks';
 import Amount from '../components/Amount';
-import PinModal from '../components/PinModal';
 import { formatDate, formatTime } from '../utils/dateHelpers';
 import { categoryLabel, typeParam } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
 
 /** Receipt shown right after saving: what was recorded, with Record another, Done and Undo. */
 export default function RecordedPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const { current: wallet } = useWallet();
+  const { profile } = useAuth();
   const { status, tx } = useEntry(id);
-  const [showPin, setShowPin] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
 
   if (status === 'loading')
@@ -33,10 +33,9 @@ export default function RecordedPage() {
   if (status === 'missing' || !tx) return <p className="empty-state__text">Entry not found</p>;
 
   const undo = async () => {
-    setShowPin(false);
     if (!wallet) return;
     try {
-      await removeTransaction(tx.id, { walletId: wallet.id, reason: 'Entered by mistake' });
+      await removeTransaction(tx.id, { walletId: wallet.id, reason: 'Entered by mistake', actor: profile?.displayName });
       navigate('/');
     } catch {
       setProblem("Couldn't undo this entry. Nothing was changed.");
@@ -102,12 +101,11 @@ export default function RecordedPage() {
         <Link className="btn btn--outline" to="/">
           Done
         </Link>
-        <button type="button" className="btn recorded__undo" onClick={() => setShowPin(true)}>
+        <button type="button" className="btn recorded__undo" onClick={() => void undo()}>
           Undo this entry
         </button>
       </div>
 
-      <PinModal isOpen={showPin} onSuccess={undo} onCancel={() => setShowPin(false)} title="Confirm undo" />
     </div>
   );
 }

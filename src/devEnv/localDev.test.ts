@@ -62,7 +62,8 @@ describe('local Supabase dev environment', () => {
     expect(seed).toMatch(/insert into (public\.)?transactions/i);
     expect(seed).toMatch(/insert into (public\.)?audit_log/i);
     expect(seed).toMatch(/on conflict/i);
-    expect(seed).toMatch(/insert into (public\.)?app_config[^;]*'pin'/i);
+    expect(seed).toMatch(/insert into auth\.users/i);
+    expect(seed).not.toMatch(/app_config/i);
     const uuid = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
     const [txPart, auditPart] = seed.split(/insert into (?:public\.)?audit_log/i);
     const txIds = new Set(txPart.match(uuid) ?? []);
@@ -121,6 +122,18 @@ describe('local Supabase dev environment', () => {
     const db = new PGlite();
     // PGlite has no Supabase realtime publication; create it so the migration runs unchanged.
     await db.exec('CREATE PUBLICATION supabase_realtime;');
+    // Stand-ins for what Supabase provides: the auth schema (with the columns the seed fills) and its roles.
+    await db.exec(`
+      CREATE SCHEMA auth;
+      CREATE TABLE auth.users (instance_id uuid, id uuid PRIMARY KEY, aud text, role text, email text, encrypted_password text,
+        email_confirmed_at timestamptz, raw_app_meta_data jsonb, raw_user_meta_data jsonb, created_at timestamptz DEFAULT now(),
+        updated_at timestamptz, confirmation_token text, recovery_token text, email_change_token_new text, email_change text);
+      CREATE TABLE auth.identities (id uuid PRIMARY KEY, user_id uuid, provider_id text, provider text, identity_data jsonb,
+        last_sign_in_at timestamptz, created_at timestamptz, updated_at timestamptz);
+      CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+      CREATE ROLE anon NOLOGIN;
+      CREATE ROLE authenticated NOLOGIN;
+    `);
     await db.exec(migrationsSql());
     const seed = read('supabase/seed.sql');
     await db.exec(seed);
@@ -129,7 +142,8 @@ describe('local Supabase dev environment', () => {
       Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
     expect(await count('transactions')).toBeGreaterThan(0);
     expect(await count('audit_log')).toBeGreaterThan(0);
-    expect(await count("app_config WHERE key = 'pin'")).toBe(1);
+    expect(await count('profiles WHERE is_admin')).toBe(1);
+    expect(await count('wallet_members')).toBe(2);
     expect(await count('audit_log a LEFT JOIN transactions t ON t.id = a.transaction_id WHERE t.id IS NULL')).toBe(0);
     await db.close();
   });

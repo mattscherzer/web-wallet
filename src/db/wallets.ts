@@ -21,7 +21,8 @@ export async function fetchWallets(): Promise<Wallet[]> {
   return (data ?? []) as Wallet[];
 }
 
-export async function createWallet(rawName: string): Promise<Wallet> {
+/** Inserts the wallet only (admins use this for wallets other people will use). */
+export async function insertWallet(rawName: string): Promise<Wallet> {
   const name = rawName.trim();
   if (!name) throw new WalletNameError('Enter a wallet name');
   if (name.length > MAX_WALLET_NAME) {
@@ -34,6 +35,18 @@ export async function createWallet(rawName: string): Promise<Wallet> {
     throw new Error(error.message);
   }
   return data as Wallet;
+}
+
+/** Creates a wallet and makes the person creating it a member, so they can use it right away. */
+export async function createWallet(rawName: string): Promise<Wallet> {
+  const wallet = await insertWallet(rawName);
+  const { data } = await supabase.auth.getSession();
+  const userId = data.session?.user.id;
+  if (userId) {
+    const { error } = await supabase.from('wallet_members').insert({ user_id: userId, wallet_id: wallet.id });
+    if (error) throw new Error(error.message);
+  }
+  return wallet;
 }
 
 type WalletBalanceRow = BalanceInput & { wallet_id: string };

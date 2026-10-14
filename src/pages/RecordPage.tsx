@@ -20,9 +20,9 @@ import {
   type RecordType,
 } from '../utils/recordForm';
 import ErrorSummary from '../components/ErrorSummary';
-import PinModal from '../components/PinModal';
 import CashCalculator from '../components/CashCalculator';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
 
 const TYPES: { id: RecordType; label: string }[] = [
   { id: 'inflow', label: 'Money in' },
@@ -43,6 +43,7 @@ const SAVE_FAILED = "Couldn't record this entry. Nothing was saved. Try again.";
 export default function RecordPage() {
   const navigate = useNavigate();
   const { current: wallet } = useWallet();
+  const { profile } = useAuth();
   const [params] = useSearchParams();
   // null until the balances have really been fetched, so nothing is previewed or warned from zeros.
   const loadedBalances = useLoadedAccountBalances();
@@ -61,7 +62,6 @@ export default function RecordPage() {
   });
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [errorRound, setErrorRound] = useState(0);
-  const [showPin, setShowPin] = useState(false);
   const [showCount, setShowCount] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -92,18 +92,17 @@ export default function RecordPage() {
       setErrorRound((n) => n + 1);
       return;
     }
-    setShowPin(true);
+    void save();
   };
 
   const save = async () => {
-    setShowPin(false);
     if (!wallet) {
       setSaveError(SAVE_FAILED);
       return;
     }
     setSaving(true);
     try {
-      const id = await createTransaction(toTransactionInput(form, wallet.id));
+      const id = await createTransaction(toTransactionInput(form, wallet.id), profile?.displayName);
       navigate(`/recorded/${id}`);
     } catch {
       setSaveError(SAVE_FAILED);
@@ -311,7 +310,6 @@ export default function RecordPage() {
         </button>
       </form>
 
-      <PinModal isOpen={showPin} onSuccess={save} onCancel={() => setShowPin(false)} title="Confirm entry" />
       <CashCalculator
         isOpen={showCount}
         onClose={() => setShowCount(false)}

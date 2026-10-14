@@ -4,6 +4,8 @@ import Layout from './components/Layout';
 import { WalletProvider } from './wallet/WalletProvider';
 import WalletGate from './wallet/WalletGate';
 import { legacyRedirect } from './components/recordMenu';
+import { AuthProvider } from './auth/AuthProvider';
+import { AuthGate } from './auth/AuthGate';
 
 // Routes are code-split so the initial load only pulls the dashboard.
 // Layout renders the Suspense boundary, which keeps the bottom nav mounted
@@ -16,6 +18,7 @@ const EntryPage = lazy(() => import('./pages/EntryPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const MorePage = lazy(() => import('./pages/MorePage'));
 const NewWalletPage = lazy(() => import('./pages/NewWalletPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 
 /** The route table with its wallet gate; the router and wallet provider come from the caller. */
 export function AppRoutes() {
@@ -38,6 +41,7 @@ export function AppRoutes() {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="more" element={<MorePage />} />
           <Route path="wallets/new" element={<NewWalletPage />} />
+          <Route path="admin" element={<AdminPage />} />
         </Route>
       </Routes>
     </WalletGate>
@@ -47,9 +51,13 @@ export function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <WalletProvider>
-        <AppRoutes />
-      </WalletProvider>
+      <AuthProvider>
+        <AuthGate>
+          <WalletProvider>
+            <AppRoutes />
+          </WalletProvider>
+        </AuthGate>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

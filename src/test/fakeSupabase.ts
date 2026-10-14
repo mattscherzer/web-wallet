@@ -15,7 +15,20 @@ export interface FakeChannel {
   removed: boolean;
 }
 
-export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
+export interface FakeUser {
+  id: string;
+  email: string;
+  password: string;
+}
+type FakeSession = { user: { id: string; email: string } } | null;
+
+export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { users?: FakeUser[] } = {}) {
+  const users = opts.users ?? [];
+  let session: FakeSession = null;
+  const authListeners = new Set<(event: string, session: FakeSession) => void>();
+  const invocations: { name: string; body: unknown }[] = [];
+  const notify = (event: string) => authListeners.forEach((cb) => cb(event, session));
+
   const tables: Record<string, Row[]> = {};
   for (const [name, rows] of Object.entries(initial)) tables[name] = rows.map((r) => ({ ...r }));
 
@@ -151,6 +164,32 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
   }
 
   const client = {
+    auth: {
+      getSession: async () => ({ data: { session }, error: null }),
+      getUser: async () => ({ data: { user: session?.user ?? null }, error: null }),
+      onAuthStateChange: (cb: (event: string, session: FakeSession) => void) => {
+        authListeners.add(cb);
+        return { data: { subscription: { unsubscribe: () => void authListeners.delete(cb) } } };
+      },
+      signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
+        const user = users.find((u) => u.email === email && u.password === password);
+        if (!user) return { data: { session: null }, error: { message: 'Invalid login credentials' } };
+        session = { user: { id: user.id, email: user.email } };
+        notify('SIGNED_IN');
+        return { data: { session }, error: null };
+      },
+      signOut: async () => {
+        session = null;
+        notify('SIGNED_OUT');
+        return { error: null };
+      },
+    },
+    functions: {
+      invoke: async (name: string, options?: { body?: unknown }) => {
+        invocations.push({ name, body: options?.body });
+        return { data: { id: 'new-user' }, error: null };
+      },
+    },
     from: (table: string) => new Query(table),
     channel: (name: string) => {
       const pending: Partial<FakeChannel> = { name, removed: false };
@@ -181,6 +220,13 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
     channels,
     failNext,
     holdNext,
+    invocations,
+    /** Start with this user already logged in. */
+    signIn(userId: string) {
+      const u = users.find((x) => x.id === userId);
+      if (!u) throw new Error(`unknown fake user ${userId}`);
+      session = { user: { id: u.id, email: u.email } };
+    },
     /** Fire the realtime callbacks of live channels on `table`. */
     emit(table: string) {
       channels.filter((c) => c.table === table && !c.removed).forEach((c) => c.callback());
@@ -257,3 +303,12 @@ export function twoWalletRows() {
     ],
   };
 }
+
+export const FAKE_USERS: FakeUser[] = [
+  { id: 'u-admin', email: 'root@x.org', password: 'secret-pw' },
+  { id: 'u-anna', email: 'anna@x.org', password: 'anna-pw' },
+];
+export const FAKE_PROFILES: Row[] = [
+  { id: 'u-admin', display_name: 'Root', is_admin: true },
+  { id: 'u-anna', display_name: 'Anna', is_admin: false },
+];

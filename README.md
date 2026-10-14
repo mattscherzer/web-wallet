@@ -9,7 +9,7 @@ A mobile-first Progressive Web App for tracking treasury funds across multiple a
 - ➖ **Add Expense** — Record outflows with categories and notes
 - 📜 **Transaction History** — Search, filter (All/Inflows/Outflows), and review past transactions
 - 🔢 **Cash Calculator** — Count bills and coins (€0.01 to €50) to calculate totals
-- 🔒 **PIN Confirmation** — 4-digit code required for all transaction changes
+- 🔒 **Login & wallets** — email/password login; people only see the wallets they are members of; admins manage wallets, users and memberships
 - 📝 **Audit Trail** — Full change history for every transaction
 - 📱 **Offline-First PWA** — Works without internet, installable on mobile
 
@@ -41,7 +41,7 @@ npm run dev        # uses .env.development -> http://127.0.0.1:54321
 | `npm run db:seed` | Non-destructive: re-runs `supabase/seed.sql` (inserts are idempotent) |
 | `npm run dev:prod` | Runs the app against **production**, using `.env.prod.local` |
 
-The seed contains fake transactions, audit entries and the local PIN `1234`.
+The seed contains fake transactions, audit entries and two local logins (password `password123`): `admin@example.test` (admin) and `anna@example.test` (member of the default wallet).
 
 Notes:
 - `.env.development` is committed and holds the public demo values of the local stack. If `npx supabase status` prints a different key, update it there.
@@ -63,7 +63,7 @@ npx supabase migration repair --status applied 20260101000000
 npx supabase db push
 ```
 
-The migrations never create the PIN. In a brand-new project insert it by hand: `INSERT INTO app_config (key, value) VALUES ('pin', '<your pin>');`.
+Before pushing the auth migration (`20261008000000_auth_rls.sql`) to production, follow `supabase/backfill/README.md`: take a backup first and create the owner's account before the migration runs. Deploy the user-creation function with `npx supabase functions deploy admin-create-user`.
 
 ## Build
 

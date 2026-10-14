@@ -1,13 +1,14 @@
 import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from '../db/accounts';
 import type { Transaction } from '../db/database';
+import { authorLabel } from './authorLabel';
 
-export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve'];
+export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by'];
 
 /**
  * Rows for the treasury report, header first. Expects transactions in
  * chronological order; running balances are split into main vs. reserve.
  */
-export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
+export function buildHistoryCsvRows(transactions: Transaction[], authors: Record<string, string> = {}): string[][] {
   let mainBalance = 0;
   let reserveBalance = 0;
 
@@ -83,15 +84,21 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
 
     const whatStr = `"${what.replace(/"/g, '""')}"`;
 
-    rows.push([dateStr, displayIn, displayOut, whatStr, mainBalance.toFixed(2), `+${reserveBalance.toFixed(2)}`]);
+    const who = `"${authorLabel(tx.created_by, authors).replace(/"/g, '""')}"`;
+
+    rows.push([dateStr, displayIn, displayOut, whatStr, mainBalance.toFixed(2), `+${reserveBalance.toFixed(2)}`, who]);
   }
 
   return rows;
 }
 
 /** With a wallet name, the file opens with a `Wallet,"<name>"` line above the column header. */
-export function buildHistoryCsv(transactions: Transaction[], walletName?: string): string {
-  const lines = buildHistoryCsvRows(transactions).map((e) => e.join(','));
+export function buildHistoryCsv(
+  transactions: Transaction[],
+  walletName?: string,
+  authors: Record<string, string> = {},
+): string {
+  const lines = buildHistoryCsvRows(transactions, authors).map((e) => e.join(','));
   if (walletName) lines.unshift(`Wallet,"${walletName.replace(/"/g, '""')}"`);
   return lines.join('\n');
 }
