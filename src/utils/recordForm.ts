@@ -119,7 +119,12 @@ export function recordPreview(form: RecordForm, balances: Record<AccountId, numb
             { accountId: form.accountId, after: balances[form.accountId] + amount },
           ];
   const available = ACCOUNTS.filter((a) => !a.isReserve).reduce((sum, a) => sum + (balances[a.id] ?? 0), 0);
-  const delta = availableDelta({ type: form.type, amount, accountId: form.accountId, fromAccountId: form.fromAccountId });
+  const delta = availableDelta({
+    type: form.type,
+    amount,
+    accountId: form.accountId,
+    fromAccountId: form.fromAccountId,
+  });
   return { lines, availableAfter: available + delta };
 }
 
@@ -145,7 +150,13 @@ export function toTransactionInput(form: RecordForm, walletId: string) {
     notes: description,
   };
   if (form.type === 'transfer') {
-    return { ...base, type: 'transfer' as const, from_account_id: form.fromAccountId, category: 'transfer', reason: null };
+    return {
+      ...base,
+      type: 'transfer' as const,
+      from_account_id: form.fromAccountId,
+      category: 'transfer',
+      reason: null,
+    };
   }
   return {
     ...base,

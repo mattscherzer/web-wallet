@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { Plus, X } from 'lucide-react';
 import { RECORD_ACTIONS, menuEventForKey, nextMenuOpen, showFabAt, type MenuEvent } from './recordMenu';
 
@@ -13,15 +13,7 @@ interface RecordFabViewProps {
   menuRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function RecordFabView({
-  open,
-  onToggle,
-  onScrim,
-  onPick,
-  fabRef,
-  firstItemRef,
-  menuRef,
-}: RecordFabViewProps) {
+export function RecordFabView({ open, onToggle, onScrim, onPick, fabRef, firstItemRef, menuRef }: RecordFabViewProps) {
   return (
     <>
       {open && <div className="record-scrim" aria-hidden="true" onClick={onScrim} />}

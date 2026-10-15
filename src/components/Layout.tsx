@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import BottomNav from './BottomNav';
 import { RecordFab } from './RecordFab';
 import AppBar from './AppBar';

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 import { House, List, FileText, Ellipsis } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -15,9 +15,7 @@ export default function BottomNav() {
         <NavLink
           key={to}
           to={to}
-          className={({ isActive }) =>
-            `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`
-          }
+          className={({ isActive }) => `bottom-nav__item${isActive ? ' bottom-nav__item--active' : ''}`}
           end={to === '/'}
         >
           <span className="bottom-nav__icon-wrap">

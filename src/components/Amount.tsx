@@ -27,7 +27,9 @@ export default function Amount({ type, amount, locale }: AmountProps) {
         <span className="sr-only">{sr} </span>
         {formatSignedCurrency(amount, type, locale)}
       </span>
-      <span className="amount__tag" aria-hidden="true">{tag}</span>
+      <span className="amount__tag" aria-hidden="true">
+        {tag}
+      </span>
     </span>
   );
 }

@@ -16,14 +16,12 @@ export interface Wallet {
 export class WalletNameError extends Error {}
 
 export async function fetchWallets(): Promise<Wallet[]> {
-  const { data, error } = await supabase
-    .from('wallets')
-    .select('*')
-    .order('created_at', { ascending: true });
+  const { data, error } = await supabase.from('wallets').select('*').order('created_at', { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as Wallet[];
 }
 
+/** Creates a wallet with the logged-in owner as its owner, in one step in the database. */
 export async function createWallet(rawName: string): Promise<Wallet> {
   const name = rawName.trim();
   if (!name) throw new WalletNameError('Enter a wallet name');
@@ -31,21 +29,21 @@ export async function createWallet(rawName: string): Promise<Wallet> {
     throw new WalletNameError(`That name is too long (max ${MAX_WALLET_NAME} characters)`);
   }
 
-  const { data, error } = await supabase.from('wallets').insert({ name }).select('*').single();
+  const { data: id, error } = await supabase.rpc('create_wallet', { name });
   if (error) {
     if (error.code === '23505') throw new WalletNameError('A wallet with that name already exists');
+    if (error.code === '42501') throw new WalletNameError('Only owners can create wallets');
     throw new Error(error.message);
   }
+  const { data, error: readError } = await supabase.from('wallets').select('*').eq('id', id).single();
+  if (readError) throw new Error(readError.message);
   return data as Wallet;
 }
 
 type WalletBalanceRow = BalanceInput & { wallet_id: string };
 
 /** Available money (operating accounts only) per wallet; wallets without entries are 0. */
-export function availableByWallet(
-  walletIds: string[],
-  rows: WalletBalanceRow[],
-): Record<string, number> {
+export function availableByWallet(walletIds: string[], rows: WalletBalanceRow[]): Record<string, number> {
   const result: Record<string, number> = {};
   for (const id of walletIds) {
     const balances = computeAccountBalances(rows.filter((r) => r.wallet_id === id));
@@ -55,9 +53,7 @@ export function availableByWallet(
   return result;
 }
 
-export async function fetchWalletAvailableBalances(
-  walletIds: string[],
-): Promise<Record<string, number>> {
+export async function fetchWalletAvailableBalances(walletIds: string[]): Promise<Record<string, number>> {
   const rows = await fetchAllRows<WalletBalanceRow>((from, to) =>
     supabase
       .from('transactions')

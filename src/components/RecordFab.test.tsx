@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 // Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./RecordFab').catch(() => undefined);
@@ -70,8 +70,7 @@ describe('RecordFabView', () => {
 
   it('menu items open the Record screen with the chosen type', () => {
     const html = view(true);
-    const href = (label: string) =>
-      html.match(new RegExp(`<a [^>]*href="([^"]+)"[^>]*>(?:(?!</a>).)*>${label}<`))?.[1];
+    const href = (label: string) => html.match(new RegExp(`<a [^>]*href="([^"]+)"[^>]*>(?:(?!</a>).)*>${label}<`))?.[1];
     expect(href('Money in')).toBe('/record?type=in');
     expect(href('Money out')).toBe('/record?type=out');
     expect(href('Transfer')).toBe('/record?type=transfer');

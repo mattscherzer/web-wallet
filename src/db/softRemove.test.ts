@@ -3,19 +3,29 @@ import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fa
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 // Loaded dynamically so missing exports fail the assertion instead of crashing the file.
 const db = await import('./database');
 const queries = await import('./queries');
 const api = db as unknown as {
-  removeTransaction?: (id: string, o: { walletId: string; reason: string; note?: string; actor: string }) => Promise<void>;
+  removeTransaction?: (
+    id: string,
+    o: { walletId: string; reason: string; note?: string; actor: string },
+  ) => Promise<void>;
   restoreTransaction?: (id: string, o: { walletId: string; actor: string }) => Promise<void>;
 };
-const fetchOne = (queries as unknown as {
-  fetchTransaction?: (walletId: string, id: string) => Promise<{ id: string; deleted: boolean } | null>;
-}).fetchTransaction;
+const fetchOne = (
+  queries as unknown as {
+    fetchTransaction?: (walletId: string, id: string) => Promise<{ id: string; deleted: boolean } | null>;
+  }
+).fetchTransaction;
 
 const row = (id: string) => ref.fake.tables.transactions.find((r) => r.id === id)!;
 const audit = (id: string) => ref.fake.tables.audit_log.filter((r) => r.transaction_id === id);
@@ -52,8 +62,18 @@ describe('soft remove', () => {
     expect(api.restoreTransaction, 'restoreTransaction must be exported from database.ts').toBeTypeOf('function');
     expect(fetchOne, 'fetchTransaction must be exported from queries.ts').toBeTypeOf('function');
 
-    await api.removeTransaction!('t1', { walletId: 'wa', reason: 'Wrong account', note: 'Meant PayPal', actor: 'Anna' });
-    expect(row('t1')).toMatchObject({ deleted: true, removed_reason: 'Wrong account', removed_note: 'Meant PayPal', removed_by: 'Anna' });
+    await api.removeTransaction!('t1', {
+      walletId: 'wa',
+      reason: 'Wrong account',
+      note: 'Meant PayPal',
+      actor: 'Anna',
+    });
+    expect(row('t1')).toMatchObject({
+      deleted: true,
+      removed_reason: 'Wrong account',
+      removed_note: 'Meant PayPal',
+      removed_by: 'Anna',
+    });
     expect((await queries.fetchTransactions('wa')).map((t) => t.id)).not.toContain('t1');
     expect((await queries.fetchAccountBalances('wa')).bank).toBeCloseTo(-100.2);
     // A removed entry can still be opened, and only in its own wallet.
@@ -86,8 +106,8 @@ describe('failed history writes', () => {
       (db as unknown as { updateTransaction: (id: string, u: object, m: object) => Promise<void> }).updateTransaction(
         't1',
         { date: '2020-01-01', amount: 1 },
-        { walletId: 'wa', reason: 'Typo' }
-      )
+        { walletId: 'wa', reason: 'Typo' },
+      ),
     ).rejects.toThrow();
     expect(row('t1')).toMatchObject({ date: before.date, amount: before.amount });
   });

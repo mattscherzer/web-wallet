@@ -1,0 +1,289 @@
+/* =============================================
+   COUNT CASH — full-screen overlay
+   ============================================= */
+.count-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+.count-header {
+  flex: none;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) 0 var(--space-xs);
+}
+
+.count-header__title {
+  flex: 1;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.count-icon-btn {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xl);
+  color: var(--color-text-primary);
+}
+
+.count-undo {
+  background: var(--color-bg-secondary);
+}
+
+.count-clear {
+  min-height: var(--touch-min);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-xl);
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-error);
+}
+
+.count-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xs) var(--page-padding) var(--space-md);
+}
+
+.count-total {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: 18px 22px;
+  border-radius: var(--radius-count-total);
+  background: var(--color-count-surface);
+  color: var(--color-on-count-surface);
+  line-height: normal;
+}
+
+.count-total__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.count-total__amount {
+  font-size: var(--font-size-3xl);
+  line-height: 1.15;
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-total__pieces {
+  font-size: var(--font-size-base);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-section {
+  margin-top: var(--space-md);
+}
+
+.count-section__title {
+  margin: 0 var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.count-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.count-tile,
+.count-entry {
+  position: relative;
+  height: 84px;
+  border-radius: var(--radius-tile);
+  background: var(--color-card);
+  border: 1px solid var(--color-rule);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.count-tile--note {
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 10px 10px 8px;
+  text-align: left;
+}
+
+.count-tile--on {
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-primary);
+}
+
+.count-tile--remove {
+  border-style: dashed;
+  border-color: var(--color-error);
+}
+
+.count-tile__face {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-tile--note .count-tile__face {
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.count-tile--coin .count-tile__face {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-outline);
+  background: var(--color-avatar);
+  font-size: var(--font-size-sm);
+}
+
+.count-tile__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.count-tile__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-avatar);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-tile--on .count-tile__badge {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.count-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.count-entry__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-entry__input {
+  width: 60px;
+  height: var(--touch-min);
+  text-align: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-container);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+  font-size: 20px;
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-hint {
+  margin: 10px var(--space-xs) 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.count-footer {
+  flex: none;
+}
+
+.count-apply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 2 * var(--page-padding));
+  min-height: var(--touch-primary);
+  margin: 0 var(--page-padding) 12px;
+  border-radius: var(--radius-xl);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.count-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--page-padding) calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  background: var(--color-container);
+}
+
+.count-modes {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2xs);
+}
+
+.count-mode {
+  min-height: var(--touch-min);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.count-mode:first-child {
+  border-radius: var(--radius-xl) var(--radius-sm) var(--radius-sm) var(--radius-xl);
+}
+
+.count-mode:last-child {
+  border-radius: var(--radius-sm) var(--radius-xl) var(--radius-xl) var(--radius-sm);
+}
+
+.count-mode--on,
+.count-mode--on:first-child,
+.count-mode--on:last-child {
+  border-radius: var(--radius-xl);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.count-mode--remove,
+.count-mode--remove:first-child,
+.count-mode--remove:last-child {
+  background: var(--color-error);
+  color: var(--color-bg);
+}

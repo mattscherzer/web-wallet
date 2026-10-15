@@ -1,14 +1,19 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { createFakeSupabase, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
-import { enterPin, transactionRows } from '../test/transactionsTestKit';
+import { transactionRows } from '../test/transactionsTestKit';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 // Loaded dynamically so missing modules fail the assertion instead of crashing the file.
@@ -40,20 +45,14 @@ const group = (name: string) => within(screen.getByRole('radiogroup', { name }))
 const submit = () => screen.getByRole('button', { name: /^Record/ });
 
 describe('Record screen', () => {
-  it('asks for the PIN before saving and refuses a wrong one', async () => {
+  it('saves the entry without asking for a PIN', async () => {
     app('/record?type=out');
     // The type from the link is preselected.
     expect((group('Type of entry').getByRole('radio', { name: 'Money out' }) as HTMLInputElement).checked).toBe(true);
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '60' } });
     fireEvent.change(screen.getByRole('textbox', { name: 'Paid to or what for' }), { target: { value: 'Hall rent' } });
     fireEvent.click(await screen.findByRole('button', { name: /^Record −€60\.00 from Cash Balance/ }));
-    expect(ref.fake.tables.transactions).toHaveLength(5);
-
-    await enterPin('9999', ref.fake);
-    expect(await screen.findByText(/Incorrect PIN/)).toBeTruthy();
-    expect(ref.fake.tables.transactions).toHaveLength(5);
-
-    await enterPin('1234', ref.fake);
+    expect(screen.queryByText(/PIN/)).toBeNull();
     expect(await screen.findByRole('heading', { name: 'Recorded' })).toBeTruthy();
     expect(ref.fake.tables.transactions).toHaveLength(6);
   });
@@ -83,11 +82,16 @@ describe('Record screen', () => {
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '60' } });
     fireEvent.change(screen.getByRole('textbox', { name: 'Paid to or what for' }), { target: { value: 'Hall rent' } });
     fireEvent.click(await screen.findByRole('button', { name: /^Record −€60\.00 from Cash Balance/ }));
-    await enterPin('1234', ref.fake);
 
     expect(await screen.findByRole('heading', { name: 'Recorded' })).toBeTruthy();
     const saved = ref.fake.tables.transactions.at(-1)!;
-    expect(saved).toMatchObject({ wallet_id: 'wa', type: 'outflow', amount: 60, account_id: 'cash', notes: 'Hall rent' });
+    expect(saved).toMatchObject({
+      wallet_id: 'wa',
+      type: 'outflow',
+      amount: 60,
+      account_id: 'cash',
+      notes: 'Hall rent',
+    });
     expect(ref.fake.tables.audit_log.at(-1)).toMatchObject({ action: 'create', transaction_id: saved.id });
     expect(screen.getByRole('button', { name: /Undo this entry/ })).toBeTruthy();
   });
@@ -97,11 +101,17 @@ describe('Record screen', () => {
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '50' } });
     fireEvent.click(group('From account').getByRole('radio', { name: 'Bank Account' }));
     fireEvent.click(group('To account').getByRole('radio', { name: 'Prudent Reserve' }));
-    fireEvent.click(await screen.findByRole('button', { name: /^Record €50\.00 from Bank Account to Prudent Reserve/ }));
-    await enterPin('1234', ref.fake);
+    fireEvent.click(
+      await screen.findByRole('button', { name: /^Record €50\.00 from Bank Account to Prudent Reserve/ }),
+    );
 
     expect(await screen.findByRole('heading', { name: 'Recorded' })).toBeTruthy();
-    expect(ref.fake.tables.transactions.at(-1)).toMatchObject({ type: 'transfer', amount: 50, account_id: 'prudent_reserve', from_account_id: 'bank' });
+    expect(ref.fake.tables.transactions.at(-1)).toMatchObject({
+      type: 'transfer',
+      amount: 50,
+      account_id: 'prudent_reserve',
+      from_account_id: 'bank',
+    });
   });
 
   it('shows an error and no receipt when saving fails', async () => {
@@ -109,22 +119,18 @@ describe('Record screen', () => {
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '10' } });
     ref.fake.failNext('transactions:insert', { message: 'boom' });
     fireEvent.click(submit());
-    await enterPin('1234', ref.fake);
     expect(await screen.findByText(/Nothing was saved/)).toBeTruthy();
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Recorded' })).toBeNull());
     expect(ref.fake.tables.transactions).toHaveLength(5);
   });
 
-  it('asks for the PIN before undoing an entry, then removes it as entered by mistake', async () => {
+  it('undoes an entry without a PIN, removing it as entered by mistake', async () => {
     app('/record?type=in');
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '25' } });
     fireEvent.click(submit());
-    await enterPin('1234', ref.fake);
     fireEvent.click(await screen.findByRole('button', { name: /Undo this entry/ }));
 
     const saved = ref.fake.tables.transactions.at(-1)!;
-    expect(saved.deleted).toBe(false);
-    await enterPin('1234', ref.fake);
     await waitFor(() => expect(saved.deleted).toBe(true));
     expect(saved.removed_reason).toBe('Entered by mistake');
     expect(ref.fake.tables.audit_log.at(-1)).toMatchObject({ action: 'remove', transaction_id: saved.id });

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { describe, expect, it } from 'vitest';
+import { LEGACY_SEED_SQL } from '../test/legacySeed';
 
 const sql = (file: string) => readFileSync(join(process.cwd(), 'supabase', file), 'utf8');
 const BASELINE = 'migrations/20260101000000_initial_schema.sql';
@@ -13,7 +14,7 @@ async function legacyDb() {
   // PGlite has no Supabase realtime publication; create it so the baseline runs unchanged.
   await db.exec('CREATE PUBLICATION supabase_realtime;');
   await db.exec(sql(BASELINE));
-  await db.exec(sql('seed.sql'));
+  await db.exec(LEGACY_SEED_SQL);
   return db;
 }
 
@@ -33,7 +34,8 @@ describe('wallets migration on a real Postgres engine', () => {
     const wallets = (await db.query('SELECT id, name FROM wallets')).rows as { id: string; name: string }[];
     expect(wallets).toEqual([{ id: DEFAULT_WALLET, name: 'Thursday SLAA Meeting' }]);
 
-    const count = async (q: string) => Number(((await db.query(`SELECT count(*) AS n FROM ${q}`)).rows[0] as { n: number }).n);
+    const count = async (q: string) =>
+      Number(((await db.query(`SELECT count(*) AS n FROM ${q}`)).rows[0] as { n: number }).n);
     expect(await count('transactions')).toBe(entries);
     expect(await count(`transactions WHERE wallet_id = '${DEFAULT_WALLET}'`)).toBe(entries);
     expect(await count('audit_log WHERE wallet_id IS NULL')).toBe(0);
@@ -57,10 +59,14 @@ describe('wallets migration on a real Postgres engine', () => {
   it('keeps accepting entries from the old app version, and refuses a wallet name that differs only by case', async () => {
     const db = await legacyDb();
     await db.exec(sql(WALLETS));
-    await db.exec("INSERT INTO transactions (type, amount, date, account_id) VALUES ('inflow', 1, '2026-02-01', 'cash')");
+    await db.exec(
+      "INSERT INTO transactions (type, amount, date, account_id) VALUES ('inflow', 1, '2026-02-01', 'cash')",
+    );
     const row = (await db.query('SELECT wallet_id FROM transactions ORDER BY created_at DESC LIMIT 1')).rows[0];
     expect(row).toEqual({ wallet_id: DEFAULT_WALLET });
-    await expect(db.exec("INSERT INTO wallets (name) VALUES ('THURSDAY slaa meeting')")).rejects.toThrow(/duplicate|unique/i);
+    await expect(db.exec("INSERT INTO wallets (name) VALUES ('THURSDAY slaa meeting')")).rejects.toThrow(
+      /duplicate|unique/i,
+    );
     await db.close();
   });
 });

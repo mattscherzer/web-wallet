@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Download, Search } from 'lucide-react';
 import { useFilteredTransactions } from '../db/hooks';
 import { getAccountLabel, fromAccountLabel, type Transaction } from '../db/database';
@@ -10,6 +10,8 @@ import { getDateGroupLabel, groupByDate } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
 import { availableDelta, categoryLabel } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
+import { useOwnerConfirm } from '../auth/OwnerConfirm';
 
 type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
 
@@ -22,6 +24,8 @@ const FILTER_LABELS: Record<FilterType, string> = {
 
 export default function HistoryPage() {
   const { current: wallet } = useWallet();
+  const { can } = useAuth();
+  const confirmOwner = useOwnerConfirm();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showRemoved, setShowRemoved] = useState(false);
@@ -36,13 +40,20 @@ export default function HistoryPage() {
     <>
       <div className="page-header">
         <h1 className="page-header__title">History</h1>
-        <button
-          className="btn btn--outline page-header__action"
-          onClick={() => wallet && generateHistoryCsv(wallet.id, wallet.name)}
-          id="export-csv-btn"
-        >
-          <Download size={18} aria-hidden="true" /> Export CSV
-        </button>
+        {can('export') && (
+          <button
+            className="btn btn--outline page-header__action"
+            onClick={() =>
+              wallet &&
+              void confirmOwner().then((ok) => {
+                if (ok) return generateHistoryCsv(wallet.id, wallet.name);
+              })
+            }
+            id="export-csv-btn"
+          >
+            <Download size={18} aria-hidden="true" /> Export CSV
+          </button>
+        )}
       </div>
 
       <div className="search-bar" id="history-search-bar">
@@ -84,7 +95,8 @@ export default function HistoryPage() {
 
       {live.length > 0 && (
         <p className="history-summary num">
-          {live.length} {live.length === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(total('inflow'), 'inflow')} · out {formatSignedCurrency(total('outflow'), 'outflow')}
+          {live.length} {live.length === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(total('inflow'), 'inflow')}{' '}
+          · out {formatSignedCurrency(total('outflow'), 'outflow')}
         </p>
       )}
 
@@ -118,7 +130,12 @@ function HistoryRow({ tx }: { tx: Transaction }) {
   const meta = [where, tx.notes].filter(Boolean).join(' · ');
 
   const delta = isTransfer
-    ? availableDelta({ type: 'transfer', amount: Number(tx.amount), accountId: tx.account_id, fromAccountId: tx.from_account_id })
+    ? availableDelta({
+        type: 'transfer',
+        amount: Number(tx.amount),
+        accountId: tx.account_id,
+        fromAccountId: tx.from_account_id,
+      })
     : null;
 
   const iconClass = isTransfer
@@ -131,7 +148,13 @@ function HistoryRow({ tx }: { tx: Transaction }) {
     <div className={`transaction-item${tx.deleted ? ' transaction-item--removed' : ''}`}>
       <Link to={`/history/${tx.id}`} className="transaction-item__header">
         <div className={`transaction-item__icon ${iconClass}`} aria-hidden="true">
-          {isTransfer ? <ArrowLeftRight size={20} /> : tx.type === 'inflow' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+          {isTransfer ? (
+            <ArrowLeftRight size={20} />
+          ) : tx.type === 'inflow' ? (
+            <ArrowDownLeft size={20} />
+          ) : (
+            <ArrowUpRight size={20} />
+          )}
         </div>
         <div className="transaction-item__info">
           <p className="transaction-item__name">

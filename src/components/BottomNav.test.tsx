@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import BottomNav from './BottomNav';
 
 function nav(path = '/') {
@@ -14,9 +14,7 @@ function nav(path = '/') {
 /** Labels of the links whose tag carries aria-current="page". */
 function currentLabels(html: string): string[] {
   const links = html.match(/<a [^>]*>.*?<\/a>/g) ?? [];
-  return links
-    .filter((a) => a.includes('aria-current="page"'))
-    .map((a) => a.replace(/<[^>]+>/g, ''));
+  return links.filter((a) => a.includes('aria-current="page"')).map((a) => a.replace(/<[^>]+>/g, ''));
 }
 
 describe('BottomNav destinations', () => {
@@ -34,5 +32,7 @@ describe('BottomNav destinations', () => {
     expect(currentLabels(nav('/history'))).toEqual(['History']);
     expect(currentLabels(nav('/reports'))).toEqual(['Reports']);
     expect(currentLabels(nav('/more'))).toEqual(['More']);
+    expect(currentLabels(nav('/record'))).toEqual([]);
+    expect(currentLabels(nav('/history/abc'))).toEqual(['History']);
   });
 });

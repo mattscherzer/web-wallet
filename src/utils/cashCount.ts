@@ -65,8 +65,7 @@ function withCount(state: CountState, index: number, value: number): CountState 
   return commit(state, counts);
 }
 
-const endTyping = (state: CountState): CountState =>
-  state.typing == null ? state : { ...state, typing: null };
+const endTyping = (state: CountState): CountState => (state.typing == null ? state : { ...state, typing: null });
 
 export function countReducer(state: CountState, action: CountAction): CountState {
   if (action.type !== 'set') state = endTyping(state);
@@ -93,7 +92,10 @@ export function countReducer(state: CountState, action: CountAction): CountState
       return { ...commit(state, counts), typing: action.index };
     }
     case 'clear':
-      return commit(state, state.counts.map(() => 0));
+      return commit(
+        state,
+        state.counts.map(() => 0),
+      );
     case 'undo': {
       if (state.history.length === 0) return state;
       return {

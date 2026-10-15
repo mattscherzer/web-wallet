@@ -8,7 +8,12 @@ import { useAccountBalances, useTransactions } from './hooks';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 beforeEach(() => {
@@ -17,10 +22,9 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const setup = () =>
-  renderHook(
-    () => ({ wallet: useWallet(), txs: useTransactions(), balances: useAccountBalances() }),
-    { wrapper: ({ children }) => walletApp(children, { current: 'wa' }) },
-  );
+  renderHook(() => ({ wallet: useWallet(), txs: useTransactions(), balances: useAccountBalances() }), {
+    wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
+  });
 
 describe('data follows the current wallet', () => {
   it('shows the new wallet’s data after switching, and never the old wallet’s', async () => {

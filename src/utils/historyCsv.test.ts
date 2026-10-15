@@ -26,7 +26,7 @@ const balances = (rows: string[][]) => rows.slice(1).map((r) => [r[4], r[5]]);
 describe('buildHistoryCsvRows', () => {
   it('starts with the header row', () => {
     expect(buildHistoryCsvRows([])).toEqual([HISTORY_CSV_HEADER]);
-    expect(HISTORY_CSV_HEADER).toEqual(['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve']);
+    expect(HISTORY_CSV_HEADER).toEqual(['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by']);
   });
 
   it('tracks main and reserve running balances over a known sequence', () => {
@@ -35,7 +35,13 @@ describe('buildHistoryCsvRows', () => {
       tx({ type: 'inflow', amount: 50.5, account_id: 'cash', date: '2026-01-06' }),
       tx({ type: 'outflow', amount: 20.25, account_id: 'cash', date: '2026-01-07' }),
       tx({ type: 'transfer', amount: 300, account_id: 'prudent_reserve', from_account_id: 'bank', date: '2026-01-08' }),
-      tx({ type: 'transfer', amount: 75, account_id: 'paypal', from_account_id: 'prudent_reserve', date: '2026-01-09' }),
+      tx({
+        type: 'transfer',
+        amount: 75,
+        account_id: 'paypal',
+        from_account_id: 'prudent_reserve',
+        date: '2026-01-09',
+      }),
       tx({ type: 'inflow', amount: 10, account_id: 'prudent_reserve', date: '2026-01-10' }),
       tx({ type: 'outflow', amount: 5, account_id: 'prudent_reserve', date: '2026-01-11' }),
     ]);
@@ -95,7 +101,7 @@ describe('buildHistoryCsvRows', () => {
       tx({ type: 'transfer', amount: 25, account_id: 'cash', from_account_id: null, notes: 'Legacy' }),
     ]);
 
-    expect(rows[2]).toEqual(['01.03.26', '', '', '"Legacy"', '50.00', '+0.00']);
+    expect(rows[2]).toEqual(['01.03.26', '', '', '"Legacy"', '50.00', '+0.00', '"Unknown / N/A"']);
   });
 
   it('skips soft-deleted transactions', () => {
@@ -120,9 +126,7 @@ describe('buildHistoryCsvRows', () => {
   });
 
   it('formats the date as DD.MM.YY', () => {
-    const [, row] = buildHistoryCsvRows([
-      tx({ type: 'inflow', amount: 1, account_id: 'cash', date: '2026-12-31' }),
-    ]);
+    const [, row] = buildHistoryCsvRows([tx({ type: 'inflow', amount: 1, account_id: 'cash', date: '2026-12-31' })]);
     expect(row[0]).toBe('31.12.26');
   });
 
@@ -149,8 +153,6 @@ describe('buildHistoryCsv', () => {
       tx({ type: 'inflow', amount: 12.5, account_id: 'bank', category: 'donation', date: '2026-02-03' }),
     ]);
 
-    expect(csv).toBe(
-      'Date,In,Out,What,Balance,Prudent Reserve\n03.02.26,12.50,,"Donation",12.50,+0.00'
-    );
+    expect(csv).toBe('Date,In,Out,What,Balance,Prudent Reserve,Created by\n03.02.26,12.50,,"Donation",12.50,+0.00,"Unknown / N/A"');
   });
 });

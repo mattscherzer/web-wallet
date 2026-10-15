@@ -1,0 +1,39 @@
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (min-width: 481px) {
+  body {
+    background: var(--color-container);
+  }
+
+  .app-layout {
+    background: var(--color-bg);
+  }
+}
+
+@media (min-width: 600px) {
+  /* Navigation rail */
+  .bottom-nav {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: var(--rail-offset);
+    max-width: none;
+    height: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-auto-rows: var(--bottom-nav-height);
+    align-content: start;
+    gap: var(--space-sm);
+    padding: var(--space-xl) 0 0 env(safe-area-inset-left, 0px);
+  }
+
+  .app-layout {
+    margin: 0 auto 0 max(var(--rail-offset), calc((100% - var(--max-width)) / 2));
+  }
+
+  .page-container {
+    padding-bottom: calc(var(--fab-size) + var(--space-2xl) + env(safe-area-inset-bottom, 0px));
+  }
+}

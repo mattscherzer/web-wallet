@@ -1,0 +1,124 @@
+/* =============================================
+   FORM ELEMENTS
+   ============================================= */
+.form-section {
+  margin-bottom: var(--space-lg);
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.form-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.form-input {
+  width: 100%;
+  min-height: var(--touch-primary);
+  padding: var(--space-md);
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.form-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.form-textarea::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+/* Amount Input */
+.amount-input {
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+}
+
+.amount-input__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.amount-input__field {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.amount-input__currency {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.amount-input__value {
+  min-height: var(--touch-min);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Date Input */
+.date-input-wrap {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-primary);
+  background: var(--color-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  transition: border-color var(--transition-fast);
+}
+
+.date-input-wrap:focus-within {
+  border-color: var(--color-primary);
+}
+
+.date-input-wrap input[type="date"] {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}

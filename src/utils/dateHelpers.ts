@@ -25,11 +25,13 @@ export function getDateGroupLabel(dateStr: string): string {
   if (dateStr === yesterdayStr) return 'YESTERDAY';
 
   const date = new Date(dateStr + 'T00:00:00');
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-  }).toUpperCase();
+  return date
+    .toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'short',
+      day: 'numeric',
+    })
+    .toUpperCase();
 }
 
 /**
@@ -63,9 +65,7 @@ export function formatTime(isoDatetime: string): string {
 /**
  * Group transactions by date
  */
-export function groupByDate<T extends { date: string }>(
-  items: T[]
-): Map<string, T[]> {
+export function groupByDate<T extends { date: string }>(items: T[]): Map<string, T[]> {
   const groups = new Map<string, T[]>();
   for (const item of items) {
     const existing = groups.get(item.date);

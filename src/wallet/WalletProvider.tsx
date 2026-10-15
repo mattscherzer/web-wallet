@@ -60,6 +60,14 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
     setAttempt((n) => n + 1);
   }, []);
 
+  const refresh = useCallback(async () => {
+    try {
+      setWallets(await fetchWallets());
+    } catch (err) {
+      console.error('Failed to refresh the wallets:', err);
+    }
+  }, []);
+
   const value = useMemo<WalletValue>(
     () => ({
       wallets,
@@ -68,8 +76,9 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
       switchWallet,
       addWallet,
       reload,
+      refresh,
     }),
-    [wallets, status, storedId, switchWallet, addWallet, reload],
+    [wallets, status, storedId, switchWallet, addWallet, reload, refresh],
   );
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;

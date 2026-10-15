@@ -1,11 +1,15 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { X } from 'lucide-react';
 import { WalletNameError } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
+import { useOwnerConfirm } from '../auth/OwnerConfirm';
 
 export default function NewWalletPage() {
   const { addWallet } = useWallet();
+  const { profile } = useAuth();
+  const confirmOwner = useOwnerConfirm();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -17,6 +21,10 @@ export default function NewWalletPage() {
     setSaving(true);
     setError(null);
     try {
+      if (!(await confirmOwner())) {
+        setSaving(false);
+        return;
+      }
       await addWallet(name);
       navigate('/');
     } catch (err) {
@@ -24,6 +32,8 @@ export default function NewWalletPage() {
       setSaving(false);
     }
   };
+
+  if (profile && profile.kind !== 'owner') return <p className="empty-state__text">Owners only</p>;
 
   return (
     <>
@@ -36,7 +46,9 @@ export default function NewWalletPage() {
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
-          <label className="form-label" htmlFor="wallet-name">Wallet name</label>
+          <label className="form-label" htmlFor="wallet-name">
+            Wallet name
+          </label>
           <input
             id="wallet-name"
             className="form-input"
@@ -46,11 +58,15 @@ export default function NewWalletPage() {
             aria-invalid={error ? true : undefined}
             autoFocus
           />
-          <p id="wallet-name-hint" className="form-hint">Shown to members, on reports and on exported files.</p>
+          <p id="wallet-name-hint" className="form-hint">
+            Shown to members, on reports and on exported files.
+          </p>
         </div>
 
         {error && (
-          <p role="alert" className="form-error">{error}</p>
+          <p role="alert" className="form-error">
+            {error}
+          </p>
         )}
 
         <button type="submit" className="btn btn--primary" disabled={saving}>

@@ -1,14 +1,19 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { createFakeSupabase, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
-import { enterPin, transactionRows } from '../test/transactionsTestKit';
+import { transactionRows } from '../test/transactionsTestKit';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 const pageMod = await import('./EntryPage').catch(() => undefined);
@@ -46,7 +51,6 @@ describe('Entry page', () => {
 
     fireEvent.click(within(sheet).getByRole('radio', { name: 'Duplicate' }));
     fireEvent.click(within(sheet).getByRole('button', { name: 'Remove entry' }));
-    await enterPin('1234', ref.fake);
 
     const history = await screen.findByRole('list', { name: 'Change history' });
     expect(await within(history).findByText('Removed')).toBeTruthy();
@@ -54,7 +58,6 @@ describe('Entry page', () => {
     expect(screen.getByText('Removed', { selector: '[data-status="removed"]' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('button', { name: 'Restore' }));
-    await enterPin('1234', ref.fake);
     expect(await within(history).findByText('Restored')).toBeTruthy();
     // Nobody is named until sign-in exists.
     expect(screen.queryByText(/Anna/)).toBeNull();
@@ -67,7 +70,7 @@ describe('Entry page', () => {
     expect(await screen.findByText(/Entry not found/)).toBeTruthy();
   });
 
-  it('edits with a reason only after the PIN, and shows before and after in the change history', async () => {
+  it('edits with a reason, and shows before and after in the change history', async () => {
     app('/history/t1');
     await screen.findByRole('button', { name: 'Edit' });
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
@@ -82,7 +85,6 @@ describe('Entry page', () => {
     const row = () => ref.fake.tables.transactions.find((t) => t.id === 't1')!;
     expect(row().amount).toBe(1000);
 
-    await enterPin('1234', ref.fake);
     const history = await screen.findByRole('list', { name: 'Change history' });
     expect(await within(history).findByText('Edited')).toBeTruthy();
     expect(within(history).getByText(/Reason: Wrong amount/)).toBeTruthy();

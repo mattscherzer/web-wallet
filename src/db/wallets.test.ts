@@ -1,10 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
-import { availableByWallet, createWallet, fetchWalletAvailableBalances, fetchWallets, MAX_WALLET_NAME } from './wallets';
+import {
+  availableByWallet,
+  createWallet,
+  fetchWalletAvailableBalances,
+  fetchWallets,
+  MAX_WALLET_NAME,
+} from './wallets';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 beforeEach(() => {

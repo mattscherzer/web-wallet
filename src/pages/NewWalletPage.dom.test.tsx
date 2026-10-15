@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { memoryStorage, walletApp } from '../test/walletTestKit';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
@@ -9,7 +9,12 @@ import NewWalletPage from './NewWalletPage';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
-  supabase: new Proxy({}, { get: (_t, p) => (...a: unknown[]) => (ref.fake.client as unknown as Record<string, (...x: unknown[]) => unknown>)[p as string](...a) }),
+  supabase: new Proxy(
+    {},
+    {
+      get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string],
+    },
+  ),
 }));
 
 beforeEach(() => {
@@ -35,8 +40,7 @@ function setup() {
   return storage;
 }
 
-const type = (v: string) =>
-  fireEvent.change(screen.getByLabelText('Wallet name'), { target: { value: v } });
+const type = (v: string) => fireEvent.change(screen.getByLabelText('Wallet name'), { target: { value: v } });
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Create wallet' }));
 
 describe('New wallet', () => {

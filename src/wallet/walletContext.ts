@@ -10,6 +10,8 @@ export interface WalletValue {
   /** Creates a wallet and opens it. Rejects with the reason if it could not be created. */
   addWallet: (name: string) => Promise<Wallet>;
   reload: () => void;
+  /** Fetches the wallets again without showing the loading screen (e.g. after an owner created one elsewhere). */
+  refresh: () => Promise<void>;
 }
 
 export const WalletContext = createContext<WalletValue | null>(null);
