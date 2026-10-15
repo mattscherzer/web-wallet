@@ -13,6 +13,8 @@ import {
   twoWalletRows,
   type FakeSupabase,
 } from '../test/fakeSupabase';
+import { WalletProvider } from '../wallet/WalletProvider';
+import { useWallet } from '../wallet/useWallet';
 import AdminPage from './AdminPage';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
@@ -108,5 +110,33 @@ describe('Wallets and staff page', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Enable Anna' }));
     await waitFor(() => expect(calls()).toHaveLength(4));
     expect(calls()[3]).toEqual({ action: 'enable', user_id: 'u-anna' });
+  });
+});
+
+function WalletCount() {
+  const { wallets } = useWallet();
+  return <p data-testid="wallet-count">{wallets.length}</p>;
+}
+
+describe('Wallets and staff page and the wallet list', () => {
+  it('T12b a wallet the owner creates shows up in the wallet list at once, without reloading the app', async () => {
+    ref.fake.signIn('u-owner');
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <OwnerConfirmProvider>
+            <WalletProvider storage={{ getItem: () => null, setItem: () => {} }}>
+              <WalletCount />
+              <AdminPage />
+            </WalletProvider>
+          </OwnerConfirmProvider>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(screen.getByTestId('wallet-count').textContent).toBe('2'));
+    fireEvent.change(await screen.findByLabelText('Wallet name'), { target: { value: 'Autumn Retreat' } });
+    fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));
+    await confirmPassword();
+    await waitFor(() => expect(screen.getByTestId('wallet-count').textContent).toBe('3'));
   });
 });

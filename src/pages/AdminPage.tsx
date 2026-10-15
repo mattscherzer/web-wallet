@@ -3,6 +3,7 @@ import { createStaff, listStaff, resetStaffPin, setStaffDisabled, type StaffMemb
 import { createWallet, fetchWallets, WalletNameError, type Wallet } from '../db/wallets';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
+import { useOptionalWallet } from '../wallet/useWallet';
 import { PIN_LENGTH, isPin } from '../auth/pin';
 
 /**
@@ -25,6 +26,7 @@ export default function AdminPage() {
 const PIN_PROBLEM = `The PIN must be exactly ${PIN_LENGTH} digits`;
 
 function Dashboard() {
+  const wallet = useOptionalWallet();
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loadError, setLoadError] = useState(false);
@@ -57,7 +59,12 @@ function Dashboard() {
           Couldn’t load everything. Check your connection and try again.
         </p>
       )}
-      <WalletForm onDone={reload} />
+      <WalletForm
+        onDone={async () => {
+          await reload();
+          await wallet?.refresh(); // so the wallet switcher lists the new wallet right away
+        }}
+      />
       <StaffForm wallets={wallets} onDone={reload} />
       <section aria-label="Staff">
         <h2 className="entry__heading">Staff</h2>

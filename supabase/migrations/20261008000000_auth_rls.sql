@@ -254,7 +254,11 @@ BEGIN
     RETURN NEW; -- server-side maintenance, not a client
   END IF;
   IF NEW.deleted AND NOT OLD.deleted THEN
-    IF NOT (can(NEW.wallet_id, 'remove_entry') OR (can(NEW.wallet_id, 'remove_own_entry') AND OLD.created_by = auth.uid())) THEN
+    -- coalesce: an entry with no author (from before login existed) is nobody's own, never a NULL that lets it through.
+    IF NOT coalesce(
+      can(NEW.wallet_id, 'remove_entry')
+        OR (can(NEW.wallet_id, 'remove_own_entry') AND OLD.created_by IS NOT NULL AND OLD.created_by = auth.uid()),
+      false) THEN
       RAISE EXCEPTION 'you may not remove this entry' USING ERRCODE = '42501';
     END IF;
     NEW.removed_by := (SELECT p.display_name FROM profiles p WHERE p.id = auth.uid());

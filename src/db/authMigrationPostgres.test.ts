@@ -341,6 +341,25 @@ describe('auth migration: roles and the permission table', () => {
     await db.close();
   });
 
+  it('T3e staff cannot remove an entry that has no author (made before login existed) or whose author account is gone', async () => {
+    const db = await migratedDb();
+    await db.exec(`INSERT INTO transactions (id, wallet_id, type, amount, date, account_id)
+      VALUES ('e0000000-0000-0000-0000-0000000000f1', '${W1}', 'inflow', 9, '2026-03-05', 'cash')`);
+    const LEGACY = 'e0000000-0000-0000-0000-0000000000f1';
+    expect(await refused(db, STAFF_A1, REMOVE(LEGACY))).toBe(true);
+    // The author's account is deleted later: their entry is nobody's own any more.
+    await db.exec(`DELETE FROM auth.users WHERE id = '${STAFF_A2}'`);
+    expect(await refused(db, STAFF_A1, REMOVE(E2))).toBe(true);
+    expect(
+      one<{ n: number }>(
+        await db.query(`SELECT count(*)::int AS n FROM transactions WHERE deleted AND id IN ('${LEGACY}', '${E2}')`),
+      ).n,
+    ).toBe(0);
+    // The owner still can.
+    await as(db, OWNER_A, REMOVE(LEGACY));
+    await db.close();
+  });
+
   it('T4d one owner per wallet and staff in one wallet are removable limits: allowing a second owner needs no schema change', async () => {
     const db = await migratedDb();
     await expect(
