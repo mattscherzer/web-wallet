@@ -1,8 +1,5 @@
 // @vitest-environment node
-import { describe, it, expect, vi } from 'vitest';
-
-// The seed test boots an in-memory Postgres and runs every migration: slow on a busy machine or a small CI runner.
-vi.setConfig({ testTimeout: 60_000 });
+import { describe, it, expect } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

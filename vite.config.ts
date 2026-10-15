@@ -1,9 +1,13 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
+  test: {
+    // Several tests boot an in-memory Postgres and run every migration: slow on a busy machine or a small CI runner.
+    testTimeout: 60_000,
+  },
   plugins: [
     react(),
     VitePWA({
