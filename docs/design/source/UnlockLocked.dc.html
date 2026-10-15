@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unlock, too many wrong PINs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F4F5F7">
+<div aria-hidden="true" style="padding: 14px 20px; display: flex; flex-direction: column; gap: 16px"><span style="font-size: 26px; font-weight: 600; letter-spacing: -0.025em">Treasury</span><div style="height: 200px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E4E7EC; padding: 18px 20px"><span class="num" style="font-size: 48px; letter-spacing: -0.025em">€1,064.80</span></div></div><div aria-hidden="true" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,24,40,0.55)"></div><section role="dialog" aria-modal="true" aria-labelledby="ul-h" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 16px 24px 28px; display: flex; flex-direction: column; gap: 16px"><div aria-hidden="true" style="align-self: center; width: 32px; height: 4px; border-radius: 2px; background: #98A2B3"></div><div style="display: flex; justify-content: space-between; align-items: center"><span style="width: 48px; height: 48px; border-radius: 24px; background: #EEF0F3; color: currentColor; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><a href="Main.dc.html" aria-label="Close, keep viewing" style="width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; color: #101828"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a></div><h2 id="ul-h" style="margin: 0; font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em">Unlock to record</h2><div role="alert" style="padding: 12px 14px; border-radius: 16px; background: #FEE4E2; display: flex; gap: 12px; align-items: flex-start"><span style="color: #B42318; flex-shrink: 0; margin-top: 1px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16.5v.01"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px; color: #101828">Too many wrong PINs</strong><span style="font-size: 14px; line-height: 20px; color: #3A4252">“ben” is paused so nobody can keep guessing. You can still view the books.</span></span></div><div role="timer" aria-label="Try again in 14 minutes 32 seconds" style="padding: 20px 16px; border-radius: 24px; background: #F7F8FA; display: flex; flex-direction: column; align-items: center; gap: 4px"><span class="num" style="font-size: 44px; font-weight: 700; letter-spacing: -0.02em">14:32</span><span style="font-size: 14px; color: #5D6675">until you can try again</span></div><p style="margin: 0; font-size: 15px; line-height: 1.45; color: #5D6675">Don’t want to wait? Ask the owner to reset your PIN. They’ll give you a new one.</p><a href="Main.dc.html" class="spring" style="height: 56px; padding: 0 24px; border-radius: 28px; border: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700; background: #E3E8F0; color: #101828">Back to viewing</a><a href="OwnerSignIn.dc.html" style="min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: #1F4E9E">I’m the owner · Sign in with email</a></section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -29,22 +29,24 @@ Board names are file names in `source/`. Every board also exists as `<Board>Dark
 
 | # | Journey | Boards |
 |---|---|---|
-| 1 | First run: create a wallet | `Welcome` → `NewWallet` → `Main` |
-| 2 | Join with an invite link | `JoinWallet`, `JoinExpired` |
-| 3 | Unlock to change things | `Unlock` → `UnlockPasskey` → `UnlockFailed` → `UnlockPin`; `AutoLocked` |
-| 4 | Record money in | `Record` → `CashCount` → `Recorded`; `CategoryNew`; `RecordSaving`, `RecordFailed` |
-| 5 | Record money out | `RecordOut`, `RecordOther` → `Recorded` |
-| 6 | Transfer between accounts | `Record` (Transfer) → `Recorded`; `States` (validation) |
-| 7 | Correct an entry | `Entry` → `EntryEdit` → `EditReason`; `Conflict` |
-| 8 | Remove and restore | `Entry` → `EntryRemove` → `EntryRemoved`; `HistoryRemoved` |
-| 9 | Review history | `History`, `LoadingHistory`, `HistoryEmpty`; desktop `DesktopHistory` |
-| 10 | Work offline, then sync | `OfflineHistory`, `SyncProgress`, `SyncProblem`, `Conflict`, `PullRefresh` |
-| 11 | Report and export | `Reports` → `ReportPeriod` → `ReportExport`; `ReportsEmpty`; desktop `DesktopReport` |
-| 12 | Manage accounts | `More`; `States` (edit account, empty first run) |
-| 13 | Manage categories | `Categories`, `CategoryEdit`, `CategoryNew` |
-| 14 | Manage members and invites | `Members` → `MemberRole` → `MemberRemove`; `InviteSheet` |
-| 15 | Switch or leave a wallet | `WalletSwitcher`, `WalletUnavailable`; desktop `DesktopWallets` |
-| 16 | Audit and settings | `ChangeLog`, `ThemeSettings` |
+| 1 | First run: create an owner account and a wallet | `Welcome` → `OwnerSignUp` → `SignUpCheckEmail` → `NewWallet` → `Main` |
+| 2 | Open a wallet with a link | `JoinWallet`, `JoinExpired` |
+| 3 | Unlock as staff | `Unlock` → `UnlockPin` → `UnlockChecking`; `UnlockLocked`; `AutoLocked` |
+| 4 | Sign in as owner | `OwnerSignIn`, `OwnerSignInError`, `ForgotPassword` → `ResetSent` |
+| 5 | Confirm an owner action | `ConfirmOwner`, `ConfirmOwnerWrong`, `OwnerOnly` |
+| 6 | Record money in | `Record` → `CashCount` → `Recorded`; `CategoryNew`; `RecordSaving`, `RecordFailed` |
+| 7 | Record money out | `RecordOut`, `RecordOther` → `Recorded` |
+| 8 | Transfer between accounts | `Record` (Transfer) → `Recorded`; `States` (validation) |
+| 9 | Correct an entry | `Entry` → `EntryEdit` → `EditReason`; `Conflict` |
+| 10 | Remove and restore | `Entry` → `EntryRemove` → `EntryRemoved`; `HistoryRemoved` |
+| 11 | Review history | `History`, `LoadingHistory`, `HistoryEmpty`; desktop `DesktopHistory` |
+| 12 | Work offline, then sync | `OfflineHistory`, `SyncProgress`, `SyncProblem`, `Conflict`, `PullRefresh` |
+| 13 | Report and export | `Reports` → `ReportPeriod` → `ReportExport`; `ReportsEmpty`; desktop `DesktopReport` |
+| 14 | Manage accounts | `More`; `States` (edit account, empty first run) |
+| 15 | Manage categories | `Categories`, `CategoryEdit`, `CategoryNew` |
+| 16 | Manage people and links | `People` → `StaffDetail` → `StaffPinReset`, `StaffRemove`; `StaffAdd` → `StaffAdded`; `LinkSheet` |
+| 17 | Switch or leave a wallet | `WalletSwitcher`, `WalletUnavailable`; desktop `DesktopWallets` |
+| 18 | Audit and settings | `ChangeLog`, `ThemeSettings` |
 
 Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCount` and `Recorded` are the two hero moments.
 
@@ -52,6 +54,7 @@ Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCo
 
 | Board | What it is |
 |---|---|
+| `AccessModel` | Who can do what: owner, staff, viewer, and how each gets in |
 | `System` | Visual system sheet (light tokens only; the design system has both themes) |
 | `FeedbackCatalog` | Snackbar, banners, notices, loading and progress indicators, skeleton, full-page states |
 | `Transitions` | The six transition patterns with live demos |
@@ -59,6 +62,7 @@ Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCo
 
 ## Notes
 
+- Access is owner (email and password), staff (username and PIN, no account) and viewers (the link). Staff unlock once per session; owner-only actions ask for the password again. The timings and counts on `AccessModel` are proposals. The decision record is `docs/decisions/auth-owner-and-staff.md`.
 - Desktop boards (`Desktop*`) use the navigation rail, balance strip and an entry side panel. On desktop the Record FAB menu opens from the rail.
 - Exports (CSV, printed or shared PDF) always use the light theme.
 - Loading and progress follow Material 3 Expressive; timings are proposals (`motion.md` in the design system).
