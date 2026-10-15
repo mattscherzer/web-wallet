@@ -2,99 +2,153 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "Welcome.dc.html": {
+    "SignIn.dc.html": {
       "x": 0,
       "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Staff username",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInPin.dc.html": {
+      "x": 470,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Staff PIN",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInPinWrong.dc.html": {
+      "x": 940,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Wrong PIN",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInChecking.dc.html": {
+      "x": 1410,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Checking",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInPaused.dc.html": {
+      "x": 1880,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Paused after wrong tries",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInOwner.dc.html": {
+      "x": 2350,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Owner",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "SignInOwnerError.dc.html": {
+      "x": 2820,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Owner, wrong password",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "MainLocked.dc.html": {
+      "x": 0,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Locked · View only",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "MainLockedIdle.dc.html": {
+      "x": 470,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Locked · After 30 minutes",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "Unlock.dc.html": {
+      "x": 940,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Staff PIN",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "UnlockWrong.dc.html": {
+      "x": 1410,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Wrong PIN",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "UnlockOwner.dc.html": {
+      "x": 1880,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Owner password",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "UnlockPaused.dc.html": {
+      "x": 2350,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Paused after wrong tries",
+      "is_interactive": true,
+      "page": "light"
+    },
+    "Welcome.dc.html": {
+      "x": 0,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Welcome · no wallet yet",
       "is_interactive": true,
       "page": "light"
     },
-    "OwnerSignUp.dc.html": {
-      "h": 844,
-      "title": "Owner · create account",
-      "w": 390,
+    "NoWalletStaff.dc.html": {
       "x": 470,
-      "y": 270,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "SignUpCheckEmail.dc.html": {
-      "h": 844,
-      "title": "Owner · confirm email",
+      "y": 2878,
       "w": 390,
-      "x": 940,
-      "y": 270,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "OwnerSignIn.dc.html": {
       "h": 844,
-      "title": "Owner · sign in",
-      "w": 390,
-      "x": 1410,
-      "y": 270,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "OwnerSignInError.dc.html": {
-      "h": 844,
-      "title": "Owner · wrong password",
-      "w": 390,
-      "x": 1880,
-      "y": 270,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "ForgotPassword.dc.html": {
-      "h": 844,
-      "title": "Owner · reset password",
-      "w": 390,
-      "x": 2350,
-      "y": 270,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "ResetSent.dc.html": {
-      "h": 844,
-      "title": "Owner · reset link sent",
-      "w": 390,
-      "x": 2820,
-      "y": 270,
+      "title": "Staff · No wallet yet",
       "is_interactive": true,
       "page": "light"
     },
     "NewWallet.dc.html": {
-      "x": 3290,
-      "y": 270,
+      "x": 940,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "New wallet",
       "is_interactive": true,
       "page": "light"
     },
-    "JoinWallet.dc.html": {
-      "x": 0,
-      "y": 1274,
-      "w": 390,
-      "h": 844,
-      "title": "Open a wallet with a link",
-      "is_interactive": true,
-      "page": "light"
-    },
-    "JoinExpired.dc.html": {
-      "x": 470,
-      "y": 1274,
-      "w": 390,
-      "h": 844,
-      "title": "Open · link expired",
-      "is_interactive": true,
-      "page": "light"
-    },
     "WalletSwitcher.dc.html": {
-      "x": 940,
-      "y": 1274,
+      "x": 1410,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Overview · switch wallet",
@@ -102,146 +156,74 @@
       "page": "light"
     },
     "WalletUnavailable.dc.html": {
-      "x": 1410,
-      "y": 1274,
+      "x": 1880,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Wallet unavailable",
       "is_interactive": true,
       "page": "light"
     },
-    "Unlock.dc.html": {
-      "h": 844,
-      "is_interactive": true,
-      "title": "Unlock to record",
-      "w": 390,
+    "ConfirmPassword.dc.html": {
       "x": 0,
-      "y": 2578,
+      "y": 4182,
+      "w": 390,
+      "h": 844,
+      "title": "Owner · Confirm your password",
+      "is_interactive": true,
       "page": "light"
     },
-    "UnlockPin.dc.html": {
+    "ConfirmPasswordWrong.dc.html": {
       "x": 470,
-      "y": 2578,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "Unlock · PIN pad, wrong PIN",
+      "title": "Owner · Wrong password",
       "is_interactive": true,
       "page": "light"
     },
-    "UnlockChecking.dc.html": {
+    "WalletsStaff.dc.html": {
       "x": 940,
-      "y": 2578,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "Unlock · checking PIN",
-      "is_interactive": true,
-      "page": "light"
-    },
-    "UnlockLocked.dc.html": {
-      "x": 1410,
-      "y": 2578,
-      "w": 390,
-      "h": 844,
-      "title": "Unlock · too many wrong PINs",
-      "is_interactive": true,
-      "page": "light"
-    },
-    "AutoLocked.dc.html": {
-      "x": 1880,
-      "y": 2578,
-      "w": 390,
-      "h": 844,
-      "title": "Locked automatically",
-      "is_interactive": true,
-      "page": "light"
-    },
-    "ConfirmOwner.dc.html": {
-      "h": 844,
-      "title": "Owner action · confirm password",
-      "w": 390,
-      "x": 2350,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "ConfirmOwnerWrong.dc.html": {
-      "h": 844,
-      "title": "Owner action · wrong password",
-      "w": 390,
-      "x": 2820,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "OwnerOnly.dc.html": {
-      "h": 844,
-      "title": "Owner action · blocked for staff",
-      "w": 390,
-      "x": 3290,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "People.dc.html": {
-      "x": 0,
-      "y": 5062,
-      "w": 390,
-      "h": 844,
-      "title": "People: owner, staff, link",
+      "title": "Wallets and staff",
       "is_interactive": true,
       "page": "light"
     },
     "StaffAdd.dc.html": {
-      "h": 844,
-      "title": "People · add staff",
-      "w": 390,
-      "x": 470,
-      "y": 5062,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "StaffAdded.dc.html": {
-      "h": 844,
-      "title": "People · staff added, PIN shown once",
-      "w": 390,
-      "x": 940,
-      "y": 5062,
-      "is_interactive": true,
-      "page": "light"
-    },
-    "StaffDetail.dc.html": {
       "x": 1410,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · staff details",
+      "title": "Staff · Add",
       "is_interactive": true,
       "page": "light"
     },
-    "StaffPinReset.dc.html": {
-      "h": 844,
-      "title": "People · PIN reset",
-      "w": 390,
+    "StaffResetPin.dc.html": {
       "x": 1880,
-      "y": 5062,
+      "y": 4182,
+      "w": 390,
+      "h": 844,
+      "title": "Staff · Reset PIN",
       "is_interactive": true,
       "page": "light"
     },
-    "StaffRemove.dc.html": {
+    "StaffDisable.dc.html": {
       "x": 2350,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · remove staff",
+      "title": "Staff · Disable",
       "is_interactive": true,
       "page": "light"
     },
-    "LinkSheet.dc.html": {
+    "OwnersOnly.dc.html": {
       "x": 2820,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · view-only link",
+      "title": "Owners only",
       "is_interactive": true,
       "page": "light"
     },
@@ -251,12 +233,12 @@
       "title": "Overview",
       "w": 390,
       "x": 0,
-      "y": 6366,
+      "y": 5486,
       "page": "light"
     },
     "OverviewFab.dc.html": {
       "x": 470,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Overview · Record menu open",
@@ -269,12 +251,12 @@
       "title": "Record · Money in",
       "w": 390,
       "x": 940,
-      "y": 6366,
+      "y": 5486,
       "page": "light"
     },
     "RecordOut.dc.html": {
       "x": 1410,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · Money out",
@@ -283,7 +265,7 @@
     },
     "RecordOther.dc.html": {
       "x": 1880,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · Money out, category “Other”",
@@ -296,12 +278,12 @@
       "title": "Count cash (working)",
       "w": 390,
       "x": 2350,
-      "y": 6366,
+      "y": 5486,
       "page": "light"
     },
     "RecordSaving.dc.html": {
       "x": 2820,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · saving",
@@ -310,7 +292,7 @@
     },
     "RecordFailed.dc.html": {
       "x": 3290,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · couldn’t save",
@@ -323,7 +305,7 @@
       "title": "Recorded",
       "w": 390,
       "x": 0,
-      "y": 7370,
+      "y": 6490,
       "page": "light"
     },
     "History.dc.html": {
@@ -332,7 +314,7 @@
       "title": "History",
       "w": 390,
       "x": 0,
-      "y": 8674,
+      "y": 7794,
       "page": "light"
     },
     "Entry.dc.html": {
@@ -341,12 +323,12 @@
       "title": "Entry + change history",
       "w": 390,
       "x": 470,
-      "y": 8674,
+      "y": 7794,
       "page": "light"
     },
     "EntryEdit.dc.html": {
       "x": 940,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Edit entry",
@@ -355,7 +337,7 @@
     },
     "EditReason.dc.html": {
       "x": 1410,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Edit entry · reason sheet",
@@ -364,7 +346,7 @@
     },
     "Conflict.dc.html": {
       "x": 1880,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 1000,
       "title": "Sync conflict · choose a version",
@@ -373,7 +355,7 @@
     },
     "EntryRemove.dc.html": {
       "x": 2350,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Remove · reason sheet",
@@ -382,7 +364,7 @@
     },
     "EntryRemoved.dc.html": {
       "x": 2820,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 1000,
       "title": "Removed entry",
@@ -391,7 +373,7 @@
     },
     "HistoryRemoved.dc.html": {
       "x": 3290,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "History · removed shown",
@@ -400,7 +382,7 @@
     },
     "ChangeLog.dc.html": {
       "x": 0,
-      "y": 10034,
+      "y": 9154,
       "w": 390,
       "h": 1180,
       "title": "Full change log",
@@ -413,12 +395,12 @@
       "title": "Reports",
       "w": 390,
       "x": 0,
-      "y": 11674,
+      "y": 10794,
       "page": "light"
     },
     "ReportsEmpty.dc.html": {
       "x": 470,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Empty · Reports, nothing in period",
@@ -427,7 +409,7 @@
     },
     "ReportPeriod.dc.html": {
       "x": 940,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Reports · period",
@@ -436,7 +418,7 @@
     },
     "ReportExport.dc.html": {
       "x": 1410,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Reports · export",
@@ -449,12 +431,12 @@
       "title": "Accounts & settings",
       "w": 390,
       "x": 0,
-      "y": 12978,
+      "y": 12098,
       "page": "light"
     },
     "Categories.dc.html": {
       "x": 470,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Categories",
@@ -463,7 +445,7 @@
     },
     "CategoryEdit.dc.html": {
       "x": 940,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Categories · edit sheet",
@@ -472,7 +454,7 @@
     },
     "CategoryNew.dc.html": {
       "x": 1410,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Record · new category sheet",
@@ -481,7 +463,7 @@
     },
     "ThemeSettings.dc.html": {
       "x": 1880,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Theme",
@@ -490,7 +472,7 @@
     },
     "LoadingOverview.dc.html": {
       "x": 0,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Loading · Overview",
@@ -499,7 +481,7 @@
     },
     "LoadingHistory.dc.html": {
       "x": 470,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Loading · History",
@@ -508,7 +490,7 @@
     },
     "HistoryEmpty.dc.html": {
       "x": 940,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Empty · History, no entries",
@@ -517,7 +499,7 @@
     },
     "PullRefresh.dc.html": {
       "x": 1410,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Pull to refresh",
@@ -526,7 +508,7 @@
     },
     "OfflineHistory.dc.html": {
       "x": 1880,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Offline · History",
@@ -535,7 +517,7 @@
     },
     "SyncProgress.dc.html": {
       "x": 2350,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Sync · in progress",
@@ -544,7 +526,7 @@
     },
     "SyncProblem.dc.html": {
       "x": 2820,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Sync · needs a decision",
@@ -557,7 +539,7 @@
       "title": "Desktop · History",
       "w": 1440,
       "x": 0,
-      "y": 15586,
+      "y": 14706,
       "page": "light"
     },
     "DesktopReport.dc.html": {
@@ -565,111 +547,165 @@
       "title": "Desktop · Monthly ledger",
       "w": 1440,
       "x": 1520,
-      "y": 15586,
+      "y": 14706,
       "page": "light"
     },
     "DesktopWallets.dc.html": {
       "x": 0,
-      "y": 16806,
+      "y": 15926,
       "w": 1440,
       "h": 900,
       "title": "Desktop · switch wallet",
       "is_interactive": true,
       "page": "light"
     },
-    "WelcomeDark.dc.html": {
+    "SignInDark.dc.html": {
       "x": 0,
       "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Staff username · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInPinDark.dc.html": {
+      "x": 470,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Staff PIN · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInPinWrongDark.dc.html": {
+      "x": 940,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Wrong PIN · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInCheckingDark.dc.html": {
+      "x": 1410,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Checking · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInPausedDark.dc.html": {
+      "x": 1880,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Paused after wrong tries · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInOwnerDark.dc.html": {
+      "x": 2350,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Owner · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "SignInOwnerErrorDark.dc.html": {
+      "x": 2820,
+      "y": 270,
+      "w": 390,
+      "h": 844,
+      "title": "Sign in · Owner, wrong password · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "MainLockedDark.dc.html": {
+      "x": 0,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Locked · View only · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "MainLockedIdleDark.dc.html": {
+      "x": 470,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Locked · After 30 minutes · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "UnlockDark.dc.html": {
+      "x": 940,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Staff PIN · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "UnlockWrongDark.dc.html": {
+      "x": 1410,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Wrong PIN · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "UnlockOwnerDark.dc.html": {
+      "x": 1880,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Owner password · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "UnlockPausedDark.dc.html": {
+      "x": 2350,
+      "y": 1574,
+      "w": 390,
+      "h": 844,
+      "title": "Unlock · Paused after wrong tries · dark",
+      "is_interactive": true,
+      "page": "dark"
+    },
+    "WelcomeDark.dc.html": {
+      "x": 0,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Welcome · no wallet yet · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "OwnerSignUpDark.dc.html": {
-      "h": 844,
-      "title": "Owner · create account · dark",
-      "w": 390,
+    "NoWalletStaffDark.dc.html": {
       "x": 470,
-      "y": 270,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "SignUpCheckEmailDark.dc.html": {
-      "h": 844,
-      "title": "Owner · confirm email · dark",
+      "y": 2878,
       "w": 390,
-      "x": 940,
-      "y": 270,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "OwnerSignInDark.dc.html": {
       "h": 844,
-      "title": "Owner · sign in · dark",
-      "w": 390,
-      "x": 1410,
-      "y": 270,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "OwnerSignInErrorDark.dc.html": {
-      "h": 844,
-      "title": "Owner · wrong password · dark",
-      "w": 390,
-      "x": 1880,
-      "y": 270,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "ForgotPasswordDark.dc.html": {
-      "h": 844,
-      "title": "Owner · reset password · dark",
-      "w": 390,
-      "x": 2350,
-      "y": 270,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "ResetSentDark.dc.html": {
-      "h": 844,
-      "title": "Owner · reset link sent · dark",
-      "w": 390,
-      "x": 2820,
-      "y": 270,
+      "title": "Staff · No wallet yet · dark",
       "is_interactive": true,
       "page": "dark"
     },
     "NewWalletDark.dc.html": {
-      "x": 3290,
-      "y": 270,
+      "x": 940,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "New wallet · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "JoinWalletDark.dc.html": {
-      "x": 0,
-      "y": 1274,
-      "w": 390,
-      "h": 844,
-      "title": "Open a wallet with a link · dark",
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "JoinExpiredDark.dc.html": {
-      "x": 470,
-      "y": 1274,
-      "w": 390,
-      "h": 844,
-      "title": "Open · link expired · dark",
-      "is_interactive": true,
-      "page": "dark"
-    },
     "WalletSwitcherDark.dc.html": {
-      "x": 940,
-      "y": 1274,
+      "x": 1410,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Overview · switch wallet · dark",
@@ -677,146 +713,74 @@
       "page": "dark"
     },
     "WalletUnavailableDark.dc.html": {
-      "x": 1410,
-      "y": 1274,
+      "x": 1880,
+      "y": 2878,
       "w": 390,
       "h": 844,
       "title": "Wallet unavailable · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "UnlockDark.dc.html": {
-      "h": 844,
-      "is_interactive": true,
-      "title": "Unlock to record · dark",
-      "w": 390,
+    "ConfirmPasswordDark.dc.html": {
       "x": 0,
-      "y": 2578,
+      "y": 4182,
+      "w": 390,
+      "h": 844,
+      "title": "Owner · Confirm your password · dark",
+      "is_interactive": true,
       "page": "dark"
     },
-    "UnlockPinDark.dc.html": {
+    "ConfirmPasswordWrongDark.dc.html": {
       "x": 470,
-      "y": 2578,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "Unlock · PIN pad, wrong PIN · dark",
+      "title": "Owner · Wrong password · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "UnlockCheckingDark.dc.html": {
+    "WalletsStaffDark.dc.html": {
       "x": 940,
-      "y": 2578,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "Unlock · checking PIN · dark",
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "UnlockLockedDark.dc.html": {
-      "x": 1410,
-      "y": 2578,
-      "w": 390,
-      "h": 844,
-      "title": "Unlock · too many wrong PINs · dark",
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "AutoLockedDark.dc.html": {
-      "x": 1880,
-      "y": 2578,
-      "w": 390,
-      "h": 844,
-      "title": "Locked automatically · dark",
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "ConfirmOwnerDark.dc.html": {
-      "h": 844,
-      "title": "Owner action · confirm password · dark",
-      "w": 390,
-      "x": 2350,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "ConfirmOwnerWrongDark.dc.html": {
-      "h": 844,
-      "title": "Owner action · wrong password · dark",
-      "w": 390,
-      "x": 2820,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "OwnerOnlyDark.dc.html": {
-      "h": 844,
-      "title": "Owner action · blocked for staff · dark",
-      "w": 390,
-      "x": 3290,
-      "y": 2578,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "PeopleDark.dc.html": {
-      "x": 0,
-      "y": 5062,
-      "w": 390,
-      "h": 844,
-      "title": "People: owner, staff, link · dark",
+      "title": "Wallets and staff · dark",
       "is_interactive": true,
       "page": "dark"
     },
     "StaffAddDark.dc.html": {
-      "h": 844,
-      "title": "People · add staff · dark",
-      "w": 390,
-      "x": 470,
-      "y": 5062,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "StaffAddedDark.dc.html": {
-      "h": 844,
-      "title": "People · staff added, PIN shown once · dark",
-      "w": 390,
-      "x": 940,
-      "y": 5062,
-      "is_interactive": true,
-      "page": "dark"
-    },
-    "StaffDetailDark.dc.html": {
       "x": 1410,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · staff details · dark",
+      "title": "Staff · Add · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "StaffPinResetDark.dc.html": {
-      "h": 844,
-      "title": "People · PIN reset · dark",
-      "w": 390,
+    "StaffResetPinDark.dc.html": {
       "x": 1880,
-      "y": 5062,
+      "y": 4182,
+      "w": 390,
+      "h": 844,
+      "title": "Staff · Reset PIN · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "StaffRemoveDark.dc.html": {
+    "StaffDisableDark.dc.html": {
       "x": 2350,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · remove staff · dark",
+      "title": "Staff · Disable · dark",
       "is_interactive": true,
       "page": "dark"
     },
-    "LinkSheetDark.dc.html": {
+    "OwnersOnlyDark.dc.html": {
       "x": 2820,
-      "y": 5062,
+      "y": 4182,
       "w": 390,
       "h": 844,
-      "title": "People · view-only link · dark",
+      "title": "Owners only · dark",
       "is_interactive": true,
       "page": "dark"
     },
@@ -826,12 +790,12 @@
       "title": "Overview · dark",
       "w": 390,
       "x": 0,
-      "y": 6366,
+      "y": 5486,
       "page": "dark"
     },
     "OverviewFabDark.dc.html": {
       "x": 470,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Overview · Record menu open · dark",
@@ -844,12 +808,12 @@
       "title": "Record · Money in · dark",
       "w": 390,
       "x": 940,
-      "y": 6366,
+      "y": 5486,
       "page": "dark"
     },
     "RecordOutDark.dc.html": {
       "x": 1410,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · Money out · dark",
@@ -858,7 +822,7 @@
     },
     "RecordOtherDark.dc.html": {
       "x": 1880,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · Money out, category “Other” · dark",
@@ -871,12 +835,12 @@
       "title": "Count cash (working) · dark",
       "w": 390,
       "x": 2350,
-      "y": 6366,
+      "y": 5486,
       "page": "dark"
     },
     "RecordSavingDark.dc.html": {
       "x": 2820,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · saving · dark",
@@ -885,7 +849,7 @@
     },
     "RecordFailedDark.dc.html": {
       "x": 3290,
-      "y": 6366,
+      "y": 5486,
       "w": 390,
       "h": 844,
       "title": "Record · couldn’t save · dark",
@@ -898,7 +862,7 @@
       "title": "Recorded · dark",
       "w": 390,
       "x": 0,
-      "y": 7370,
+      "y": 6490,
       "page": "dark"
     },
     "HistoryDark.dc.html": {
@@ -907,7 +871,7 @@
       "title": "History · dark",
       "w": 390,
       "x": 0,
-      "y": 8674,
+      "y": 7794,
       "page": "dark"
     },
     "EntryDark.dc.html": {
@@ -916,12 +880,12 @@
       "title": "Entry + change history · dark",
       "w": 390,
       "x": 470,
-      "y": 8674,
+      "y": 7794,
       "page": "dark"
     },
     "EntryEditDark.dc.html": {
       "x": 940,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Edit entry · dark",
@@ -930,7 +894,7 @@
     },
     "EditReasonDark.dc.html": {
       "x": 1410,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Edit entry · reason sheet · dark",
@@ -939,7 +903,7 @@
     },
     "ConflictDark.dc.html": {
       "x": 1880,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 1000,
       "title": "Sync conflict · choose a version · dark",
@@ -948,7 +912,7 @@
     },
     "EntryRemoveDark.dc.html": {
       "x": 2350,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "Remove · reason sheet · dark",
@@ -957,7 +921,7 @@
     },
     "EntryRemovedDark.dc.html": {
       "x": 2820,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 1000,
       "title": "Removed entry · dark",
@@ -966,7 +930,7 @@
     },
     "HistoryRemovedDark.dc.html": {
       "x": 3290,
-      "y": 8674,
+      "y": 7794,
       "w": 390,
       "h": 844,
       "title": "History · removed shown · dark",
@@ -975,7 +939,7 @@
     },
     "ChangeLogDark.dc.html": {
       "x": 0,
-      "y": 10034,
+      "y": 9154,
       "w": 390,
       "h": 1180,
       "title": "Full change log · dark",
@@ -988,12 +952,12 @@
       "title": "Reports · dark",
       "w": 390,
       "x": 0,
-      "y": 11674,
+      "y": 10794,
       "page": "dark"
     },
     "ReportsEmptyDark.dc.html": {
       "x": 470,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Empty · Reports, nothing in period · dark",
@@ -1002,7 +966,7 @@
     },
     "ReportPeriodDark.dc.html": {
       "x": 940,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Reports · period · dark",
@@ -1011,7 +975,7 @@
     },
     "ReportExportDark.dc.html": {
       "x": 1410,
-      "y": 11674,
+      "y": 10794,
       "w": 390,
       "h": 844,
       "title": "Reports · export · dark",
@@ -1024,12 +988,12 @@
       "title": "Accounts & settings · dark",
       "w": 390,
       "x": 0,
-      "y": 12978,
+      "y": 12098,
       "page": "dark"
     },
     "CategoriesDark.dc.html": {
       "x": 470,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Categories · dark",
@@ -1038,7 +1002,7 @@
     },
     "CategoryEditDark.dc.html": {
       "x": 940,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Categories · edit sheet · dark",
@@ -1047,7 +1011,7 @@
     },
     "CategoryNewDark.dc.html": {
       "x": 1410,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Record · new category sheet · dark",
@@ -1056,7 +1020,7 @@
     },
     "ThemeSettingsDark.dc.html": {
       "x": 1880,
-      "y": 12978,
+      "y": 12098,
       "w": 390,
       "h": 844,
       "title": "Theme · dark",
@@ -1065,7 +1029,7 @@
     },
     "LoadingOverviewDark.dc.html": {
       "x": 0,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Loading · Overview · dark",
@@ -1074,7 +1038,7 @@
     },
     "LoadingHistoryDark.dc.html": {
       "x": 470,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Loading · History · dark",
@@ -1083,7 +1047,7 @@
     },
     "HistoryEmptyDark.dc.html": {
       "x": 940,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Empty · History, no entries · dark",
@@ -1092,7 +1056,7 @@
     },
     "PullRefreshDark.dc.html": {
       "x": 1410,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Pull to refresh · dark",
@@ -1101,7 +1065,7 @@
     },
     "OfflineHistoryDark.dc.html": {
       "x": 1880,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Offline · History · dark",
@@ -1110,7 +1074,7 @@
     },
     "SyncProgressDark.dc.html": {
       "x": 2350,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Sync · in progress · dark",
@@ -1119,7 +1083,7 @@
     },
     "SyncProblemDark.dc.html": {
       "x": 2820,
-      "y": 14282,
+      "y": 13402,
       "w": 390,
       "h": 844,
       "title": "Sync · needs a decision · dark",
@@ -1132,7 +1096,7 @@
       "title": "Desktop · History · dark",
       "w": 1440,
       "x": 0,
-      "y": 15586,
+      "y": 14706,
       "page": "dark"
     },
     "DesktopReportDark.dc.html": {
@@ -1140,12 +1104,12 @@
       "title": "Desktop · Monthly ledger · dark",
       "w": 1440,
       "x": 1520,
-      "y": 15586,
+      "y": 14706,
       "page": "dark"
     },
     "DesktopWalletsDark.dc.html": {
       "x": 0,
-      "y": 16806,
+      "y": 15926,
       "w": 1440,
       "h": 900,
       "title": "Desktop · switch wallet · dark",
@@ -1202,7 +1166,7 @@
     },
     "AccessModel.dc.html": {
       "h": 1020,
-      "title": "Access model: owner, staff, viewer",
+      "title": "Access model",
       "w": 1440,
       "x": 0,
       "y": 6490,
@@ -1210,7 +1174,7 @@
     },
     "AccessModelDark.dc.html": {
       "h": 1020,
-      "title": "Access model: owner, staff, viewer · dark",
+      "title": "Access model · dark",
       "w": 1440,
       "x": 0,
       "y": 7590,
@@ -1223,6 +1187,204 @@
       "x": 0,
       "y": 9070,
       "page": "ref"
+    },
+    "OwnerSignUp.dc.html": {
+      "h": 844,
+      "title": "Owner · create account",
+      "w": 390,
+      "x": 0,
+      "y": 270,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "SignUpCheckEmail.dc.html": {
+      "h": 844,
+      "title": "Owner · confirm email",
+      "w": 390,
+      "x": 470,
+      "y": 270,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "ForgotPassword.dc.html": {
+      "h": 844,
+      "title": "Owner · reset password",
+      "w": 390,
+      "x": 940,
+      "y": 270,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "ResetSent.dc.html": {
+      "h": 844,
+      "title": "Owner · reset link sent",
+      "w": 390,
+      "x": 1410,
+      "y": 270,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "OwnerSignUpDark.dc.html": {
+      "h": 844,
+      "title": "Owner · create account · dark",
+      "w": 390,
+      "x": 0,
+      "y": 1194,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "SignUpCheckEmailDark.dc.html": {
+      "h": 844,
+      "title": "Owner · confirm email · dark",
+      "w": 390,
+      "x": 470,
+      "y": 1194,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "ForgotPasswordDark.dc.html": {
+      "h": 844,
+      "title": "Owner · reset password · dark",
+      "w": 390,
+      "x": 940,
+      "y": 1194,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "ResetSentDark.dc.html": {
+      "h": 844,
+      "title": "Owner · reset link sent · dark",
+      "w": 390,
+      "x": 1410,
+      "y": 1194,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "LinkSheet.dc.html": {
+      "x": 0,
+      "y": 2498,
+      "w": 390,
+      "h": 844,
+      "title": "People · view-only link",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "JoinWallet.dc.html": {
+      "x": 470,
+      "y": 2498,
+      "w": 390,
+      "h": 844,
+      "title": "Open a wallet with a link",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "JoinExpired.dc.html": {
+      "x": 940,
+      "y": 2498,
+      "w": 390,
+      "h": 844,
+      "title": "Open · link expired",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "LinkSheetDark.dc.html": {
+      "x": 0,
+      "y": 3422,
+      "w": 390,
+      "h": 844,
+      "title": "People · view-only link · dark",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "JoinWalletDark.dc.html": {
+      "x": 470,
+      "y": 3422,
+      "w": 390,
+      "h": 844,
+      "title": "Open a wallet with a link · dark",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "JoinExpiredDark.dc.html": {
+      "x": 940,
+      "y": 3422,
+      "w": 390,
+      "h": 844,
+      "title": "Open · link expired · dark",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffDetail.dc.html": {
+      "x": 0,
+      "y": 4726,
+      "w": 390,
+      "h": 844,
+      "title": "People · staff details",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffAdded.dc.html": {
+      "h": 844,
+      "title": "People · staff added, PIN shown once",
+      "w": 390,
+      "x": 470,
+      "y": 4726,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffPinReset.dc.html": {
+      "h": 844,
+      "title": "People · PIN reset",
+      "w": 390,
+      "x": 940,
+      "y": 4726,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffRemove.dc.html": {
+      "x": 1410,
+      "y": 4726,
+      "w": 390,
+      "h": 844,
+      "title": "People · remove staff",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffDetailDark.dc.html": {
+      "x": 0,
+      "y": 5650,
+      "w": 390,
+      "h": 844,
+      "title": "People · staff details · dark",
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffAddedDark.dc.html": {
+      "h": 844,
+      "title": "People · staff added, PIN shown once · dark",
+      "w": 390,
+      "x": 470,
+      "y": 5650,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffPinResetDark.dc.html": {
+      "h": 844,
+      "title": "People · PIN reset · dark",
+      "w": 390,
+      "x": 940,
+      "y": 5650,
+      "is_interactive": true,
+      "page": "later"
+    },
+    "StaffRemoveDark.dc.html": {
+      "x": 1410,
+      "y": 5650,
+      "w": 390,
+      "h": 844,
+      "title": "People · remove staff · dark",
+      "is_interactive": true,
+      "page": "later"
     }
   },
   "createdOnFiles": {
@@ -1237,146 +1399,162 @@
   "notes": {
     "light1": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "1 · Start: create account, open a wallet, switch wallets",
+      "maxW": 3210,
+      "text": "1 · Sign in: first time on a phone, or after signing out",
       "x": 0,
       "y": 0,
       "page": "light"
     },
     "light2": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "2 · Unlock and confirm: staff PIN, owner password, auto-lock",
+      "maxW": 2740,
+      "text": "2 · Locked and unlock: view only until you unlock",
       "x": 0,
-      "y": 2308,
+      "y": 1304,
       "page": "light"
     },
     "light3": {
       "kind": "title1",
-      "maxW": 3210,
-      "text": "3 · People and links: staff, PIN reset, view-only link",
+      "maxW": 2270,
+      "text": "3 · First run and wallets",
       "x": 0,
-      "y": 4792,
+      "y": 2608,
       "page": "light"
     },
     "light4": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "4 · Record money: overview, money in and out, cash count",
+      "maxW": 3210,
+      "text": "4 · Owner only: confirm password, wallets and staff",
       "x": 0,
-      "y": 6096,
+      "y": 3912,
       "page": "light"
     },
     "light5": {
       "kind": "title1",
       "maxW": 3680,
-      "text": "5 · History and corrections: entry, edit, remove, conflict, change log",
+      "text": "5 · Record money: overview, money in and out, cash count",
       "x": 0,
-      "y": 8404,
+      "y": 5216,
       "page": "light"
     },
     "light6": {
       "kind": "title1",
-      "maxW": 1800,
-      "text": "6 · Reports: monthly view, period, export",
+      "maxW": 3680,
+      "text": "6 · History and corrections: entry, edit, remove, conflict, change log",
       "x": 0,
-      "y": 11404,
+      "y": 7524,
       "page": "light"
     },
     "light7": {
       "kind": "title1",
-      "maxW": 2270,
-      "text": "7 · Accounts, categories and settings",
+      "maxW": 1800,
+      "text": "7 · Reports: monthly view, period, export",
       "x": 0,
-      "y": 12708,
+      "y": 10524,
       "page": "light"
     },
     "light8": {
       "kind": "title1",
-      "maxW": 3210,
-      "text": "8 · Loading, empty, offline and sync",
+      "maxW": 2270,
+      "text": "8 · Accounts, categories and settings",
       "x": 0,
-      "y": 14012,
+      "y": 11828,
       "page": "light"
     },
     "light9": {
       "kind": "title1",
-      "maxW": 2960,
-      "text": "9 · Desktop",
+      "maxW": 3210,
+      "text": "9 · Loading, empty, offline and sync",
       "x": 0,
-      "y": 15316,
+      "y": 13132,
+      "page": "light"
+    },
+    "light10": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "10 · Desktop",
+      "x": 0,
+      "y": 14436,
       "page": "light"
     },
     "dark1": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "1 · Start: create account, open a wallet, switch wallets · dark",
+      "maxW": 3210,
+      "text": "1 · Sign in: first time on a phone, or after signing out · dark",
       "x": 0,
       "y": 0,
       "page": "dark"
     },
     "dark2": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "2 · Unlock and confirm: staff PIN, owner password, auto-lock · dark",
+      "maxW": 2740,
+      "text": "2 · Locked and unlock: view only until you unlock · dark",
       "x": 0,
-      "y": 2308,
+      "y": 1304,
       "page": "dark"
     },
     "dark3": {
       "kind": "title1",
-      "maxW": 3210,
-      "text": "3 · People and links: staff, PIN reset, view-only link · dark",
+      "maxW": 2270,
+      "text": "3 · First run and wallets · dark",
       "x": 0,
-      "y": 4792,
+      "y": 2608,
       "page": "dark"
     },
     "dark4": {
       "kind": "title1",
-      "maxW": 3680,
-      "text": "4 · Record money: overview, money in and out, cash count · dark",
+      "maxW": 3210,
+      "text": "4 · Owner only: confirm password, wallets and staff · dark",
       "x": 0,
-      "y": 6096,
+      "y": 3912,
       "page": "dark"
     },
     "dark5": {
       "kind": "title1",
       "maxW": 3680,
-      "text": "5 · History and corrections: entry, edit, remove, conflict, change log · dark",
+      "text": "5 · Record money: overview, money in and out, cash count · dark",
       "x": 0,
-      "y": 8404,
+      "y": 5216,
       "page": "dark"
     },
     "dark6": {
       "kind": "title1",
-      "maxW": 1800,
-      "text": "6 · Reports: monthly view, period, export · dark",
+      "maxW": 3680,
+      "text": "6 · History and corrections: entry, edit, remove, conflict, change log · dark",
       "x": 0,
-      "y": 11404,
+      "y": 7524,
       "page": "dark"
     },
     "dark7": {
       "kind": "title1",
-      "maxW": 2270,
-      "text": "7 · Accounts, categories and settings · dark",
+      "maxW": 1800,
+      "text": "7 · Reports: monthly view, period, export · dark",
       "x": 0,
-      "y": 12708,
+      "y": 10524,
       "page": "dark"
     },
     "dark8": {
       "kind": "title1",
-      "maxW": 3210,
-      "text": "8 · Loading, empty, offline and sync · dark",
+      "maxW": 2270,
+      "text": "8 · Accounts, categories and settings · dark",
       "x": 0,
-      "y": 14012,
+      "y": 11828,
       "page": "dark"
     },
     "dark9": {
       "kind": "title1",
-      "maxW": 2960,
-      "text": "9 · Desktop · dark",
+      "maxW": 3210,
+      "text": "9 · Loading, empty, offline and sync · dark",
       "x": 0,
-      "y": 15316,
+      "y": 13132,
+      "page": "dark"
+    },
+    "dark10": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "10 · Desktop · dark",
+      "x": 0,
+      "y": 14436,
       "page": "dark"
     },
     "ref1": {
@@ -1418,36 +1596,58 @@
       "x": 0,
       "y": 8800,
       "page": "ref"
+    },
+    "later1": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Owner account in the app: sign-up, email confirmation, forgot password",
+      "x": 0,
+      "y": 0,
+      "page": "later"
+    },
+    "later2": {
+      "kind": "title1",
+      "maxW": 1440,
+      "text": "View-only links and viewers",
+      "x": 0,
+      "y": 2228,
+      "page": "later"
+    },
+    "later3": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Staff extras: person page, credentials shown once, remove",
+      "x": 0,
+      "y": 4456,
+      "page": "later"
     }
   },
   "order": [
+    "SignIn.dc.html",
+    "SignInPin.dc.html",
+    "SignInPinWrong.dc.html",
+    "SignInChecking.dc.html",
+    "SignInPaused.dc.html",
+    "SignInOwner.dc.html",
+    "SignInOwnerError.dc.html",
+    "MainLocked.dc.html",
+    "MainLockedIdle.dc.html",
+    "Unlock.dc.html",
+    "UnlockWrong.dc.html",
+    "UnlockOwner.dc.html",
+    "UnlockPaused.dc.html",
     "Welcome.dc.html",
-    "OwnerSignUp.dc.html",
-    "SignUpCheckEmail.dc.html",
-    "OwnerSignIn.dc.html",
-    "OwnerSignInError.dc.html",
-    "ForgotPassword.dc.html",
-    "ResetSent.dc.html",
+    "NoWalletStaff.dc.html",
     "NewWallet.dc.html",
-    "JoinWallet.dc.html",
-    "JoinExpired.dc.html",
     "WalletSwitcher.dc.html",
     "WalletUnavailable.dc.html",
-    "Unlock.dc.html",
-    "UnlockPin.dc.html",
-    "UnlockChecking.dc.html",
-    "UnlockLocked.dc.html",
-    "AutoLocked.dc.html",
-    "ConfirmOwner.dc.html",
-    "ConfirmOwnerWrong.dc.html",
-    "OwnerOnly.dc.html",
-    "People.dc.html",
+    "ConfirmPassword.dc.html",
+    "ConfirmPasswordWrong.dc.html",
+    "WalletsStaff.dc.html",
     "StaffAdd.dc.html",
-    "StaffAdded.dc.html",
-    "StaffDetail.dc.html",
-    "StaffPinReset.dc.html",
-    "StaffRemove.dc.html",
-    "LinkSheet.dc.html",
+    "StaffResetPin.dc.html",
+    "StaffDisable.dc.html",
+    "OwnersOnly.dc.html",
     "Main.dc.html",
     "OverviewFab.dc.html",
     "Record.dc.html",
@@ -1485,33 +1685,31 @@
     "DesktopHistory.dc.html",
     "DesktopReport.dc.html",
     "DesktopWallets.dc.html",
+    "SignInDark.dc.html",
+    "SignInPinDark.dc.html",
+    "SignInPinWrongDark.dc.html",
+    "SignInCheckingDark.dc.html",
+    "SignInPausedDark.dc.html",
+    "SignInOwnerDark.dc.html",
+    "SignInOwnerErrorDark.dc.html",
+    "MainLockedDark.dc.html",
+    "MainLockedIdleDark.dc.html",
+    "UnlockDark.dc.html",
+    "UnlockWrongDark.dc.html",
+    "UnlockOwnerDark.dc.html",
+    "UnlockPausedDark.dc.html",
     "WelcomeDark.dc.html",
-    "OwnerSignUpDark.dc.html",
-    "SignUpCheckEmailDark.dc.html",
-    "OwnerSignInDark.dc.html",
-    "OwnerSignInErrorDark.dc.html",
-    "ForgotPasswordDark.dc.html",
-    "ResetSentDark.dc.html",
+    "NoWalletStaffDark.dc.html",
     "NewWalletDark.dc.html",
-    "JoinWalletDark.dc.html",
-    "JoinExpiredDark.dc.html",
     "WalletSwitcherDark.dc.html",
     "WalletUnavailableDark.dc.html",
-    "UnlockDark.dc.html",
-    "UnlockPinDark.dc.html",
-    "UnlockCheckingDark.dc.html",
-    "UnlockLockedDark.dc.html",
-    "AutoLockedDark.dc.html",
-    "ConfirmOwnerDark.dc.html",
-    "ConfirmOwnerWrongDark.dc.html",
-    "OwnerOnlyDark.dc.html",
-    "PeopleDark.dc.html",
+    "ConfirmPasswordDark.dc.html",
+    "ConfirmPasswordWrongDark.dc.html",
+    "WalletsStaffDark.dc.html",
     "StaffAddDark.dc.html",
-    "StaffAddedDark.dc.html",
-    "StaffDetailDark.dc.html",
-    "StaffPinResetDark.dc.html",
-    "StaffRemoveDark.dc.html",
-    "LinkSheetDark.dc.html",
+    "StaffResetPinDark.dc.html",
+    "StaffDisableDark.dc.html",
+    "OwnersOnlyDark.dc.html",
     "MainDark.dc.html",
     "OverviewFabDark.dc.html",
     "RecordDark.dc.html",
@@ -1557,7 +1755,29 @@
     "Transitions.dc.html",
     "AccessModel.dc.html",
     "AccessModelDark.dc.html",
-    "OverviewDark.dc.html"
+    "OverviewDark.dc.html",
+    "OwnerSignUp.dc.html",
+    "SignUpCheckEmail.dc.html",
+    "ForgotPassword.dc.html",
+    "ResetSent.dc.html",
+    "OwnerSignUpDark.dc.html",
+    "SignUpCheckEmailDark.dc.html",
+    "ForgotPasswordDark.dc.html",
+    "ResetSentDark.dc.html",
+    "LinkSheet.dc.html",
+    "JoinWallet.dc.html",
+    "JoinExpired.dc.html",
+    "LinkSheetDark.dc.html",
+    "JoinWalletDark.dc.html",
+    "JoinExpiredDark.dc.html",
+    "StaffDetail.dc.html",
+    "StaffAdded.dc.html",
+    "StaffPinReset.dc.html",
+    "StaffRemove.dc.html",
+    "StaffDetailDark.dc.html",
+    "StaffAddedDark.dc.html",
+    "StaffPinResetDark.dc.html",
+    "StaffRemoveDark.dc.html"
   ],
   "pages": [
     {
@@ -1571,6 +1791,10 @@
     {
       "id": "ref",
       "name": "Reference & docs"
+    },
+    {
+      "id": "later",
+      "name": "Later · not built yet"
     }
   ],
   "title": "Group Treasury — UI design"

@@ -84,23 +84,35 @@ Features the proposal and the boards assumed that did not ship:
 
 ## Design status
 
-The boards in `docs/design/` were redrawn for the proposal before #57 existed. **They do not match what shipped**, and the user flow differs at the first step:
+The boards in `docs/design/` were redrawn after #57 to match the shipped model, with one deliberate difference: **lock keeps the person signed in and view only**, instead of signing them out.
 
-- The boards open on the dashboard in view-only mode and ask people to unlock from a bottom sheet. The app opens on a sign-in screen and has no view-only mode, so that sheet is never reached.
-- The boards include flows that were not built (see the list above) and use the proposal's numbers (15 minutes, 5-minute owner window).
+Why: signing out after 30 minutes forces a full login every time someone only wants to look. The design keeps them signed in until they choose to sign out, and a locked phone still shows balances, history and reports. Changing anything asks to unlock.
 
-Redesign needed:
+| | Shipped in #57 | Design (proposal) |
+|---|---|---|
+| First screen on a new phone | Sign in | Sign in (same) |
+| After 30 minutes without use, or Lock | Signed out, back to Sign in | **Locked**: still signed in, view only |
+| To change something | Sign in again from scratch | Unlock: staff enter their PIN, owners their password (identity already known) |
+| Leaving a phone | Lock = sign out | Separate **Sign out** on More |
+| Header lock button | none | Open lock (unlocked, tap to lock) or closed lock (view only, tap to unlock) |
 
-1. **Sign in** as the first screen, in light and dark: Staff (username remembered, PIN) and Owner (email, password), wrong PIN, locked out with a wait time, and a "Locked after 30 minutes" variant.
-2. **Locked** state returning to the same screen, instead of a sheet over the dashboard.
-3. **Confirm your password** dialog (15 minutes), wrong password.
-4. **Wallets and staff**: wallet creation, add staff, reset PIN, disable and enable.
-5. **No wallet yet** for staff.
-6. Remove or park the boards for sign-up, forgot password, view-only links and staff removal, or keep them as a labelled "later" set.
-7. **More**: signed-in line, Lock, Wallets and staff.
+Consequences to know before building it:
+
+- **The lock is an app-level safeguard, like the owner password check.** The database session stays valid while locked, so a person who can run code on the phone could still write. If the lock must be enforced by the database, unlocking has to mint or refresh a session (staff: call `staff-login` again; owner: password sign-in), and locking has to drop write rights, for example by swapping to a read-only session. Decide which level is wanted; for a small group the app-level lock is probably enough.
+- **A locked phone shows the books to whoever holds it.** That is the trade for not logging in again. Sign out (More) is for handing a phone over. This needs a yes from the product owner.
+- Wrong PINs at unlock count against the same per-username limit as sign-in.
+
+Boards, by page on the canvas:
+
+- **Screens (light and dark):** Sign in (`SignIn`, `SignInPin`, `SignInPinWrong`, `SignInChecking`, `SignInPaused`, `SignInOwner`, `SignInOwnerError`); Locked and unlock (`MainLocked`, `MainLockedIdle`, `Unlock`, `UnlockWrong`, `UnlockOwner`, `UnlockPaused`); `Welcome`, `NoWalletStaff`, `NewWallet`; owner only (`ConfirmPassword`, `ConfirmPasswordWrong`, `WalletsStaff`, `StaffAdd`, `StaffResetPin`, `StaffDisable`, `OwnersOnly`); the rest of the app with the lock button in the header.
+- **Reference:** `AccessModel`.
+- **Later (not built yet):** owner sign-up and confirmation, forgot password, view-only links, per-person staff pages, credentials shown once, staff removal.
+
+Small additions the design makes beyond #57, each cheap to drop: a confirmation before disabling staff, a "Sign out" button on More, a header lock button showing who is unlocked, and no countdown (the lock is invisible until it happens).
 
 ## Open decisions
 
+- **Lock model.** Keep #57's lock-signs-out, or adopt the design's locked view-only state (see Design status).
 - Whether to add a view-only link and viewer role later. If yes, the dashboard-first flow with an unlock sheet comes back for that role only.
 - Owner sign-up and password reset inside the app, or leave them to the dashboard.
 - Staff removal (today only disable).
