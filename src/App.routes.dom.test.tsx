@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from './test/fakeSupabase';
 import { memoryStorage } from './test/walletTestKit';
 import { CURRENT_WALLET_KEY } from './wallet/walletStore';
@@ -53,6 +53,23 @@ describe('App routes', () => {
     appAt(path);
     expect(await screen.findByRole('heading', { name: 'Record' })).toBeTruthy();
     expect(((await screen.findByRole('radio', { name: label })) as HTMLInputElement).checked).toBe(true);
+  });
+
+  it.each([
+    ['/reports', 'heading', 'Reports'],
+    ['/more', 'heading', 'More'],
+    ['/wallets/new', 'heading', 'New wallet'],
+  ])('shows the page for %s', async (path, role, name) => {
+    appAt(path);
+    expect(await screen.findByRole(role as 'heading', { name })).toBeTruthy();
+  });
+
+  it.each([
+    ['/recorded/nope', 'Entry not found'],
+    ['/history/nope', 'Entry not found'],
+  ])('reaches the entry page for %s and reports an unknown entry', async (path, text) => {
+    appAt(path);
+    expect(await screen.findByText(text)).toBeTruthy();
   });
 
   it('draws no page and no navigation bar for an unknown address', async () => {

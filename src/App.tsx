@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router';
 import Layout from './components/Layout';
 import { WalletProvider } from './wallet/WalletProvider';
 import WalletGate from './wallet/WalletGate';

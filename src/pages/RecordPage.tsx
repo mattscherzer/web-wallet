@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { Calculator, X } from 'lucide-react';
 import { ACCOUNTS, createTransaction, getAccountLabel, type AccountId } from '../db/database';
 import { useLoadedAccountBalances } from '../db/hooks';
