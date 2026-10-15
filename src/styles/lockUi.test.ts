@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { readCss } from '../test/readCss';
 
@@ -61,5 +62,33 @@ describe('lock and sign-in styles', () => {
       }
     }
     expect(checked).toBeGreaterThanOrEqual(MUST_PAIR.length);
+  });
+});
+
+// Everything in access.css, not just the classes above.
+const ACCESS = readFileSync(new URL('./access.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+const RULES = [...ACCESS.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({ selector: m[1].trim(), body: m[2] }));
+
+describe('every rule in access.css', () => {
+  it('uses design tokens only (no raw colours anywhere in the file)', () => {
+    expect(RULES.length).toBeGreaterThan(30);
+    expect(ACCESS).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
+  });
+
+  it.each([
+    ['light', lightTokens],
+    ['dark', darkTokens],
+  ])('%s: every rule that sets text and background colours keeps them readable (AA)', (_name, t) => {
+    let checked = 0;
+    for (const { selector, body } of RULES) {
+      const fg = body.match(/(?:^|[;\s])color:\s*var\(--([\w-]+)\)/)?.[1];
+      const bg = body.match(/background(?:-color)?:\s*var\(--([\w-]+)\)/)?.[1];
+      if (!fg || !bg) continue;
+      expect(t[fg], `${selector}: unknown token ${fg}`).toBeTruthy();
+      expect(t[bg], `${selector}: unknown token ${bg}`).toBeTruthy();
+      expect(ratio(t[fg], t[bg]), `${selector} ${fg} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+      checked++;
+    }
+    expect(checked).toBeGreaterThanOrEqual(8);
   });
 });

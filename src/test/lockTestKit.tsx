@@ -11,6 +11,8 @@ import Layout from '../components/Layout';
 import AdminPage from '../pages/AdminPage';
 import EntryPage from '../pages/EntryPage';
 import MorePage from '../pages/MorePage';
+import RecordedPage from '../pages/RecordedPage';
+import RecordPage from '../pages/RecordPage';
 import { walletApp } from './walletTestKit';
 
 export function shell(extra: ReactNode = null, path = '/') {
@@ -23,6 +25,8 @@ export function shell(extra: ReactNode = null, path = '/') {
               <Route element={<Layout />}>
                 <Route index element={<p>the books</p>} />
                 <Route path="more" element={<MorePage />} />
+                <Route path="record" element={<RecordPage />} />
+                <Route path="recorded/:id" element={<RecordedPage />} />
                 <Route path="admin" element={<AdminPage />} />
                 <Route path="history/:id" element={<EntryPage />} />
               </Route>

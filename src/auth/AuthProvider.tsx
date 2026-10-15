@@ -167,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!ok) return { ok: false, kind: 'wrong' };
       } else {
         const username = readLastStaff();
-        if (!username) return { ok: false, kind: 'wrong' };
+        if (!username) return { ok: false, kind: 'error' }; // nobody to check the PIN for
         const result = await requestStaffLogin(username, secret);
         if (!result.ok) return result;
         // The PIN has to belong to the person signed in on this phone, not just to some staff member.

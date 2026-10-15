@@ -78,6 +78,8 @@ export default function EntryPage() {
   const walletId = wallet?.id ?? tx.wallet_id;
 
   const run = async (action: () => Promise<void>) => {
+    // The app may have locked while a sheet was open.
+    if (!requireUnlocked()) return;
     setProblem(null);
     try {
       await action();

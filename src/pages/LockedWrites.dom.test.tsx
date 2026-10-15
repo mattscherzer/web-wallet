@@ -157,3 +157,38 @@ describe('the idle bar', () => {
     }
   });
 });
+
+describe('every other way to change something while locked', () => {
+  it('T53 a Remove sheet that was already open when the app locked cannot save the removal', async () => {
+    ref.fake.signIn('u-owner');
+    shell(null, '/history/t1');
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove' }));
+    const remove = within(await screen.findByRole('dialog', { name: /Remove this entry/ }));
+    await lock();
+    fireEvent.click(remove.getByRole('radio', { name: 'Duplicate' }));
+    fireEvent.click(remove.getByRole('button', { name: 'Remove entry' }));
+    await findSheet();
+    expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
+  });
+
+  it('T54 saving a new entry from the Record screen while locked asks to unlock and saves nothing', async () => {
+    ref.fake.signIn('u-owner');
+    const before = ref.fake.tables.transactions.length;
+    const { container } = shell(null, '/record?type=in');
+    await screen.findByRole('heading', { level: 1 });
+    await lock();
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement);
+    await findSheet();
+    expect(ref.fake.tables.transactions).toHaveLength(before);
+  });
+
+  it('T55 Undo on the receipt while locked asks to unlock and removes nothing', async () => {
+    ref.fake.signIn('u-owner');
+    shell(null, '/recorded/t1');
+    const undo = await screen.findByRole('button', { name: 'Undo this entry' });
+    await lock();
+    fireEvent.click(undo);
+    await findSheet();
+    expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
+  });
+});
