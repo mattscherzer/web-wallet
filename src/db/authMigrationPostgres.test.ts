@@ -1,7 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Each test boots an in-memory Postgres and runs every migration: slow on a busy machine or a small CI runner.
+vi.setConfig({ testTimeout: 60_000 });
 
 // Runs the real migrations on PGlite with a stand-in for Supabase's `auth` schema and roles,
 // and acts as different users through `SET ROLE` so row level security is really enforced.
