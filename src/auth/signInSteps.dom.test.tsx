@@ -172,8 +172,7 @@ describe('the sign-in screens follow the design', () => {
 
   // while the PIN is checked the design's loading indicator and "Signing you in…" show, and the Not-anna link is gone
   it('T64', async () => {
-    const original = ref.fake.client.functions.invoke;
-    ref.fake.client.functions.invoke = (() => new Promise(() => {})) as typeof original;
+    ref.fake.client.functions.invoke = (() => new Promise(() => {})) as unknown as typeof ref.fake.client.functions.invoke;
     await toPinStep();
     press('123456');
     const status = await screen.findByRole('status', { name: /checking/i });
