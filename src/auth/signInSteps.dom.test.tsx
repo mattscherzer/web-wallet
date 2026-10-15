@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import {
   createFakeSupabase,
@@ -168,5 +168,18 @@ describe('the sign-in screens follow the design', () => {
     open();
     fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
     expect(screen.getByText('Owners sign in with email and password.')).toBeTruthy();
+  });
+
+  // while the PIN is checked the design's loading indicator and "Signing you in…" show, and the Not-anna link is gone
+  it('T64', async () => {
+    const original = ref.fake.client.functions.invoke;
+    ref.fake.client.functions.invoke = (() => new Promise(() => {})) as typeof original;
+    await toPinStep();
+    press('123456');
+    const status = await screen.findByRole('status', { name: /checking/i });
+    expect(within(status).getByRole('img', { name: 'Loading' }).querySelector('animate[attributeName="d"]')).toBeTruthy();
+    expect(within(status).getByText('Signing you in…')).toBeTruthy();
+    expect(screen.getByText('Checking your PIN')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Not anna\?/ })).toBeNull();
   });
 });

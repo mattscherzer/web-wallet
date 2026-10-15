@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Delete } from 'lucide-react';
-import { Loader } from 'lucide-react';
+import LoadingIndicator from './LoadingIndicator';
 import { PIN_LENGTH } from '../auth/pin';
 
 interface PinPadProps {
@@ -39,7 +39,7 @@ export default function PinPad({ value, onChange, disabled = false, invalid = fa
       </div>
       {status && (
         <p role="status" aria-label="Checking" className="pin-pad__status">
-          <Loader size={32} aria-hidden="true" />
+          <LoadingIndicator />
           {status}
         </p>
       )}

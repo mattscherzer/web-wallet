@@ -157,9 +157,11 @@ export default function LoginPage() {
         <PinPad value={pin} onChange={onPin} disabled={busy} invalid={wrong} status={busy ? 'Signing you in…' : null}>
           {alert}
         </PinPad>
-        <button type="button" className="login-link" onClick={anotherUsername}>
-          Not {name}? Use another username
-        </button>
+        {!busy && (
+          <button type="button" className="login-link" onClick={anotherUsername}>
+            Not {name}? Use another username
+          </button>
+        )}
       </div>
     );
   }

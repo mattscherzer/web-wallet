@@ -103,24 +103,20 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-md);
-  margin: 0;
+  margin: auto 0;
   font-weight: var(--font-weight-semibold);
 }
 
-.pin-pad__status svg {
-  animation: pin-spin 1s linear infinite;
+.loading-indicator {
+  flex: none;
 }
 
-@keyframes pin-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.loading-indicator__disc {
+  fill: var(--color-primary-container);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .pin-pad__status svg {
-    animation: none;
-  }
+.loading-indicator__shape {
+  fill: var(--color-on-primary-container);
 }
 
 .pin-pad__keys {
