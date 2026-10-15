@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign in as owner</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#F7F8FA;color:#101828;font-family:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F4E9E;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid #1F4E9E;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.mono{font-family:'Geist Mono',ui-monospace,Menlo,monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spring{transition:transform 350ms cubic-bezier(.34,1.56,.64,1),border-radius 200ms cubic-bezier(.2,0,0,1),background-color 200ms cubic-bezier(.2,0,0,1)}
+.spring:active{transform:scale(.94);border-radius:12px}
+@media (prefers-reduced-motion: reduce){.spring,.spring:active{transition:none;transform:none}*{animation:none!important}}
+
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F7F8FA">
+<div style="padding: 64px 24px 0; display: flex; align-items: center; gap: 14px"><span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 18px; background: #0B2545; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span><span style="font-size: 28px; font-weight: 700; letter-spacing: -0.025em">Treasury</span></div><div style="padding: 28px 24px 0; display: flex; flex-direction: column; gap: 16px"><div style="display: flex; flex-direction: column; gap: 6px"><h1 style="margin: 0; font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em">Sign in</h1><p style="margin: 0; font-size: 15px; line-height: 1.45; color: #5D6675">Owners sign in with email and password.</p></div><div role="group" aria-label="Sign in as" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 28px; background: #E3E8F0"><a href="SignIn.dc.html" class="spring" style="height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #101828">Staff</a><a href="SignInOwner.dc.html" class="spring" aria-current="true" style="height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; background: #0B2545; color: #FFFFFF">Owner</a></div><div style="display: flex; flex-direction: column; gap: 6px"><label for="em" style="font-size: 14px; font-weight: 600; color: #5D6675">Email</label><input id="em" type="email" value="anna@example.org" autocomplete="off" autocapitalize="none" spellcheck="false" style="width: 100%; height: 56px; padding: 0 16px 0 16px; border: 0; border-radius: 16px; background: #EEF0F4; font-size: 17px; font-weight: 600; box-shadow: inset 0 0 0 1px #D0D5DD"></div><div style="display: flex; flex-direction: column; gap: 6px"><label for="pw" style="font-size: 14px; font-weight: 600; color: #5D6675">Password</label><span style="position: relative; display: flex"><input id="pw" type="password" value="correct-horse-9" autocomplete="off" autocapitalize="none" spellcheck="false" style="width: 100%; height: 56px; padding: 0 56px 0 16px; border: 0; border-radius: 16px; background: #EEF0F4; font-size: 17px; font-weight: 600; box-shadow: inset 0 0 0 2px #0B2545"><button type="button" aria-label="Show password" aria-pressed="false" style="position: absolute; right: 4px; top: 4px; width: 48px; height: 48px; border: 0; border-radius: 24px; background: transparent; color: #5D6675; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></span></div><a href="Main.dc.html" class="spring" style="height: 56px; padding: 0 24px; border-radius: 28px; border: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700; background: #0B2545; color: #FFFFFF">Sign in</a></div><p style="position: absolute; left: 24px; right: 24px; bottom: 28px; margin: 0; text-align: center; font-size: 14px; line-height: 20px; color: #5D6675">Stays signed in on this phone until you sign out. Locks after 30 minutes without use.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

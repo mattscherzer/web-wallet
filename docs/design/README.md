@@ -25,26 +25,29 @@ Rebuild screens in this repo's stack (React 19, TypeScript, CSS custom propertie
 
 ## Journeys
 
-Board names are file names in `source/`. Every board also exists as `<Board>Dark`. A journey is done only when its error, empty, offline and locked states exist.
+Board names are file names in `source/`. Every board also exists as `<Board>Dark`. A journey is done only when its error, empty, offline and locked states exist. The canvas has four pages: Screens · Light, Screens · Dark, Reference & docs and Later.
 
 | # | Journey | Boards |
 |---|---|---|
-| 1 | First run: create a wallet | `Welcome` → `NewWallet` → `Main` |
-| 2 | Join with an invite link | `JoinWallet`, `JoinExpired` |
-| 3 | Unlock to change things | `Unlock` → `UnlockPasskey` → `UnlockFailed` → `UnlockPin`; `AutoLocked` |
-| 4 | Record money in | `Record` → `CashCount` → `Recorded`; `CategoryNew`; `RecordSaving`, `RecordFailed` |
-| 5 | Record money out | `RecordOut`, `RecordOther` → `Recorded` |
-| 6 | Transfer between accounts | `Record` (Transfer) → `Recorded`; `States` (validation) |
-| 7 | Correct an entry | `Entry` → `EntryEdit` → `EditReason`; `Conflict` |
-| 8 | Remove and restore | `Entry` → `EntryRemove` → `EntryRemoved`; `HistoryRemoved` |
-| 9 | Review history | `History`, `LoadingHistory`, `HistoryEmpty`; desktop `DesktopHistory` |
-| 10 | Work offline, then sync | `OfflineHistory`, `SyncProgress`, `SyncProblem`, `Conflict`, `PullRefresh` |
-| 11 | Report and export | `Reports` → `ReportPeriod` → `ReportExport`; `ReportsEmpty`; desktop `DesktopReport` |
-| 12 | Manage accounts | `More`; `States` (edit account, empty first run) |
-| 13 | Manage categories | `Categories`, `CategoryEdit`, `CategoryNew` |
-| 14 | Manage members and invites | `Members` → `MemberRole` → `MemberRemove`; `InviteSheet` |
-| 15 | Switch or leave a wallet | `WalletSwitcher`, `WalletUnavailable`; desktop `DesktopWallets` |
-| 16 | Audit and settings | `ChangeLog`, `ThemeSettings` |
+| 1 | Sign in, first time on a phone or after signing out | `SignIn` → `SignInPin` → `SignInChecking`; `SignInPinWrong`, `SignInPaused`; owner `SignInOwner`, `SignInOwnerError` |
+| 2 | Lock and unlock (view only until unlocked) | `MainLocked`, `MainLockedIdle` → `Unlock`; `UnlockWrong`, `UnlockOwner`, `UnlockPaused` |
+| 3 | First run and wallets | `Welcome` (owner) or `NoWalletStaff` → `NewWallet` → `Main` |
+| 4 | Confirm an owner action | `ConfirmPassword`, `ConfirmPasswordWrong`, `OwnersOnly` |
+| 5 | Wallets and staff (owner) | `WalletsStaff` → `StaffAdd`; `StaffResetPin`; `StaffDisable` |
+| 6 | Record money in | `Record` → `CashCount` → `Recorded`; `CategoryNew`; `RecordSaving`, `RecordFailed` |
+| 7 | Record money out | `RecordOut`, `RecordOther` → `Recorded` |
+| 8 | Transfer between accounts | `Record` (Transfer) → `Recorded`; `States` (validation) |
+| 9 | Correct an entry | `Entry` → `EntryEdit` → `EditReason`; `Conflict` |
+| 10 | Remove and restore | `Entry` → `EntryRemove` → `EntryRemoved`; `HistoryRemoved` |
+| 11 | Review history | `History`, `LoadingHistory`, `HistoryEmpty`; desktop `DesktopHistory` |
+| 12 | Work offline, then sync | `OfflineHistory`, `SyncProgress`, `SyncProblem`, `Conflict`, `PullRefresh` |
+| 13 | Report and export | `Reports` → `ReportPeriod` → `ReportExport`; `ReportsEmpty`; desktop `DesktopReport` |
+| 14 | Manage accounts | `More`; `States` (edit account, empty first run) |
+| 15 | Manage categories | `Categories`, `CategoryEdit`, `CategoryNew` |
+| 16 | Switch or leave a wallet | `WalletSwitcher`, `WalletUnavailable`; desktop `DesktopWallets` |
+| 17 | Audit and settings | `ChangeLog`, `ThemeSettings` |
+
+**Later (not built yet, kept on the canvas's "Later" page):** owner sign-up and email confirmation (`OwnerSignUp`, `SignUpCheckEmail`), forgot password (`ForgotPassword`, `ResetSent`), view-only links (`LinkSheet`, `JoinWallet`, `JoinExpired`), and per-person staff pages (`StaffDetail`, `StaffAdded`, `StaffPinReset`, `StaffRemove`).
 
 Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCount` and `Recorded` are the two hero moments.
 
@@ -52,6 +55,7 @@ Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCo
 
 | Board | What it is |
 |---|---|
+| `AccessModel` | Who can do what: owner and staff, how people sign in, lock and unlock |
 | `System` | Visual system sheet (light tokens only; the design system has both themes) |
 | `FeedbackCatalog` | Snackbar, banners, notices, loading and progress indicators, skeleton, full-page states |
 | `Transitions` | The six transition patterns with live demos |
@@ -59,6 +63,7 @@ Overview (`Main`, `OverviewFab`, `LoadingOverview`) opens most journeys. `CashCo
 
 ## Notes
 
+- Access is owner (email and password) and staff (username and 6-digit PIN, no account). The first screen on a new phone is Sign in; the phone stays signed in until someone signs out. After 30 minutes without use, or from the lock button, it **locks**: everything stays visible, nothing can be changed until unlock (staff PIN, owner password). Owner-only actions ask for the password again and then stay open for 15 minutes. The locked state is decided and not built yet; what shipped in #57 signs out on lock instead (#59). The decision record is `docs/decisions/auth-owner-and-staff.md`.
 - Desktop boards (`Desktop*`) use the navigation rail, balance strip and an entry side panel. On desktop the Record FAB menu opens from the rail.
 - Exports (CSV, printed or shared PDF) always use the light theme.
 - Loading and progress follow Material 3 Expressive; timings are proposals (`motion.md` in the design system).
