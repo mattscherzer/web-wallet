@@ -14,13 +14,15 @@ import {
 } from '../db/database';
 import { useEntry } from '../db/hooks';
 import Amount from '../components/Amount';
-import PinModal from '../components/PinModal';
 import ReasonSheet from '../components/ReasonSheet';
 import StatusChip from '../components/StatusChip';
 import { formatDate } from '../utils/dateHelpers';
 import { formatCurrency } from '../utils/formatCurrency';
 import { categoryLabel, parseAmount } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
+import { useAuth } from '../auth/useAuth';
+import { useOwnerConfirm } from '../auth/OwnerConfirm';
+import { authorLabel } from '../utils/authorLabel';
 
 type Sheet = 'edit' | 'remove' | null;
 
@@ -33,10 +35,11 @@ export default function EntryPage() {
   const { id = '' } = useParams();
   const { current: wallet } = useWallet();
   const { status, tx, audit, refresh } = useEntry(id);
+  const { profile, user, can } = useAuth();
+  const confirmOwner = useOwnerConfirm();
+  const actor = profile?.displayName;
 
   const [sheet, setSheet] = useState<Sheet>(null);
-  // Every change waits for the PIN, then runs.
-  const [pending, setPending] = useState<(() => Promise<void>) | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const [editAmount, setEditAmount] = useState('');
   const [editNotes, setEditNotes] = useState('');
@@ -72,15 +75,8 @@ export default function EntryPage() {
 
   const walletId = wallet?.id ?? tx.wallet_id;
 
-  const askPin = (action: () => Promise<void>) => {
+  const run = async (action: () => Promise<void>) => {
     setProblem(null);
-    setPending(() => action);
-  };
-
-  const runPending = async () => {
-    const action = pending;
-    setPending(null);
-    if (!action) return;
     try {
       await action();
       setSheet(null);
@@ -157,7 +153,7 @@ export default function EntryPage() {
       <p className="entry__hint">Written automatically. It can't be edited or deleted.</p>
       <ol className="history-log" aria-label="Change history">
         {history.map((e) => (
-          <HistoryEvent key={e.id} entry={e} />
+          <HistoryEvent key={e.id} entry={e} author={authorLabel(e)} />
         ))}
       </ol>
 
@@ -169,28 +165,36 @@ export default function EntryPage() {
 
       <div className="entry__toolbar" role="group" aria-label="Entry actions">
         {removed ? (
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={() => askPin(() => restoreTransaction(tx.id, { walletId }))}
-          >
-            <RotateCcw size={18} aria-hidden="true" /> Restore
-          </button>
+          can('restore_entry') && (
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() =>
+                void confirmOwner().then((ok) => {
+                  if (ok) return run(() => restoreTransaction(tx.id, { walletId, actor }));
+                })
+              }
+            >
+              <RotateCcw size={18} aria-hidden="true" /> Restore
+            </button>
+          )
         ) : (
           <>
             <button type="button" className="btn btn--outline" onClick={openEdit}>
               <Pencil size={18} aria-hidden="true" /> Edit
             </button>
-            <button
-              type="button"
-              className="btn btn--outline entry__remove"
-              onClick={() => {
-                setProblem(null);
-                setSheet('remove');
-              }}
-            >
-              <Trash2 size={18} aria-hidden="true" /> Remove
-            </button>
+            {(can('remove_entry') || (can('remove_own_entry') && (!user || tx.created_by === user.id))) && (
+              <button
+                type="button"
+                className="btn btn--outline entry__remove"
+                onClick={() => {
+                  setProblem(null);
+                  setSheet('remove');
+                }}
+              >
+                <Trash2 size={18} aria-hidden="true" /> Remove
+              </button>
+            )}
           </>
         )}
       </div>
@@ -204,7 +208,7 @@ export default function EntryPage() {
           withNote
           error={problem}
           onCancel={() => setSheet(null)}
-          onConfirm={(reason, note) => askPin(() => removeTransaction(tx.id, { walletId, reason, note }))}
+          onConfirm={(reason, note) => void run(() => removeTransaction(tx.id, { walletId, reason, note, actor }))}
         >
           <p className="sheet__text">
             It stops counting in balances and reports. It stays in the history and can be restored.
@@ -228,11 +232,11 @@ export default function EntryPage() {
             return null;
           }}
           onConfirm={(reason) =>
-            askPin(() =>
+            void run(() =>
               updateTransaction(
                 tx.id,
                 { amount: parseAmount(editAmount), notes: editNotes.trim() },
-                { walletId, reason },
+                { walletId, reason, actor },
               ),
             )
           }
@@ -264,13 +268,6 @@ export default function EntryPage() {
           </div>
         </ReasonSheet>
       )}
-
-      <PinModal
-        isOpen={pending !== null}
-        onSuccess={() => void runPending()}
-        onCancel={() => setPending(null)}
-        title="Confirm change"
-      />
     </div>
   );
 }
@@ -279,7 +276,7 @@ function amountOf(data?: Partial<Transaction> | null): number | undefined {
   return data?.amount === undefined ? undefined : Number(data.amount);
 }
 
-function HistoryEvent({ entry }: { entry: AuditEntry }) {
+function HistoryEvent({ entry, author }: { entry: AuditEntry; author: string }) {
   const title =
     entry.action === 'create'
       ? 'Created'
@@ -300,6 +297,7 @@ function HistoryEvent({ entry }: { entry: AuditEntry }) {
       <time className="history-log__time" dateTime={entry.timestamp}>
         {exactTime(entry.timestamp)}
       </time>
+      <p className="history-log__reason">By {author}</p>
       {entry.action === 'update' && (
         <ul className="history-log__changes">
           {before !== undefined && after !== undefined && before !== after && (

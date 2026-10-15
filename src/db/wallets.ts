@@ -21,6 +21,7 @@ export async function fetchWallets(): Promise<Wallet[]> {
   return (data ?? []) as Wallet[];
 }
 
+/** Creates a wallet with the logged-in owner as its owner, in one step in the database. */
 export async function createWallet(rawName: string): Promise<Wallet> {
   const name = rawName.trim();
   if (!name) throw new WalletNameError('Enter a wallet name');
@@ -28,11 +29,14 @@ export async function createWallet(rawName: string): Promise<Wallet> {
     throw new WalletNameError(`That name is too long (max ${MAX_WALLET_NAME} characters)`);
   }
 
-  const { data, error } = await supabase.from('wallets').insert({ name }).select('*').single();
+  const { data: id, error } = await supabase.rpc('create_wallet', { name });
   if (error) {
     if (error.code === '23505') throw new WalletNameError('A wallet with that name already exists');
+    if (error.code === '42501') throw new WalletNameError('Only owners can create wallets');
     throw new Error(error.message);
   }
+  const { data, error: readError } = await supabase.from('wallets').select('*').eq('id', id).single();
+  if (readError) throw new Error(readError.message);
   return data as Wallet;
 }
 

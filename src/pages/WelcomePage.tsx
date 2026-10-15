@@ -1,8 +1,23 @@
 import { Link } from 'react-router';
 import { Plus } from 'lucide-react';
+import { useAuth } from '../auth/useAuth';
 
 /** First run: this device has no wallet yet. */
 export default function WelcomePage() {
+  const { profile, signOut } = useAuth();
+  if (profile && profile.kind !== 'owner') {
+    return (
+      <div className="welcome">
+        <div className="welcome__hero">
+          <h1 className="welcome__title">No wallet yet</h1>
+          <p className="welcome__text">You aren’t a member of any wallet yet. Ask the owner to add you.</p>
+        </div>
+        <button type="button" className="btn btn--outline" onClick={() => void signOut()}>
+          Sign out
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="welcome">
       <div className="welcome__hero">

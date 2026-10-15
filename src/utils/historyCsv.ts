@@ -1,7 +1,8 @@
 import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from '../db/accounts';
 import type { Transaction } from '../db/database';
+import { authorLabel } from './authorLabel';
 
-export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve'];
+export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by'];
 
 /**
  * Rows for the treasury report, header first. Expects transactions in
@@ -83,7 +84,9 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
 
     const whatStr = `"${what.replace(/"/g, '""')}"`;
 
-    rows.push([dateStr, displayIn, displayOut, whatStr, mainBalance.toFixed(2), `+${reserveBalance.toFixed(2)}`]);
+    const who = `"${authorLabel(tx).replace(/"/g, '""')}"`;
+
+    rows.push([dateStr, displayIn, displayOut, whatStr, mainBalance.toFixed(2), `+${reserveBalance.toFixed(2)}`, who]);
   }
 
   return rows;

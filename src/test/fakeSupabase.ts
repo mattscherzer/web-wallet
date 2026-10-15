@@ -15,7 +15,23 @@ export interface FakeChannel {
   removed: boolean;
 }
 
-export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
+export interface FakeUser {
+  id: string;
+  email: string;
+  password: string;
+}
+type FakeSession = { user: { id: string; email: string } } | null;
+
+export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { users?: FakeUser[] } = {}) {
+  const users = opts.users ?? [];
+  let session: FakeSession = null;
+  const authListeners = new Set<(event: string, session: FakeSession) => void>();
+  const invocations: { name: string; body: unknown }[] = [];
+  const functionAnswers = new Map<string, (body: unknown) => { data?: unknown; error?: { message: string } | null }>();
+  const signOutScopes: (string | undefined)[] = [];
+  const rpcCalls: { name: string; args: unknown }[] = [];
+  const notify = (event: string) => authListeners.forEach((cb) => cb(event, session));
+
   const tables: Record<string, Row[]> = {};
   for (const [name, rows] of Object.entries(initial)) tables[name] = rows.map((r) => ({ ...r }));
 
@@ -151,6 +167,68 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
   }
 
   const client = {
+    auth: {
+      getSession: async () => ({ data: { session }, error: null }),
+      getUser: async () => ({ data: { user: session?.user ?? null }, error: null }),
+      onAuthStateChange: (cb: (event: string, session: FakeSession) => void) => {
+        authListeners.add(cb);
+        return { data: { subscription: { unsubscribe: () => void authListeners.delete(cb) } } };
+      },
+      signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
+        const user = users.find((u) => u.email === email && u.password === password);
+        if (!user) return { data: { session: null }, error: { message: 'Invalid login credentials' } };
+        session = { user: { id: user.id, email: user.email } };
+        notify('SIGNED_IN');
+        return { data: { session }, error: null };
+      },
+      // The staff login function hands back tokens named `at-<user id>`; the fake knows which user that is.
+      setSession: async ({ access_token }: { access_token: string; refresh_token: string }) => {
+        const user = users.find((u) => `at-${u.id}` === access_token);
+        if (!user) return { data: { session: null }, error: { message: 'Invalid session' } };
+        session = { user: { id: user.id, email: user.email } };
+        notify('SIGNED_IN');
+        return { data: { session }, error: null };
+      },
+      signOut: async (opts?: { scope?: string }) => {
+        signOutScopes.push(opts?.scope);
+        session = null;
+        notify('SIGNED_OUT');
+        return { error: null };
+      },
+    },
+    functions: {
+      invoke: async (name: string, options?: { body?: unknown }) => {
+        invocations.push({ name, body: options?.body });
+        const answer = functionAnswers.get(name);
+        if (answer) {
+          const res = answer(options?.body);
+          return { data: res.data ?? null, error: res.error ?? null };
+        }
+        return { data: { id: 'new-user' }, error: null };
+      },
+    },
+    // `create_wallet` mirrors the database function: the wallet and the caller's owner membership in one step.
+    rpc: async (name: string, args: Record<string, unknown>) => {
+      rpcCalls.push({ name, args });
+      if (name === 'create_wallet') {
+        const failure = failures.get('wallets:insert');
+        if (failure) {
+          failures.delete('wallets:insert');
+          return { data: null, error: failure };
+        }
+        const wallet = {
+          id: `id-${nextId++}`,
+          name: String(args.name),
+          currency: 'EUR',
+          created_at: new Date().toISOString(),
+        };
+        (tables.wallets ??= []).push(wallet);
+        if (session)
+          (tables.wallet_members ??= []).push({ user_id: session.user.id, wallet_id: wallet.id, role: 'owner' });
+        return { data: wallet.id, error: null };
+      }
+      return { data: null, error: { message: `unknown rpc ${name}` } };
+    },
     from: (table: string) => new Query(table),
     channel: (name: string) => {
       const pending: Partial<FakeChannel> = { name, removed: false };
@@ -181,6 +259,19 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}) {
     channels,
     failNext,
     holdNext,
+    invocations,
+    signOutScopes,
+    rpcCalls,
+    /** Make a function answer with `{ data }` or `{ error }` instead of the default. */
+    answerFunction(name: string, answer: (body: unknown) => { data?: unknown; error?: { message: string } | null }) {
+      functionAnswers.set(name, answer);
+    },
+    /** Start with this user already logged in. */
+    signIn(userId: string) {
+      const u = users.find((x) => x.id === userId);
+      if (!u) throw new Error(`unknown fake user ${userId}`);
+      session = { user: { id: u.id, email: u.email } };
+    },
     /** Fire the realtime callbacks of live channels on `table`. */
     emit(table: string) {
       channels.filter((c) => c.table === table && !c.removed).forEach((c) => c.callback());
@@ -257,3 +348,36 @@ export function twoWalletRows() {
     ],
   };
 }
+
+export const FAKE_USERS: FakeUser[] = [
+  { id: 'u-owner', email: 'olga@x.org', password: 'owner-pw' },
+  { id: 'u-anna', email: 'u-anna@staff.invalid', password: 'never-used' },
+];
+export const FAKE_PROFILES: Row[] = [
+  { id: 'u-owner', display_name: 'Olga', kind: 'owner' },
+  { id: 'u-anna', display_name: 'Anna', kind: 'staff' },
+];
+export const FAKE_MEMBERS: Row[] = [
+  { user_id: 'u-owner', wallet_id: 'wa', role: 'owner' },
+  { user_id: 'u-anna', wallet_id: 'wa', role: 'staff' },
+];
+/** The same rows the migration seeds into `role_permissions`. */
+export const FAKE_PERMISSIONS: Row[] = [
+  ...['view', 'add_entry', 'edit_entry', 'remove_own_entry', 'create_category'].map((action) => ({
+    role: 'staff',
+    action,
+  })),
+  ...[
+    'view',
+    'add_entry',
+    'edit_entry',
+    'remove_entry',
+    'remove_own_entry',
+    'restore_entry',
+    'create_category',
+    'manage_wallet',
+    'manage_staff',
+    'export',
+  ].map((action) => ({ role: 'owner', action })),
+];
+export const STAFF_LOGIN_OK = { session: { access_token: 'at-u-anna', refresh_token: 'rt-u-anna' } };

@@ -35,6 +35,11 @@ export interface Transaction {
   removed_note?: string | null;
   removed_by?: string | null;
   removed_at?: string | null;
+  /** Who made the entry (profile id); null for entries from before login existed. */
+  created_by?: string | null;
+  /** Role and name of the author as they were when the entry was made (kept if the account is removed). */
+  created_by_role?: 'owner' | 'staff' | null;
+  created_by_name?: string | null;
 }
 
 export interface AuditEntry {
@@ -45,25 +50,18 @@ export interface AuditEntry {
   timestamp: string;
   previous_data?: Partial<Transaction> | null;
   new_data?: Partial<Transaction> | null;
-  /** Who made the change; empty until sign-in exists. */
+  /** Display name of who made the change when it was recorded. */
   actor?: string | null;
+  /** Who made the change (profile id); null for history from before login existed. */
+  created_by?: string | null;
+  created_by_role?: 'owner' | 'staff' | null;
+  created_by_name?: string | null;
   reason?: string | null;
   note?: string | null;
 }
 
 // ─── Static Account Data ────────────────────────────────
 export { ACCOUNTS, MAIN_ACCOUNTS, RESERVE_ACCOUNTS, getAccountLabel, fromAccountLabel } from './accounts';
-
-// ─── Fetch PIN from Supabase ────────────────────────────
-export async function fetchPin(): Promise<string> {
-  const { data, error } = await supabase.from('app_config').select('value').eq('key', 'pin').single();
-
-  if (error || !data) {
-    console.error('Failed to fetch PIN, falling back to default:', error);
-    return '1234';
-  }
-  return data.value;
-}
 
 // ─── Create Transaction (inflow / outflow) ──────────────
 export async function createTransaction(

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { describe, expect, it } from 'vitest';
+import { LEGACY_SEED_SQL } from '../test/legacySeed';
 
 const sql = (file: string) => readFileSync(join(process.cwd(), 'supabase', file), 'utf8');
 const BASELINE = 'migrations/20260101000000_initial_schema.sql';
@@ -13,7 +14,7 @@ async function legacyDb() {
   // PGlite has no Supabase realtime publication; create it so the baseline runs unchanged.
   await db.exec('CREATE PUBLICATION supabase_realtime;');
   await db.exec(sql(BASELINE));
-  await db.exec(sql('seed.sql'));
+  await db.exec(LEGACY_SEED_SQL);
   return db;
 }
 
