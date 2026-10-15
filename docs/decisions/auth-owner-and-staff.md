@@ -84,11 +84,11 @@ Features the proposal and the boards assumed that did not ship:
 
 ## Design status
 
-The boards in `docs/design/` were redrawn after #57 to match the shipped model, with one deliberate difference: **lock keeps the person signed in and view only**, instead of signing them out.
+The boards in `docs/design/` were redrawn after #57 to match the shipped model, with one deliberate difference: **lock keeps the person signed in and view only**, instead of signing them out. **Decided: build the locked state** (tracked in #59).
 
 Why: signing out after 30 minutes forces a full login every time someone only wants to look. The design keeps them signed in until they choose to sign out, and a locked phone still shows balances, history and reports. Changing anything asks to unlock.
 
-| | Shipped in #57 | Design (proposal) |
+| | Shipped in #57 | Design (decided) |
 |---|---|---|
 | First screen on a new phone | Sign in | Sign in (same) |
 | After 30 minutes without use, or Lock | Signed out, back to Sign in | **Locked**: still signed in, view only |
@@ -112,7 +112,6 @@ Small additions the design makes beyond #57, each cheap to drop: a confirmation 
 
 ## Open decisions
 
-- **Lock model.** Keep #57's lock-signs-out, or adopt the design's locked view-only state (see Design status).
 - Whether to add a view-only link and viewer role later. If yes, the dashboard-first flow with an unlock sheet comes back for that role only.
 - Owner sign-up and password reset inside the app, or leave them to the dashboard.
 - Staff removal (today only disable).
