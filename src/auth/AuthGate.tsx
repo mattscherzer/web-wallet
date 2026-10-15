@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import LoginPage from './LoginPage';
+import { UnlockProvider } from './UnlockProvider';
 import { useAuth } from './useAuth';
 
 /** Shows the app only to a logged-in user; everyone else gets the login form. Nothing below it loads data before that. */
@@ -13,5 +14,5 @@ export function AuthGate({ children }: { children: ReactNode }) {
     );
   }
   if (status === 'signedOut') return <LoginPage />;
-  return <>{children}</>;
+  return <UnlockProvider>{children}</UnlockProvider>;
 }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useUnlock } from './unlockContext';
 import { OWNER_CONFIRM_MS, OwnerConfirmContext, type Confirm } from './ownerConfirmContext';
 import { checkOwnerPassword } from './passwordCheck';
 import { useAuth } from './useAuth';
@@ -7,9 +8,10 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 
 export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
-  const latest = useRef(auth);
+  const { openUnlock } = useUnlock();
+  const latest = useRef({ auth, openUnlock });
   useEffect(() => {
-    latest.current = auth;
+    latest.current = { auth, openUnlock };
   });
   const confirmedUntil = useRef(0);
   const waiting = useRef<((ok: boolean) => void)[]>([]);
@@ -25,10 +27,20 @@ export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
+  // Locking ends the 15-minute window: after an unlock the next owner action asks for the password again.
+  useEffect(() => {
+    if (auth.locked) confirmedUntil.current = 0;
+  }, [auth.locked]);
+
   const confirm = useCallback<Confirm>(async () => {
     // An action can start a moment before the login has finished loading.
-    while (latest.current.status === 'loading') await wait(20);
-    if (latest.current.profile?.kind !== 'owner') return false;
+    while (latest.current.auth.status === 'loading') await wait(20);
+    if (latest.current.auth.profile?.kind !== 'owner') return false;
+    // View only: unlock first, then try again.
+    if (latest.current.auth.locked) {
+      latest.current.openUnlock();
+      return false;
+    }
     if (Date.now() < confirmedUntil.current) return true;
     return new Promise<boolean>((resolve) => {
       waiting.current.push(resolve);

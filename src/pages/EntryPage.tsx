@@ -22,6 +22,7 @@ import { categoryLabel, parseAmount } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
+import { useUnlock } from '../auth/unlockContext';
 import { authorLabel } from '../utils/authorLabel';
 
 type Sheet = 'edit' | 'remove' | null;
@@ -37,6 +38,7 @@ export default function EntryPage() {
   const { status, tx, audit, refresh } = useEntry(id);
   const { profile, user, can } = useAuth();
   const confirmOwner = useOwnerConfirm();
+  const { requireUnlocked } = useUnlock();
   const actor = profile?.displayName;
 
   const [sheet, setSheet] = useState<Sheet>(null);
@@ -87,6 +89,7 @@ export default function EntryPage() {
   };
 
   const openEdit = () => {
+    if (!requireUnlocked()) return;
     setEditAmount(String(Number(tx.amount)));
     setEditNotes(tx.notes);
     setProblem(null);
@@ -188,6 +191,7 @@ export default function EntryPage() {
                 type="button"
                 className="btn btn--outline entry__remove"
                 onClick={() => {
+                  if (!requireUnlocked()) return;
                   setProblem(null);
                   setSheet('remove');
                 }}

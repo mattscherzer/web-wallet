@@ -8,6 +8,7 @@ import { formatDate, formatTime } from '../utils/dateHelpers';
 import { categoryLabel, typeParam } from '../utils/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
+import { useUnlock } from '../auth/unlockContext';
 
 /** Receipt shown right after saving: what was recorded, with Record another, Done and Undo. */
 export default function RecordedPage() {
@@ -15,6 +16,7 @@ export default function RecordedPage() {
   const navigate = useNavigate();
   const { current: wallet } = useWallet();
   const { profile } = useAuth();
+  const { requireUnlocked } = useUnlock();
   const { status, tx } = useEntry(id);
   const [problem, setProblem] = useState<string | null>(null);
 
@@ -33,7 +35,7 @@ export default function RecordedPage() {
   if (status === 'missing' || !tx) return <p className="empty-state__text">Entry not found</p>;
 
   const undo = async () => {
-    if (!wallet) return;
+    if (!wallet || !requireUnlocked()) return;
     try {
       await removeTransaction(tx.id, { walletId: wallet.id, reason: 'Entered by mistake', actor: profile?.displayName });
       navigate('/');

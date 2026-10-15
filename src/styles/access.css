@@ -1,0 +1,312 @@
+/* =============================================
+   ACCESS: sign-in steps, lock, unlock, PIN pad, bottom sheet, snackbar
+   ============================================= */
+
+/* Sign-in card pieces */
+.login-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.login-card__title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+}
+
+.login-card__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Text field with an optional show/hide toggle */
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.text-field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.text-field__control .form-input {
+  width: 100%;
+}
+
+.text-field__toggle {
+  position: absolute;
+  right: var(--space-xs);
+}
+
+/* PIN dots and number pad */
+.pin-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.pin-dots {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.pin-dots__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: transparent;
+}
+
+.pin-dots__dot--filled {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.pin-pad__keys {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: var(--space-md);
+}
+
+.pin-pad__key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.pin-pad__key:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pin-pad__key:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Countdown shown while sign-in or unlock is paused */
+.countdown {
+  display: block;
+  text-align: center;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+
+/* Bottom sheet */
+.bottom-sheet__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--color-scrim);
+}
+
+.bottom-sheet {
+  width: 100%;
+  max-width: var(--max-width);
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: var(--space-sm) var(--space-lg) calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--color-card);
+  color: var(--color-text-primary);
+  animation: modalSlideUp var(--transition-spring);
+}
+
+.bottom-sheet:focus {
+  outline: none;
+}
+
+.bottom-sheet__grabber {
+  display: block;
+  width: 32px;
+  height: 4px;
+  margin: 0 auto var(--space-md);
+  border-radius: var(--radius-full);
+  background: var(--color-outline);
+}
+
+/* Unlock sheet */
+.unlock-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--color-card);
+}
+
+.unlock-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.unlock-sheet__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.unlock-sheet__title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.unlock-sheet__text {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.unlock-sheet__link {
+  align-self: center;
+  min-height: var(--touch-min);
+  border: 0;
+  background: none;
+  color: var(--color-focus);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+/* Snackbar */
+.snackbar {
+  position: fixed;
+  left: var(--page-padding);
+  right: var(--page-padding);
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-md));
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  max-width: calc(var(--max-width) - 2 * var(--page-padding));
+  min-height: var(--touch-primary);
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.snackbar__action {
+  min-height: var(--touch-min);
+  border: 0;
+  background: none;
+  color: var(--color-focus);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+/* Header lock button */
+.app-bar__lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  margin-left: auto;
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.app-bar__lock--locked {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+/* The Record button while locked */
+.record-fab--locked {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.record-fab__lock {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+/* More: signed-in card and actions */
+.signed-in-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.signed-in-card__name {
+  margin: 0;
+  font-weight: var(--font-weight-extrabold);
+}
+
+.signed-in-card__detail {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.more-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+/* Owners only */
+.owners-only {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding-top: var(--space-xl);
+}
+
+.owners-only__title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+}

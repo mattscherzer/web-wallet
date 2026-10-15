@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 import { createStaff, listStaff, resetStaffPin, setStaffDisabled, type StaffMember } from '../db/admin';
 import { createWallet, fetchWallets, WalletNameError, type Wallet } from '../db/wallets';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
 import { useOptionalWallet } from '../wallet/useWallet';
 import { PIN_LENGTH, isPin } from '../auth/pin';
+import BottomSheet from '../components/BottomSheet';
+import TextField from '../components/TextField';
 
 /**
  * Wallets and staff, for owners. The page check below is a convenience only: what protects the data are the
@@ -19,7 +22,19 @@ export default function AdminPage() {
       </p>
     );
   }
-  if (profile?.kind !== 'owner') return <p className="empty-state__text">Owners only</p>;
+  if (profile?.kind !== 'owner') {
+    return (
+      <div className="owners-only">
+        <h1 className="owners-only__title">Owners only</h1>
+        <p className="entry__hint">
+          Only the owner can manage wallets and staff. Ask the owner if something needs to change.
+        </p>
+        <Link to="/more" className="btn btn--outline">
+          Back to More
+        </Link>
+      </div>
+    );
+  }
   return <Dashboard />;
 }
 
@@ -65,7 +80,7 @@ function Dashboard() {
           await wallet?.refresh(); // so the wallet switcher lists the new wallet right away
         }}
       />
-      <StaffForm wallets={wallets} onDone={reload} />
+      <AddStaff wallets={wallets} onDone={reload} />
       <section aria-label="Staff">
         <h2 className="entry__heading">Staff</h2>
         {wallets.map((w) => {
@@ -95,19 +110,23 @@ function useOwnerAction(run: () => Promise<void>, onDone: () => Promise<void>) {
   const confirmOwner = useOwnerConfirm();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const go = async () => {
-    if (busy) return;
+  /** Resolves to true when the action went through (not cancelled, not failed). */
+  const go = async (): Promise<boolean> => {
+    if (busy) return false;
     setBusy(true);
     setError(null);
+    let done = false;
     try {
       if (await confirmOwner()) {
         await run();
         await onDone();
+        done = true;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     }
     setBusy(false);
+    return done;
   };
   return { error, setError, busy, go };
 }
@@ -147,7 +166,39 @@ function WalletForm({ onDone }: { onDone: () => Promise<void> }) {
   );
 }
 
-function StaffForm({ wallets, onDone }: { wallets: Wallet[]; onDone: () => Promise<void> }) {
+/** The Add staff button and its bottom sheet. */
+function AddStaff({ wallets, onDone }: { wallets: Wallet[]; onDone: () => Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" className="btn btn--primary" aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        Add staff
+      </button>
+      {open && (
+        <BottomSheet label="Add staff" onClose={() => setOpen(false)}>
+          <StaffForm
+            wallets={wallets}
+            onDone={onDone}
+            onAdded={() => setOpen(false)}
+            onCancel={() => setOpen(false)}
+          />
+        </BottomSheet>
+      )}
+    </>
+  );
+}
+
+function StaffForm({
+  wallets,
+  onDone,
+  onAdded,
+  onCancel,
+}: {
+  wallets: Wallet[];
+  onDone: () => Promise<void>;
+  onAdded: () => void;
+  onCancel: () => void;
+}) {
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [pin, setPin] = useState('');
@@ -162,49 +213,34 @@ function StaffForm({ wallets, onDone }: { wallets: Wallet[]; onDone: () => Promi
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!isPin(pin)) return setError(PIN_PROBLEM);
-    void go();
+    void go().then((ok) => ok && onAdded());
   };
   return (
-    <form onSubmit={submit} noValidate aria-label="Add staff">
+    <form onSubmit={submit} noValidate>
       <h2 className="entry__heading">Add staff</h2>
-      <div className="form-group">
-        <label className="form-label" htmlFor="staff-username">
-          Username
-        </label>
-        <input
-          id="staff-username"
-          className="form-input"
-          autoCapitalize="none"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label className="form-label" htmlFor="staff-display">
-          Display name
-        </label>
-        <input
-          id="staff-display"
-          className="form-input"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-        />
-      </div>
-      <div className="form-group">
-        <label className="form-label" htmlFor="staff-pin">
-          PIN
-        </label>
-        <input
-          id="staff-pin"
-          className="form-input"
-          inputMode="numeric"
-          maxLength={PIN_LENGTH}
-          autoComplete="off"
-          value={pin}
-          onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-        />
-        <p className="form-hint">{PIN_LENGTH} digits. Hand it over in person.</p>
-      </div>
+      <p className="entry__hint">
+        Staff record and edit entries. They don’t need an account, only a username and a PIN.
+      </p>
+      <TextField
+        label="Name shown in the history"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+      />
+      <TextField
+        label="Username"
+        autoCapitalize="none"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <TextField
+        label="PIN"
+        inputMode="numeric"
+        maxLength={PIN_LENGTH}
+        autoComplete="off"
+        value={pin}
+        onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+      />
+      <p className="form-hint">{PIN_LENGTH} digits. Hand it over in person.</p>
       <div className="form-group">
         <label className="form-label" htmlFor="staff-wallet">
           Wallet
@@ -225,6 +261,9 @@ function StaffForm({ wallets, onDone }: { wallets: Wallet[]; onDone: () => Promi
       <button type="submit" className="btn btn--primary" disabled={busy || !chosen}>
         Add staff
       </button>
+      <button type="button" className="btn btn--outline" onClick={onCancel}>
+        Cancel
+      </button>
     </form>
   );
 }
@@ -232,6 +271,7 @@ function StaffForm({ wallets, onDone }: { wallets: Wallet[]; onDone: () => Promi
 function StaffRow({ member, onDone }: { member: StaffMember; onDone: () => Promise<void> }) {
   const [resetting, setResetting] = useState(false);
   const [pin, setPin] = useState('');
+  const [confirmingDisable, setConfirmingDisable] = useState(false);
   const toggle = useOwnerAction(() => setStaffDisabled(member.user_id, !member.disabled), onDone);
   const reset = useOwnerAction(async () => {
     await resetStaffPin(member.user_id, pin);
@@ -261,11 +301,30 @@ function StaffRow({ member, onDone }: { member: StaffMember; onDone: () => Promi
           className="btn btn--outline"
           aria-label={`${member.disabled ? 'Enable' : 'Disable'} ${member.display_name}`}
           disabled={toggle.busy}
-          onClick={() => void toggle.go()}
+          onClick={() => (member.disabled ? void toggle.go() : setConfirmingDisable(true))}
         >
           {member.disabled ? 'Enable' : 'Disable'}
         </button>
       </div>
+      {confirmingDisable && (
+        <BottomSheet label={`Disable ${member.display_name}?`} onClose={() => setConfirmingDisable(false)}>
+          <h2 className="entry__heading">{`Disable ${member.display_name}?`}</h2>
+          <p className="entry__hint">
+            {`${member.display_name} can no longer sign in, on any phone. Entries ${member.display_name} recorded stay in the books under ${member.display_name}’s name. You can enable ${member.display_name} again later.`}
+          </p>
+          <button
+            type="button"
+            className="btn btn--primary"
+            disabled={toggle.busy}
+            onClick={() => void toggle.go().then(() => setConfirmingDisable(false))}
+          >
+            {`Disable ${member.display_name}`}
+          </button>
+          <button type="button" className="btn btn--outline" onClick={() => setConfirmingDisable(false)}>
+            {`Keep ${member.display_name}`}
+          </button>
+        </BottomSheet>
+      )}
       {resetting && (
         <form onSubmit={savePin} noValidate>
           <label className="form-label" htmlFor={`pin-${member.user_id}`}>

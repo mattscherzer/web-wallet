@@ -34,6 +34,11 @@
   font-size: var(--font-size-base);
 }
 
+.empty-state__hint {
+  margin: var(--space-sm) 0 var(--space-md);
+  font-size: var(--font-size-base);
+}
+
 /* =============================================
    AUDIT LOG
    ============================================= */

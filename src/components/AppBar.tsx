@@ -1,5 +1,7 @@
 import { lazy, Suspense, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Lock, LockOpen } from 'lucide-react';
+import { useAuth } from '../auth/useAuth';
+import { useUnlock } from '../auth/unlockContext';
 import { useOptionalWallet } from '../wallet/useWallet';
 import { walletInitials } from '../wallet/walletStore';
 
@@ -10,6 +12,8 @@ const WalletSwitcher = lazy(() => import('./WalletSwitcher'));
 export default function AppBar() {
   const wallet = useOptionalWallet();
   const [open, setOpen] = useState(false);
+  const { lock } = useAuth();
+  const { locked, openUnlock } = useUnlock();
   const current = wallet?.current;
   if (!current) return null;
 
@@ -29,6 +33,21 @@ export default function AppBar() {
           <span className="app-bar__name">{current.name}</span>
           <ChevronDown size={20} aria-hidden="true" />
         </button>
+        {locked ? (
+          <button
+            type="button"
+            className="app-bar__lock app-bar__lock--locked"
+            aria-label="Locked, view only. Unlock to make changes"
+            onClick={openUnlock}
+          >
+            <Lock size={20} aria-hidden="true" />
+            <span className="app-bar__lock-text">View only</span>
+          </button>
+        ) : (
+          <button type="button" className="app-bar__lock" aria-label="Lock" onClick={() => void lock()}>
+            <LockOpen size={20} aria-hidden="true" />
+          </button>
+        )}
       </header>
       {open && (
         <Suspense fallback={null}>
