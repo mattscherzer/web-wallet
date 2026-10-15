@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { Lock, LockOpen } from 'lucide-react';
 import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';
 
@@ -12,31 +13,28 @@ export default function MorePage() {
       </div>
       {profile && (
         <section className="signed-in-card" aria-label="Signed in">
-          <span className="wallet-avatar" aria-hidden="true">
+          <span className="signed-in-card__avatar" aria-hidden="true">
             {profile.displayName.slice(0, 1).toUpperCase()}
           </span>
-          <div>
+          <div className="signed-in-card__who">
             <p className="signed-in-card__name">{profile.displayName}</p>
             <p className="signed-in-card__detail">
               {profile.kind === 'owner' ? `Owner · ${user?.email ?? ''}` : 'Staff · PIN sign-in'}
             </p>
           </div>
+          <button
+            type="button"
+            className="signed-in-card__lock"
+            onClick={locked ? openUnlock : () => void lock()}
+          >
+            {locked ? <LockOpen size={20} aria-hidden="true" /> : <Lock size={20} aria-hidden="true" />}
+            {locked ? 'Unlock' : 'Lock'}
+          </button>
         </section>
       )}
-      <div className="more-actions">
-        {locked ? (
-          <button type="button" className="btn btn--primary" onClick={openUnlock}>
-            Unlock
-          </button>
-        ) : (
-          <button type="button" className="btn btn--outline" onClick={() => void lock()}>
-            Lock
-          </button>
-        )}
-        <button type="button" className="btn btn--outline" onClick={() => void signOut()}>
-          Sign out of this phone
-        </button>
-      </div>
+      <button type="button" className="more-signout" onClick={() => void signOut()}>
+        Sign out of this phone
+      </button>
       {profile?.kind === 'owner' && (
         <Link to="/admin" className="btn btn--outline">
           Wallets and staff

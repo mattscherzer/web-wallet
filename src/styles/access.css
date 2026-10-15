@@ -240,6 +240,21 @@
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.unlock-sheet__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.unlock-sheet__note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
 }
 
 .unlock-sheet__text {
@@ -293,11 +308,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  min-width: var(--touch-min);
-  min-height: var(--touch-min);
+  flex: none;
+  width: var(--touch-min);
+  height: var(--touch-min);
   margin-left: auto;
-  padding: 0 var(--space-md);
+  padding: 0;
   border: 0;
   border-radius: var(--radius-full);
   background: var(--color-bg-secondary);
@@ -308,8 +323,8 @@
 }
 
 .app-bar__lock--locked {
-  background: var(--color-primary-container);
-  color: var(--color-on-primary-container);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 /* The Record button while locked */
@@ -336,28 +351,76 @@
 .signed-in-card {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-  padding: var(--space-md);
+  gap: 14px;
+  margin-top: var(--space-sm);
+  padding: 12px 12px 12px var(--space-md);
   border-radius: var(--radius-lg);
   background: var(--color-card);
 }
 
+.signed-in-card__avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-hero-bg);
+  color: var(--color-hero-text);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-extrabold);
+}
+
+.signed-in-card__who {
+  flex: 1;
+  min-width: 0;
+}
+
 .signed-in-card__name {
   margin: 0;
-  font-weight: var(--font-weight-extrabold);
+  font-weight: var(--font-weight-semibold);
 }
 
 .signed-in-card__detail {
   margin: 0;
+  font-size: var(--font-size-base);
   color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.more-actions {
+.signed-in-card__lock {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 var(--space-md) 0 12px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  color: var(--color-on-primary-container);
+  font: inherit;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.more-signout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--color-focus);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
 }
 
 /* Owners only */

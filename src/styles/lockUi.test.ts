@@ -66,7 +66,10 @@ describe('lock and sign-in styles', () => {
 });
 
 // Everything in access.css, not just the classes above.
-const ACCESS = readFileSync(new URL('./access.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+const ACCESS = ['access.css', 'login.css', 'admin.css']
+  .map((f) => readFileSync(new URL(`./${f}`, import.meta.url), 'utf8'))
+  .join('\n')
+  .replace(/\/\*[\s\S]*?\*\//g, '');
 const RULES = [...ACCESS.matchAll(/([^{}]+)\{([^}]*)\}/g)].map((m) => ({ selector: m[1].trim(), body: m[2] }));
 
 describe('every rule in access.css', () => {

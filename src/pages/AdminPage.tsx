@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
+import { ArrowLeft } from 'lucide-react';
 import { createStaff, listStaff, resetStaffPin, setStaffDisabled, type StaffMember } from '../db/admin';
 import { createWallet, fetchWallets, WalletNameError, type Wallet } from '../db/wallets';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
 import { useOptionalWallet } from '../wallet/useWallet';
+import { walletInitials } from '../wallet/walletStore';
 import { PIN_LENGTH, isPin } from '../auth/pin';
 import BottomSheet from '../components/BottomSheet';
 import TextField from '../components/TextField';
@@ -66,41 +68,59 @@ function Dashboard() {
 
   return (
     <div className="admin">
-      <div className="page-header">
-        <h1 className="page-header__title">Wallets and staff</h1>
-      </div>
+      <header className="admin-header">
+        <Link to="/more" className="icon-btn" aria-label="Back">
+          <ArrowLeft size={24} aria-hidden="true" />
+        </Link>
+        <h1 className="admin-header__title">Wallets and staff</h1>
+      </header>
+      <p className="admin-intro">
+        Only owners see this page. Staff record and edit entries, and each belongs to one wallet.
+      </p>
       {loadError && (
         <p role="alert" className="form-error">
           Couldn’t load everything. Check your connection and try again.
         </p>
       )}
+      <h2 className="admin-heading">Wallets</h2>
+      <ul className="admin-list">
+        {wallets.map((w) => {
+          const count = staff.filter((s) => s.wallet_id === w.id).length;
+          return (
+            <li key={w.id} className="admin-row admin-row--wallet">
+              <span className="admin-avatar admin-avatar--wallet" aria-hidden="true">
+                {walletInitials(w.name)}
+              </span>
+              <span className="admin-row__who">
+                <span className="admin-row__name">{w.name}</span>
+                <span className="admin-row__sub">{count === 0 ? 'No staff yet' : `${count} staff`}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
       <WalletForm
         onDone={async () => {
           await reload();
           await wallet?.refresh(); // so the wallet switcher lists the new wallet right away
         }}
       />
+      {wallets.map((w) => {
+        const members = staff.filter((s) => s.wallet_id === w.id);
+        return (
+          <section key={w.id} aria-label={`Staff of ${w.name}`}>
+            <h2 className="admin-heading">{`Staff · ${w.name}`}</h2>
+            {members.length > 0 && (
+              <ul className="admin-list">
+                {members.map((s) => (
+                  <StaffRow key={s.user_id} member={s} onDone={reload} />
+                ))}
+              </ul>
+            )}
+          </section>
+        );
+      })}
       <AddStaff wallets={wallets} onDone={reload} />
-      <section aria-label="Staff">
-        <h2 className="entry__heading">Staff</h2>
-        {wallets.map((w) => {
-          const members = staff.filter((s) => s.wallet_id === w.id);
-          return (
-            <div key={w.id}>
-              <h3 className="entry__hint">{w.name}</h3>
-              {members.length === 0 ? (
-                <p className="entry__hint">No staff yet</p>
-              ) : (
-                <ul>
-                  {members.map((s) => (
-                    <StaffRow key={s.user_id} member={s} onDone={reload} />
-                  ))}
-                </ul>
-              )}
-            </div>
-          );
-        })}
-      </section>
     </div>
   );
 }
@@ -146,14 +166,9 @@ function WalletForm({ onDone }: { onDone: () => Promise<void> }) {
     void go();
   };
   return (
-    <form onSubmit={submit} noValidate aria-label="Create a wallet">
-      <h2 className="entry__heading">New wallet</h2>
-      <div className="form-group">
-        <label className="form-label" htmlFor="admin-wallet-name">
-          Wallet name
-        </label>
-        <input id="admin-wallet-name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} />
-      </div>
+    <form className="admin-form" onSubmit={submit} noValidate aria-label="Create a wallet">
+      <h2 className="admin-heading">New wallet</h2>
+      <TextField label="Wallet name" value={name} onChange={(e) => setName(e.target.value)} />
       {error && (
         <p role="alert" className="form-error">
           {error}
@@ -284,21 +299,31 @@ function StaffRow({ member, onDone }: { member: StaffMember; onDone: () => Promi
     void reset.go();
   };
   return (
-    <li>
-      <strong>{member.display_name}</strong> <span className="entry__hint">{member.username}</span>
-      {member.disabled && <span className="entry__hint"> (disabled)</span>}
-      <div>
+    <li className="admin-row admin-row--staff">
+      <div className="admin-row__top">
+        <span className="admin-avatar" aria-hidden="true">
+          {member.display_name.slice(0, 1).toUpperCase()}
+        </span>
+        <span className="admin-row__who">
+          <span className="admin-row__name">
+            {member.display_name}
+            {member.disabled && <span className="admin-row__sub"> (disabled)</span>}
+          </span>
+          <span className="admin-row__mono">{member.username}</span>
+        </span>
+      </div>
+      <div className="admin-row__actions">
         <button
           type="button"
-          className="btn btn--outline"
+          className="admin-pill"
           aria-label={`Reset PIN for ${member.display_name}`}
           onClick={() => setResetting((v) => !v)}
         >
           Reset PIN
-        </button>{' '}
+        </button>
         <button
           type="button"
-          className="btn btn--outline"
+          className={`admin-pill ${member.disabled ? '' : 'admin-pill--danger'}`.trim()}
           aria-label={`${member.disabled ? 'Enable' : 'Disable'} ${member.display_name}`}
           disabled={toggle.busy}
           onClick={() => (member.disabled ? void toggle.go() : setConfirmingDisable(true))}

@@ -30,8 +30,13 @@ export default function AppBar() {
           <span className="wallet-avatar wallet-avatar--current" aria-hidden="true">
             {walletInitials(current.name)}
           </span>
-          <span className="app-bar__name">{current.name}</span>
-          <ChevronDown size={20} aria-hidden="true" />
+          <span className="app-bar__text">
+            <span className="app-bar__title">
+              <span className="app-bar__name">{current.name}</span>
+              <ChevronDown size={20} aria-hidden="true" />
+            </span>
+            {locked && <span className="app-bar__sub">View only</span>}
+          </span>
         </button>
         {locked ? (
           <button
@@ -40,12 +45,11 @@ export default function AppBar() {
             aria-label="Locked, view only. Unlock to make changes"
             onClick={openUnlock}
           >
-            <Lock size={20} aria-hidden="true" />
-            <span className="app-bar__lock-text">View only</span>
+            <Lock size={24} aria-hidden="true" />
           </button>
         ) : (
           <button type="button" className="app-bar__lock" aria-label="Lock" onClick={() => void lock()}>
-            <LockOpen size={20} aria-hidden="true" />
+            <LockOpen size={24} aria-hidden="true" />
           </button>
         )}
       </header>

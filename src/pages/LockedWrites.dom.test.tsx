@@ -59,7 +59,7 @@ describe('the header lock', () => {
     expect(screen.queryByText('View only')).toBeNull();
     await lock();
     const closed = screen.getByRole('button', { name: 'Locked, view only. Unlock to make changes' });
-    expect(within(closed).getByText('View only')).toBeTruthy();
+    expect(screen.getByText('View only')).toBeTruthy();
     expect(screen.getByText('the books')).toBeTruthy();
     fireEvent.click(closed);
     await findSheet();

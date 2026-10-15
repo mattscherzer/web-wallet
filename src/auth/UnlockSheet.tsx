@@ -83,7 +83,7 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
         </p>
       )}
       {isOwner ? (
-        <form onSubmit={submitPassword} noValidate>
+        <form className="unlock-sheet__form" onSubmit={submitPassword} noValidate>
           <TextField
             label="Password"
             password
@@ -95,7 +95,6 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
           <button type="submit" className="btn btn--primary" disabled={busy}>
             Unlock
           </button>
-          <p className="unlock-sheet__text">Locks again after 30 minutes without use.</p>
         </form>
       ) : (
         <PinPad value={pin} onChange={onPin} disabled={busy} />
@@ -103,6 +102,7 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
       <button type="button" className="unlock-sheet__link" onClick={() => void signOut()}>
         Not {name}? Sign out
       </button>
+      {isOwner && <p className="unlock-sheet__note">Locks again after 30 minutes without use.</p>}
     </BottomSheet>
   );
 }
