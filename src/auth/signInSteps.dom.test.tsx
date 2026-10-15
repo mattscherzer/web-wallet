@@ -140,7 +140,8 @@ describe('owner sign-in', () => {
 });
 
 describe('the sign-in screens follow the design', () => {
-  it('T61 the username step has the Treasury mark, a "Sign in" heading, the helper lines and the footer note', async () => {
+  // the username step has the Treasury mark, a "Sign in" heading, the helper lines and the footer note
+  it('T61', async () => {
     open();
     await screen.findByLabelText('Username');
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeTruthy();
@@ -152,7 +153,8 @@ describe('the sign-in screens follow the design', () => {
     expect(screen.getByLabelText('Username').getAttribute('aria-describedby')).toBeTruthy();
   });
 
-  it('T62 the PIN step has a back arrow, the initial in a circle, and "Not anna? Use another username"', async () => {
+  // the PIN step has a back arrow, the initial in a circle, and "Not anna? Use another username"
+  it('T62', async () => {
     await toPinStep();
     expect(screen.getByText('A')).toBeTruthy();
     expect(screen.getByText('Enter your 6-digit PIN')).toBeTruthy();
@@ -161,7 +163,8 @@ describe('the sign-in screens follow the design', () => {
     expect(await screen.findByLabelText('Username')).toBeTruthy();
   });
 
-  it('T63 the owner step says "Owners sign in with email and password."', async () => {
+  // the owner step says "Owners sign in with email and password."
+  it('T63', async () => {
     open();
     fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
     expect(screen.getByText('Owners sign in with email and password.')).toBeTruthy();
