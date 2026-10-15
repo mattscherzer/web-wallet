@@ -73,7 +73,7 @@ describe('staff sign-in in two steps', () => {
     localStorage.setItem(LAST_STAFF_KEY, 'anna');
     open();
     expect(await screen.findByText('Hi, anna')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Not anna?' }));
+    fireEvent.click(screen.getByRole('button', { name: /Not anna\?/ }));
     expect(await screen.findByLabelText('Username')).toBeTruthy();
   });
 
@@ -136,5 +136,34 @@ describe('owner sign-in', () => {
     type('Password', 'owner-pw');
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() => expect(screen.queryByText('the books')).not.toBeNull());
+  });
+});
+
+describe('the sign-in screens follow the design', () => {
+  it('T61 the username step has the Treasury mark, a "Sign in" heading, the helper lines and the footer note', async () => {
+    open();
+    await screen.findByLabelText('Username');
+    expect(screen.getByRole('heading', { name: 'Sign in' })).toBeTruthy();
+    expect(screen.getByText('Treasury')).toBeTruthy();
+    expect(screen.getByText('Staff sign in with the username and 6-digit PIN the owner gave them.')).toBeTruthy();
+    expect(screen.getByText('This phone remembers it, so next time you only enter your PIN.')).toBeTruthy();
+    expect(screen.getByText('Forgot your PIN? Ask the owner to reset it.')).toBeTruthy();
+    expect(screen.getByText(/Stays signed in on this phone until you sign out\. Locks after 30 minutes/)).toBeTruthy();
+    expect(screen.getByLabelText('Username').getAttribute('aria-describedby')).toBeTruthy();
+  });
+
+  it('T62 the PIN step has a back arrow, the initial in a circle, and "Not anna? Use another username"', async () => {
+    await toPinStep();
+    expect(screen.getByText('A')).toBeTruthy();
+    expect(screen.getByText('Enter your 6-digit PIN')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Not anna\? Use another username/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Back to username' }));
+    expect(await screen.findByLabelText('Username')).toBeTruthy();
+  });
+
+  it('T63 the owner step says "Owners sign in with email and password."', async () => {
+    open();
+    fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
+    expect(screen.getByText('Owners sign in with email and password.')).toBeTruthy();
   });
 });

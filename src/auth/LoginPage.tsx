@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { ArrowLeft, Lock, TriangleAlert } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import PinPad from '../components/PinPad';
 import TextField from '../components/TextField';
@@ -61,6 +62,12 @@ export default function LoginPage() {
     setBusy(false);
   };
 
+  const backToUsername = () => {
+    setPin('');
+    setError(null);
+    setStep('username');
+  };
+
   const anotherUsername = () => {
     setPaused(null);
     setPin('');
@@ -69,96 +76,89 @@ export default function LoginPage() {
     setStep('username');
   };
 
-  let body;
-  if (mode === 'owner') {
-    body = (
-      <form className="login-card__form" onSubmit={submitOwner} noValidate>
-        <TextField
-          label="Email"
-          type="email"
-          autoComplete="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          label="Password"
-          password
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && (
-          <p role="alert" className="login-card__error">
-            {error}
-          </p>
-        )}
-        <button type="submit" className="btn btn--primary" disabled={busy}>
-          Sign in
+  const brand = (
+    <div className="login-brand">
+      <span className="login-brand__mark" aria-hidden="true">
+        <Lock size={28} />
+      </span>
+      <span className="login-brand__name">Treasury</span>
+    </div>
+  );
+
+  const footer = (
+    <p className="login-footer">Stays signed in on this phone until you sign out. Locks after 30 minutes without use.</p>
+  );
+
+  const tabs = (
+    <div className="login-tabs" role="group" aria-label="Sign in as">
+      {(['staff', 'owner'] as const).map((m) => (
+        <button
+          key={m}
+          type="button"
+          className={`login-tabs__tab${mode === m ? ' login-tabs__tab--active' : ''}`}
+          aria-pressed={mode === m}
+          onClick={() => switchMode(m)}
+        >
+          {m === 'staff' ? 'Staff' : 'Owner'}
         </button>
-      </form>
-    );
-  } else if (paused !== null) {
-    body = (
-      <div className="login-card__form">
-        <h1 className="login-card__title">Sign in paused</h1>
-        <p className="login-card__text">Sign-in for “{name}” is paused</p>
-        <p className="login-card__text">
-          So nobody can keep guessing the PIN. Each new mistake after a pause makes the wait longer.
-        </p>
-        <Countdown seconds={paused} />
-        <p className="login-card__text">until you can try again</p>
-        <p className="login-card__text">Don’t want to wait? Ask the owner to reset your PIN. They’ll give you a new one.</p>
-        <button type="button" className="btn btn--outline" onClick={anotherUsername}>
-          Use another username
-        </button>
+      ))}
+    </div>
+  );
+
+  const alert = error && (
+    <p role="alert" className="login-error">
+      <TriangleAlert size={20} aria-hidden="true" />
+      {error}
+    </p>
+  );
+
+  if (mode === 'staff' && paused !== null) {
+    return (
+      <div className="login-page">
+        {brand}
+        <div className="login-body">
+          <h1 className="login-title">Too many wrong tries</h1>
+          <div className="login-paused" role="group" aria-label="Sign in paused">
+            <TriangleAlert size={20} aria-hidden="true" />
+            <div>
+              <strong>Sign-in for “{name}” is paused</strong>
+              <span>So nobody can keep guessing the PIN. Each new mistake after a pause makes the wait longer.</span>
+            </div>
+          </div>
+          <div className="login-timer">
+            <Countdown seconds={paused} />
+            <span>until you can try again</span>
+          </div>
+          <p className="login-text">Don’t want to wait? Ask the owner to reset your PIN. They’ll give you a new one.</p>
+          <button type="button" className="btn btn--outline" onClick={anotherUsername}>
+            Use another username
+          </button>
+        </div>
       </div>
     );
-  } else if (step === 'username') {
-    body = (
-      <form className="login-card__form" onSubmit={submitUsername} noValidate>
-        <TextField
-          label="Username"
-          autoComplete="username"
-          autoCapitalize="none"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        {error && (
-          <p role="alert" className="login-card__error">
-            {error}
-          </p>
-        )}
-        <button type="submit" className="btn btn--primary">
-          Continue
-        </button>
-      </form>
-    );
-  } else {
-    body = (
-      <div className="login-card__form">
-        <h1 className="login-card__title">Hi, {name}</h1>
-        <p className="login-card__text">Enter your {PIN_LENGTH}-digit PIN.</p>
-        {error && (
-          <p role="alert" className="login-card__error">
-            {error}
-          </p>
-        )}
-        {busy && (
-          <p role="status" aria-label="Checking" className="login-card__text">
-            Checking…
-          </p>
-        )}
-        <PinPad value={pin} onChange={onPin} disabled={busy} />
-        <button
-          type="button"
-          className="unlock-sheet__link"
-          onClick={() => {
-            setStep('username');
-            setPin('');
-            setError(null);
-          }}
-        >
-          Not {name}?
+  }
+
+  if (mode === 'staff' && step === 'pin') {
+    const wrong = error !== null && error.startsWith('Wrong');
+    return (
+      <div className="login-page login-page--pin">
+        <header className="login-back">
+          <button type="button" className="icon-btn" aria-label="Back to username" onClick={backToUsername}>
+            <ArrowLeft size={24} aria-hidden="true" />
+          </button>
+        </header>
+        <div className="login-hello">
+          <span className="login-hello__avatar" aria-hidden="true">
+            {name.charAt(0).toUpperCase()}
+          </span>
+          <h1 className="login-title">Hi, {name}</h1>
+          <p className="login-text">{busy ? 'Checking your PIN' : `Enter your ${PIN_LENGTH}-digit PIN`}</p>
+        </div>
+        <PinPad value={pin} onChange={onPin} disabled={busy} invalid={wrong} status={busy ? 'Signing you in…' : null}>
+          {alert}
+        </PinPad>
+        <button type="button" className="login-link" onClick={anotherUsername}>
+          Not {name}? Use another username
         </button>
       </div>
     );
@@ -166,30 +166,60 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
-        <div className="login-card__logo">
-          <span className="login-card__logo-text">Treasury</span>
+      {brand}
+      <div className="login-body">
+        <div className="login-heading">
+          <h1 className="login-title">Sign in</h1>
+          <p className="login-text">
+            {mode === 'owner'
+              ? 'Owners sign in with email and password.'
+              : 'Staff sign in with the username and 6-digit PIN the owner gave them.'}
+          </p>
         </div>
-        <div className="login-card__tabs" role="group" aria-label="Sign in as">
-          <button
-            type="button"
-            className={`filter-pill${mode === 'staff' ? ' filter-pill--active' : ''}`}
-            aria-pressed={mode === 'staff'}
-            onClick={() => switchMode('staff')}
-          >
-            Staff
-          </button>
-          <button
-            type="button"
-            className={`filter-pill${mode === 'owner' ? ' filter-pill--active' : ''}`}
-            aria-pressed={mode === 'owner'}
-            onClick={() => switchMode('owner')}
-          >
-            Owner
-          </button>
-        </div>
-        {body}
+        {tabs}
+        {mode === 'owner' ? (
+          <form className="login-form" onSubmit={submitOwner} noValidate>
+            <TextField
+              label="Email"
+              type="email"
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              password
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {alert}
+            <button type="submit" className="btn btn--primary" disabled={busy}>
+              Sign in
+            </button>
+          </form>
+        ) : (
+          <form className="login-form" onSubmit={submitUsername} noValidate>
+            <TextField
+              label="Username"
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              hint="This phone remembers it, so next time you only enter your PIN."
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {alert}
+            <button type="submit" className="btn btn--primary">
+              Continue
+            </button>
+            <p className="login-note">Forgot your PIN? Ask the owner to reset it.</p>
+          </form>
+        )}
       </div>
+      {footer}
     </div>
   );
 }
