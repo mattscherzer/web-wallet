@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 /**
- * Checks the owner's password on a separate client that keeps no session, so the app's own session (and everything
+ * Checks the owner's password (false when it is wrong, throws when the check itself fails) on a separate client that keeps no session, so the app's own session (and everything
  * listening to it) stays untouched.
  */
 export async function checkOwnerPassword(email: string, password: string): Promise<boolean> {
@@ -9,5 +9,12 @@ export async function checkOwnerPassword(email: string, password: string): Promi
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   const { error } = await checker.auth.signInWithPassword({ email, password });
-  return !error;
+  if (!error) {
+    // The check opened a real session on the server; end it so none is left behind.
+    await checker.auth.signOut({ scope: 'local' }).catch(() => {});
+    return true;
+  }
+  // A refused password is an answer; anything else (offline, server failure) means we could not check.
+  if (error.status === 400 || error.status === 401 || error.code === 'invalid_credentials') return false;
+  throw error;
 }

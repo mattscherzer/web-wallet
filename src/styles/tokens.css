@@ -27,6 +27,8 @@
   --color-in: #067647;
   --color-in-surface: #ddf3e6;
   --color-error: #b42318;
+  --color-error-surface: #fee4e2;
+  --color-on-error-surface: #3a4252;
 
   /* Balance card */
   --color-hero-bg: #0b2545;
@@ -83,6 +85,7 @@
   --radius-indicator: 16px;
   --radius-count-total: 32px;
   --radius-tile: 16px;
+  --radius-brand: 18px;
 
   /* Touch targets */
   --touch-min: 48px;
@@ -129,6 +132,8 @@
     --color-in: #47cd89;
     --color-in-surface: #0f2a1e;
     --color-error: #f97066;
+    --color-error-surface: #3a1a17;
+    --color-on-error-surface: #d0d5dd;
 
     --color-hero-bg: #13305a;
     --color-hero-decor: #1b3f6e;

@@ -1,0 +1,151 @@
+/* =============================================
+   ADMIN: wallets and staff
+   ============================================= */
+/* Wallets and staff */
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: 64px;
+  margin: 0 calc(var(--space-sm) * -1) 0 calc(var(--space-xs) * -1);
+}
+
+.admin-header__title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.admin-intro {
+  margin: var(--space-xs) var(--space-xs) 0;
+  font-size: var(--font-size-base);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.admin-heading {
+  margin: 20px var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-row {
+  display: flex;
+  gap: var(--space-sm);
+  padding: 12px var(--space-md);
+  border-radius: var(--radius-xs);
+  background: var(--color-card);
+}
+
+.admin-row:first-child {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.admin-row:last-child {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+.admin-row--wallet {
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 72px;
+}
+
+.admin-row--staff {
+  flex-direction: column;
+}
+
+.admin-row__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.admin-row__who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+
+.admin-row__name {
+  font-weight: var(--font-weight-semibold);
+}
+
+.admin-row__sub {
+  font-size: var(--font-size-base);
+  font-weight: normal;
+  color: var(--color-text-secondary);
+}
+
+.admin-row__mono {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.admin-row__actions {
+  display: flex;
+  gap: var(--space-sm);
+  padding-left: 56px;
+}
+
+.admin-avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-extrabold);
+}
+
+.admin-avatar--wallet {
+  background: var(--color-hero-bg);
+  color: var(--color-hero-text);
+}
+
+.admin-pill {
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  color: var(--color-on-primary-container);
+  font: inherit;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.admin-pill--danger {
+  background: transparent;
+  color: var(--color-error);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.admin > .btn {
+  margin-top: var(--space-md);
+}

@@ -380,4 +380,6 @@ export const FAKE_PERMISSIONS: Row[] = [
     'export',
   ].map((action) => ({ role: 'owner', action })),
 ];
-export const STAFF_LOGIN_OK = { session: { access_token: 'at-u-anna', refresh_token: 'rt-u-anna' } };
+export const STAFF_LOGIN_OK = {
+  session: { access_token: 'at-u-anna', refresh_token: 'rt-u-anna', user: { id: 'u-anna' } },
+};
