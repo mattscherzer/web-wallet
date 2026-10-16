@@ -7,8 +7,6 @@ import { PIN_LENGTH } from './pin';
 import { readLastStaff } from './staffLogin';
 import { useAuth } from './useAuth';
 
-export { LAST_STAFF_KEY } from './staffLogin';
-
 export default function LoginPage() {
   const { signIn, signInStaff } = useAuth();
   const [mode, setMode] = useState<'staff' | 'owner'>('staff');
@@ -20,6 +18,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [paused, setPaused] = useState<number | null>(null);
+  const [waited, setWaited] = useState(false);
+  const [wrongPin, setWrongPin] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const switchMode = (next: 'staff' | 'owner') => {
@@ -40,12 +40,18 @@ export default function LoginPage() {
     if (busy) return;
     setBusy(true);
     setError(null);
+    setWrongPin(false);
     const result = await signInStaff(name, digits);
     setBusy(false);
     if (result.ok) return;
     setPin('');
-    if (result.kind === 'paused') setPaused(result.retryAfter);
-    else setError(result.kind === 'wrong' ? 'Wrong username or PIN' : 'Could not sign in. Try again.');
+    if (result.kind === 'paused') {
+      setWaited(false);
+      setPaused(result.retryAfter);
+    } else {
+      setWrongPin(result.kind === 'wrong');
+      setError(result.kind === 'wrong' ? 'Wrong username or PIN' : 'Could not sign in. Try again.');
+    }
   };
   const onPin = (next: string) => {
     setPin(next);
@@ -62,14 +68,24 @@ export default function LoginPage() {
     setBusy(false);
   };
 
+  // The wait is over: back to the PIN pad for the same person.
+  const tryAgain = () => {
+    setPaused(null);
+    setPin('');
+    setError(null);
+    setWrongPin(false);
+  };
+
   const backToUsername = () => {
     setPin('');
     setError(null);
+    setWrongPin(false);
     setStep('username');
   };
 
   const anotherUsername = () => {
     setPaused(null);
+    setWrongPin(false);
     setPin('');
     setError(null);
     setUsername('');
@@ -126,10 +142,15 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="login-timer">
-            <Countdown seconds={paused} />
+            <Countdown seconds={paused} onDone={() => setWaited(true)} />
             <span>until you can try again</span>
           </div>
           <p className="login-text">Don’t want to wait? Ask the owner to reset your PIN. They’ll give you a new one.</p>
+          {waited && (
+            <button type="button" className="btn btn--primary" onClick={tryAgain}>
+              Try again
+            </button>
+          )}
           <button type="button" className="btn btn--outline" onClick={anotherUsername}>
             Use another username
           </button>
@@ -139,7 +160,6 @@ export default function LoginPage() {
   }
 
   if (mode === 'staff' && step === 'pin') {
-    const wrong = error !== null && error.startsWith('Wrong');
     return (
       <div className="login-page login-page--pin">
         <header className="login-back">
@@ -154,7 +174,7 @@ export default function LoginPage() {
           <h1 className="login-title">Hi, {name}</h1>
           <p className="login-text">{busy ? 'Checking your PIN' : `Enter your ${PIN_LENGTH}-digit PIN`}</p>
         </div>
-        <PinPad value={pin} onChange={onPin} disabled={busy} invalid={wrong} status={busy ? 'Signing you in…' : null}>
+        <PinPad value={pin} onChange={onPin} disabled={busy} invalid={wrongPin} status={busy ? 'Signing you in…' : null}>
           {alert}
         </PinPad>
         {!busy && (
@@ -206,7 +226,7 @@ export default function LoginPage() {
           <form className="login-form" onSubmit={submitUsername} noValidate>
             <TextField
               label="Username"
-              autoComplete="off"
+              autoComplete="username"
               autoCapitalize="none"
               spellCheck={false}
               hint="This phone remembers it, so next time you only enter your PIN."

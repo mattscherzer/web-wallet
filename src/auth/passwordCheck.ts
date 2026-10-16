@@ -9,7 +9,11 @@ export async function checkOwnerPassword(email: string, password: string): Promi
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   const { error } = await checker.auth.signInWithPassword({ email, password });
-  if (!error) return true;
+  if (!error) {
+    // The check opened a real session on the server; end it so none is left behind.
+    await checker.auth.signOut({ scope: 'local' }).catch(() => {});
+    return true;
+  }
   // A refused password is an answer; anything else (offline, server failure) means we could not check.
   if (error.status === 400 || error.status === 401 || error.code === 'invalid_credentials') return false;
   throw error;

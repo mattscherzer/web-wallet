@@ -7,11 +7,11 @@ import {
   FAKE_PERMISSIONS,
   FAKE_PROFILES,
   FAKE_USERS,
-  STAFF_LOGIN_OK,
   twoWalletRows,
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { findSheet, noSheet, pass, pressPin, refused, rememberStaff, shell, sheet } from '../test/lockTestKit';
+import { LAST_STAFF_KEY } from './staffLogin';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -31,7 +31,7 @@ beforeEach(() => {
   ref.fake.answerFunction('staff-login', (body) => {
     const { username, pin } = body as { username: string; pin: string };
     return username === 'anna' && pin === '123456'
-      ? { data: STAFF_LOGIN_OK }
+      ? { data: { userId: 'u-anna' } }
       : refused(401, { error: 'Wrong username or PIN' });
   });
 });
@@ -54,7 +54,9 @@ describe('unlocking as staff', () => {
     expect(within(sheet()).getByText(/Hi, anna/)).toBeTruthy();
     pressPin('123456');
     await waitFor(() => expect(noSheet()).toBeNull());
-    expect(staffLoginCalls()).toEqual([{ name: 'staff-login', body: { username: 'anna', pin: '123456' } }]);
+    expect(staffLoginCalls()).toEqual([
+      { name: 'staff-login', body: { username: 'anna', pin: '123456', verifyOnly: true } },
+    ]);
     expect(screen.getByRole('button', { name: 'Lock' })).toBeTruthy();
     expect(ref.fake.signOutScopes).toEqual([]);
   });
@@ -108,9 +110,7 @@ describe('unlocking as staff', () => {
   });
 
   it('T13 a PIN that belongs to someone else is not accepted for the signed-in person', async () => {
-    ref.fake.answerFunction('staff-login', () => ({
-      data: { session: { access_token: 'at-u-owner', refresh_token: 'rt', user: { id: 'u-owner' } } },
-    }));
+    ref.fake.answerFunction('staff-login', () => ({ data: { userId: 'u-owner' } }));
     await lockedAsStaff();
     pressPin('123456');
     expect(await within(sheet()).findByText('Wrong PIN')).toBeTruthy();
@@ -209,5 +209,33 @@ describe('the idle lock banner', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+describe('unlock sheet edge cases', () => {
+  // staff whose phone forgot the username get a way out instead of a pad that never works
+  it('T66', async () => {
+    rememberStaff();
+    ref.fake.signIn('u-anna');
+    shell();
+    fireEvent.click(await screen.findByRole('button', { name: 'Lock' }));
+    localStorage.removeItem(LAST_STAFF_KEY);
+    fireEvent.click(await screen.findByRole('button', { name: /Locked, view only/ }));
+    await findSheet();
+    expect(within(sheet()).getByText(/Sign out and sign in again/)).toBeTruthy();
+    expect(within(sheet()).queryByRole('button', { name: '1' })).toBeNull();
+    fireEvent.click(within(sheet()).getByRole('button', { name: /Sign out/ }));
+    await waitFor(() => expect(ref.fake.signOutScopes).toEqual(['local']));
+  });
+
+  // Tab inside the open sheet stays inside it
+  it('T67', async () => {
+    await lockedAsStaff();
+    const buttons = within(sheet()).getAllByRole('button').filter((b) => !(b as HTMLButtonElement).disabled);
+    buttons[buttons.length - 1].focus();
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(buttons[0]);
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(buttons[buttons.length - 1]);
   });
 });

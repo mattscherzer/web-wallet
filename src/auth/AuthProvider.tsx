@@ -11,7 +11,7 @@ import {
 } from './authContext';
 import { checkOwnerPassword } from './passwordCheck';
 import { idleExpired, rememberActivity, useIdleLock } from './idleLock';
-import { forgetStaff, readLastStaff, rememberStaff, requestStaffLogin } from './staffLogin';
+import { checkStaffPin, forgetStaff, readLastStaff, rememberStaff, requestStaffLogin } from './staffLogin';
 
 type State = Pick<AuthValue, 'status' | 'user' | 'profile'> & { permissions: ReadonlySet<string> };
 const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null, permissions: new Set() };
@@ -168,10 +168,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         const username = readLastStaff();
         if (!username) return { ok: false, kind: 'error' }; // nobody to check the PIN for
-        const result = await requestStaffLogin(username, secret);
+        const result = await checkStaffPin(username, secret);
         if (!result.ok) return result;
         // The PIN has to belong to the person signed in on this phone, not just to some staff member.
-        if (result.session.user?.id !== user.id) return { ok: false, kind: 'wrong' };
+        if (result.userId !== user.id) return { ok: false, kind: 'wrong' };
       }
       rememberActivity();
       applyLock(null);

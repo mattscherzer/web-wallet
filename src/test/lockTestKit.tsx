@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { AuthProvider } from '../auth/AuthProvider';
 import { AuthGate } from '../auth/AuthGate';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
-import { LAST_STAFF_KEY } from '../auth/LoginPage';
+import { LAST_STAFF_KEY } from '../auth/staffLogin';
 import Layout from '../components/Layout';
 import AdminPage from '../pages/AdminPage';
 import EntryPage from '../pages/EntryPage';

@@ -42,6 +42,8 @@ export async function handleStaffLogin(req: Request, deps: StaffLoginDeps): Prom
     if (!pinOk || !state.userId || state.disabled) return reply(401, REFUSED);
 
     await deps.resetAttempts(username);
+    // Unlocking an app that is already signed in only needs to know who the PIN belongs to: no new session.
+    if (body.verifyOnly === true) return reply(200, { userId: state.userId });
     return reply(200, { session: await deps.mintSession(state.userId) });
   } catch (error) {
     console.error('staff-login failed', error);

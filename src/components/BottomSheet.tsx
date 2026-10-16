@@ -21,6 +21,22 @@ export default function BottomSheet({ label, onClose, className = '', children }
     ref.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close.current();
+      if (e.key !== 'Tab' || !ref.current) return;
+      // aria-modal: Tab wraps inside the sheet instead of reaching the page behind it.
+      const items = [...ref.current.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea')].filter(
+        (el) => !(el as HTMLButtonElement).disabled,
+      );
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || active === ref.current)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => {

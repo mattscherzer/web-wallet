@@ -46,6 +46,22 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
     if (password) void attempt(password);
   };
 
+  if (!isOwner && !name) {
+    // The phone forgot who this is, so a PIN cannot be checked: a way out instead of a pad that never works.
+    return (
+      <BottomSheet label="Unlock to make changes" onClose={onClose} className="unlock-sheet">
+        <h2 className="unlock-sheet__title">Unlock to make changes</h2>
+        <p className="unlock-sheet__text">This phone no longer knows who you are. Sign out and sign in again.</p>
+        <button type="button" className="btn btn--primary" onClick={() => void signOut()}>
+          Sign out
+        </button>
+        <button type="button" className="btn btn--outline" onClick={onClose}>
+          Back to viewing
+        </button>
+      </BottomSheet>
+    );
+  }
+
   if (problem?.kind === 'paused') {
     return (
       <BottomSheet label="Unlock to make changes" onClose={onClose} className="unlock-sheet">

@@ -7,7 +7,6 @@ import {
   FAKE_PERMISSIONS,
   FAKE_PROFILES,
   FAKE_USERS,
-  STAFF_LOGIN_OK,
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { transactionRows } from '../test/transactionsTestKit';
@@ -113,7 +112,7 @@ describe('changes while unlocked', () => {
   });
 
   it('T43 after unlocking with the PIN the same Edit tap opens the edit sheet, and a reload stays unlocked', async () => {
-    ref.fake.answerFunction('staff-login', () => ({ data: STAFF_LOGIN_OK }));
+    ref.fake.answerFunction('staff-login', () => ({ data: { userId: 'u-anna' } }));
     ref.fake.signIn('u-anna');
     const view = shell(null, '/history/t1');
     await lock();
@@ -132,7 +131,7 @@ describe('changes while unlocked', () => {
 
 describe('the idle bar', () => {
   it('T44 the bar appears once after an idle lock, is not repeated while locked, and goes away after unlocking', async () => {
-    ref.fake.answerFunction('staff-login', () => ({ data: STAFF_LOGIN_OK }));
+    ref.fake.answerFunction('staff-login', () => ({ data: { userId: 'u-anna' } }));
     vi.useFakeTimers();
     try {
       ref.fake.signIn('u-anna');
@@ -190,5 +189,18 @@ describe('every other way to change something while locked', () => {
     fireEvent.click(undo);
     await findSheet();
     expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
+  });
+
+  // an owner restore that waited at the password box while the app locked must not go through
+  it('T65', async () => {
+    ref.fake.signIn('u-owner');
+    shell(null, '/history/t5');
+    fireEvent.click(await screen.findByRole('button', { name: 'Restore' }));
+    const ask = await screen.findByRole('dialog', { name: 'Confirm your password' });
+    await lock();
+    fireEvent.change(within(ask).getByLabelText('Password'), { target: { value: 'owner-pw' } });
+    fireEvent.click(within(ask).getByRole('button', { name: 'Confirm' }));
+    await findSheet();
+    expect(ref.fake.tables.transactions.find((t) => t.id === 't5')!.deleted).toBe(true);
   });
 });

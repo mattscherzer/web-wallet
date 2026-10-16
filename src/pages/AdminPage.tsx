@@ -47,12 +47,23 @@ function Dashboard() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loadError, setLoadError] = useState(false);
+  // Wallets whose staff list could not be loaded: shown as such, never as an empty team.
+  const [staffFailed, setStaffFailed] = useState<ReadonlySet<string>>(new Set());
 
   const reload = useCallback(async () => {
     try {
       const w = await fetchWallets();
-      const lists = await Promise.all(w.map((wallet) => listStaff(wallet.id).catch(() => [] as StaffMember[])));
+      const failed = new Set<string>();
+      const lists = await Promise.all(
+        w.map((wallet) =>
+          listStaff(wallet.id).catch(() => {
+            failed.add(wallet.id);
+            return [] as StaffMember[];
+          }),
+        ),
+      );
       setWallets(w);
+      setStaffFailed(failed);
       setStaff([...new Map(lists.flat().map((s) => [s.user_id, s])).values()]);
       setLoadError(false);
     } catch (err) {
@@ -93,7 +104,9 @@ function Dashboard() {
               </span>
               <span className="admin-row__who">
                 <span className="admin-row__name">{w.name}</span>
-                <span className="admin-row__sub">{count === 0 ? 'No staff yet' : `${count} staff`}</span>
+                <span className="admin-row__sub">
+                  {staffFailed.has(w.id) ? 'Couldn’t load staff' : count === 0 ? 'No staff yet' : `${count} staff`}
+                </span>
               </span>
             </li>
           );

@@ -15,7 +15,7 @@ import {
 import { refused } from '../test/lockTestKit';
 import { AuthProvider } from './AuthProvider';
 import { AuthGate } from './AuthGate';
-import { LAST_STAFF_KEY } from './LoginPage';
+import { LAST_STAFF_KEY } from './staffLogin';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -180,5 +180,17 @@ describe('the sign-in screens follow the design', () => {
     expect(within(status).getByText('Signing you in…')).toBeTruthy();
     expect(screen.getByText('Checking your PIN')).toBeTruthy();
     expect(screen.queryByRole('button', { name: /Not anna\?/ })).toBeNull();
+  });
+
+  // when the paused wait is over a button leads straight back to the PIN pad for the same person
+  it('T68', async () => {
+    ref.fake.answerFunction('staff-login', () => refused(429, { error: 'locked', retryAfter: 1 }));
+    await toPinStep();
+    press('000000');
+    await screen.findByText('Sign-in for “anna” is paused');
+    expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
+    fireEvent.click(await screen.findByRole('button', { name: 'Try again' }, { timeout: 3000 }));
+    expect(await screen.findByText('Hi, anna')).toBeTruthy();
+    expect(screen.getByRole('img', { name: '0 of 6 digits entered' })).toBeTruthy();
   });
 });

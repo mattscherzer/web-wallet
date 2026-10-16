@@ -159,4 +159,12 @@ describe('Wallets and staff page and the wallet list', () => {
     await confirmPassword();
     await waitFor(() => expect(screen.getByTestId('wallet-count').textContent).toBe('3'));
   });
+
+  // a staff list that cannot be loaded must not read as "No staff yet"
+  it('T69', async () => {
+    ref.fake.answerFunction('staff-admin', () => ({ error: { message: 'down' } }));
+    open('u-owner');
+    expect(await screen.findAllByText('Couldn’t load staff')).not.toHaveLength(0);
+    expect(screen.queryByText('No staff yet')).toBeNull();
+  });
 });
