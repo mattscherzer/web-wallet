@@ -105,4 +105,16 @@ describe('staff login', () => {
     expect(seen).toEqual([null, 'hash:123456']);
     expect(s.attempts).toEqual(['nobody', 'anna']);
   });
+
+  // a PIN check for unlocking answers who the PIN belongs to and starts no session
+  it('T71', async () => {
+    const s = setup();
+    const ok = await body(await s.call({ username: 'anna', pin: '123456', verifyOnly: true }));
+    expect(ok).toEqual({ status: 200, json: { userId: 'u-anna' } });
+    expect(s.minted).toEqual([]);
+    expect(s.resets).toEqual(['anna']);
+    const wrong = await body(await s.call({ username: 'anna', pin: '654321', verifyOnly: true }));
+    expect(wrong.status).toBe(401);
+    expect(s.minted).toEqual([]);
+  });
 });

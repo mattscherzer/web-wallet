@@ -23,6 +23,7 @@ import ErrorSummary from '../components/ErrorSummary';
 import CashCalculator from '../components/CashCalculator';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
+import { useUnlock } from '../auth/unlockContext';
 
 const TYPES: { id: RecordType; label: string }[] = [
   { id: 'inflow', label: 'Money in' },
@@ -44,6 +45,7 @@ export default function RecordPage() {
   const navigate = useNavigate();
   const { current: wallet } = useWallet();
   const { profile } = useAuth();
+  const { requireUnlocked } = useUnlock();
   const [params] = useSearchParams();
   // null until the balances have really been fetched, so nothing is previewed or warned from zeros.
   const loadedBalances = useLoadedAccountBalances();
@@ -84,7 +86,7 @@ export default function RecordPage() {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (saving) return;
+    if (saving || !requireUnlocked()) return;
     setSaveError(null);
     const found = validateRecord(form);
     setErrors(found);

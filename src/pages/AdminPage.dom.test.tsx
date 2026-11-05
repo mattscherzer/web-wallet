@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { AuthProvider } from '../auth/AuthProvider';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
@@ -59,6 +59,23 @@ const calls = () =>
   ref.fake.invocations.filter((i) => (i.body as { action: string }).action !== 'list').map((i) => i.body);
 
 describe('Wallets and staff page', () => {
+  it('T30 disabling staff asks first ("Disable Anna?"); Keep Anna does nothing', async () => {
+    open('u-owner');
+    fireEvent.click(await screen.findByRole('button', { name: 'Disable Anna' }));
+    const ask = within(await screen.findByRole('dialog', { name: 'Disable Anna?' }));
+    expect(ask.getByText(/can no longer sign in/)).toBeTruthy();
+    fireEvent.click(ask.getByRole('button', { name: 'Keep Anna' }));
+    expect(screen.queryByRole('dialog', { name: 'Disable Anna?' })).toBeNull();
+    expect(calls()).toEqual([]);
+  });
+
+  it('T31 staff who open this page get "Owners only", an explanation and a way back to More', async () => {
+    open('u-anna');
+    expect(await screen.findByRole('heading', { name: 'Owners only' })).toBeTruthy();
+    expect(screen.getByText(/Only the owner can manage wallets and staff/)).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Back to More' }).getAttribute('href')).toBe('/more');
+  });
+
   it('T11 staff are told the page is for owners and get no controls', async () => {
     open('u-anna');
     expect(await screen.findByText(/owners only/i)).toBeTruthy();
@@ -78,15 +95,17 @@ describe('Wallets and staff page', () => {
     await waitFor(() => expect(ref.fake.tables.wallets.map((w) => w.name)).toContain('Autumn Retreat'));
     expect(ref.fake.rpcCalls).toEqual([{ name: 'create_wallet', args: { name: 'Autumn Retreat' } }]);
 
-    // Add staff: the PIN must be exactly 6 digits.
+    // Add staff opens a bottom sheet: the PIN must be exactly 6 digits.
+    fireEvent.click(screen.getByRole('button', { name: 'Add staff' }));
+    const sheet = within(await screen.findByRole('dialog', { name: 'Add staff' }));
     type('Username', 'mia');
-    type('Display name', 'Mia');
+    type('Name shown in the history', 'Mia');
     type('PIN', '1234');
-    fireEvent.click(screen.getByRole('button', { name: /add staff/i }));
+    fireEvent.click(sheet.getByRole('button', { name: 'Add staff' }));
     expect((await screen.findByRole('alert')).textContent).toMatch(/6 digits/i);
     expect(calls()).toEqual([]);
     type('PIN', '246810');
-    fireEvent.click(screen.getByRole('button', { name: /add staff/i }));
+    fireEvent.click(sheet.getByRole('button', { name: 'Add staff' }));
     await waitFor(() => expect(calls()).toHaveLength(1));
     expect(calls()[0]).toEqual({
       action: 'create',
@@ -103,8 +122,9 @@ describe('Wallets and staff page', () => {
     await waitFor(() => expect(calls()).toHaveLength(2));
     expect(calls()[1]).toEqual({ action: 'reset_pin', user_id: 'u-anna', pin: '135790' });
 
-    // Disable, then re-enable.
+    // Disable asks first, then re-enable does not.
     fireEvent.click(screen.getByRole('button', { name: 'Disable Anna' }));
+    fireEvent.click(within(await screen.findByRole('dialog', { name: 'Disable Anna?' })).getByRole('button', { name: 'Disable Anna' }));
     await waitFor(() => expect(calls()).toHaveLength(3));
     expect(calls()[2]).toEqual({ action: 'disable', user_id: 'u-anna' });
     fireEvent.click(await screen.findByRole('button', { name: 'Enable Anna' }));
@@ -138,5 +158,13 @@ describe('Wallets and staff page and the wallet list', () => {
     fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));
     await confirmPassword();
     await waitFor(() => expect(screen.getByTestId('wallet-count').textContent).toBe('3'));
+  });
+
+  // a staff list that cannot be loaded must not read as "No staff yet"
+  it('T69', async () => {
+    ref.fake.answerFunction('staff-admin', () => ({ error: { message: 'down' } }));
+    open('u-owner');
+    expect(await screen.findAllByText('Couldn’t load staff')).not.toHaveLength(0);
+    expect(screen.queryByText('No staff yet')).toBeNull();
   });
 });

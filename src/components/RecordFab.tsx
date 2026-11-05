@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Plus, X } from 'lucide-react';
+import { Lock, Plus, X } from 'lucide-react';
+import { useUnlock } from '../auth/unlockContext';
 import { RECORD_ACTIONS, menuEventForKey, nextMenuOpen, showFabAt, type MenuEvent } from './recordMenu';
 
 interface RecordFabViewProps {
@@ -11,9 +12,37 @@ interface RecordFabViewProps {
   fabRef?: RefObject<HTMLButtonElement | null>;
   firstItemRef?: RefObject<HTMLAnchorElement | null>;
   menuRef?: RefObject<HTMLDivElement | null>;
+  /** View only: the button says so and opens Unlock instead of the menu. */
+  locked?: boolean;
 }
 
-export function RecordFabView({ open, onToggle, onScrim, onPick, fabRef, firstItemRef, menuRef }: RecordFabViewProps) {
+export function RecordFabView({
+  open,
+  onToggle,
+  onScrim,
+  onPick,
+  fabRef,
+  firstItemRef,
+  menuRef,
+  locked = false,
+}: RecordFabViewProps) {
+  if (locked) {
+    return (
+      <button
+        type="button"
+        ref={fabRef}
+        className="record-fab record-fab--locked"
+        id="record-fab"
+        aria-label="Record. Locked: unlock to record"
+        onClick={onToggle}
+      >
+        <Plus size={28} aria-hidden="true" />
+        <span className="record-fab__lock" aria-hidden="true">
+          <Lock size={16} />
+        </span>
+      </button>
+    );
+  }
   return (
     <>
       {open && <div className="record-scrim" aria-hidden="true" onClick={onScrim} />}
@@ -54,6 +83,7 @@ export function RecordFabView({ open, onToggle, onScrim, onPick, fabRef, firstIt
 
 export function RecordFab() {
   const { pathname } = useLocation();
+  const { locked, openUnlock } = useUnlock();
   // The menu is open for the page it was opened on, so navigating closes it.
   const [openFor, setOpenFor] = useState<string | null>(null);
   const open = openFor === pathname;
@@ -100,7 +130,8 @@ export function RecordFab() {
   return (
     <RecordFabView
       open={open}
-      onToggle={() => send('toggle')}
+      locked={locked}
+      onToggle={locked ? openUnlock : () => send('toggle')}
       onScrim={() => send('scrim')}
       onPick={() => send('itemPick')}
       fabRef={fabRef}

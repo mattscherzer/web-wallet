@@ -103,6 +103,16 @@ export default function HistoryPage() {
       {transactions.length === 0 && (
         <div className="empty-state">
           <p className="empty-state__text">{searchQuery ? 'No matching entries' : 'No entries yet'}</p>
+          {!searchQuery && (
+            <>
+              <p className="empty-state__hint">
+                Money in, money out and transfers you record appear here, newest first.
+              </p>
+              <Link to="/record?type=in" className="btn btn--primary">
+                Record money in
+              </Link>
+            </>
+          )}
         </div>
       )}
 
