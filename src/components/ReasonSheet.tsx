@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import BottomSheet from './BottomSheet';
 
 interface ReasonSheetProps {
   title: string;
@@ -29,46 +30,6 @@ export default function ReasonSheet({
   withNote,
   error,
 }: ReasonSheetProps) {
-  const titleId = useId();
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const onCancelRef = useRef(onCancel);
-  useEffect(() => {
-    onCancelRef.current = onCancel;
-  }, [onCancel]);
-
-  // Keyboard: focus moves into the dialog, Tab stays inside, Escape closes, and focus goes back to the opener.
-  // Keys typed elsewhere (e.g. in the PIN box shown on top) are left alone.
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
-    const dialog = dialogRef.current;
-    dialog?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (!dialog || !dialog.contains(e.target as Node)) return;
-      if (e.key === 'Escape') {
-        onCancelRef.current();
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      const items = Array.from(
-        dialog.querySelectorAll<HTMLElement>('button, input, textarea, [href], [tabindex]:not([tabindex="-1"])'),
-      ).filter((el) => !(el as HTMLInputElement).disabled);
-      if (items.length === 0) return;
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      opener?.focus();
-    };
-  }, []);
   const [reason, setReason] = useState('');
   const [note, setNote] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
@@ -84,54 +45,41 @@ export default function ReasonSheet({
   };
 
   return (
-    <div className="modal-overlay" onClick={onCancel}>
-      <div
-        ref={dialogRef}
-        tabIndex={-1}
-        className="modal-content sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id={titleId} className="sheet__title">
-          {title}
-        </h2>
-        {children}
-        <div role="radiogroup" aria-label={reasonLabel} className="sheet__reasons">
-          {reasons.map((r) => (
-            <label key={r} className={`choice${reason === r ? ' choice--on' : ''}`}>
-              <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => setReason(r)} />
-              <span>{r}</span>
-            </label>
-          ))}
-        </div>
-        {withNote && (
-          <div className="form-section">
-            <label className="form-label" htmlFor="reason-note">
-              Note (optional)
-            </label>
-            <textarea
-              id="reason-note"
-              className="form-textarea"
-              rows={2}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          </div>
-        )}
-        {(problem || error) && (
-          <p className="field-error" role="status">
-            {problem ?? error}
-          </p>
-        )}
-        <button type="button" className="btn btn--primary" onClick={submit}>
-          {confirmLabel}
-        </button>
-        <button type="button" className="pin-modal__cancel" onClick={onCancel}>
-          Cancel
-        </button>
+    <BottomSheet title={title} onClose={onCancel}>
+      {children}
+      <div role="radiogroup" aria-label={reasonLabel} className="sheet__reasons">
+        {reasons.map((r) => (
+          <label key={r} className={`choice${reason === r ? ' choice--on' : ''}`}>
+            <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => setReason(r)} />
+            <span>{r}</span>
+          </label>
+        ))}
       </div>
-    </div>
+      {withNote && (
+        <div className="form-section">
+          <label className="form-label" htmlFor="reason-note">
+            Note (optional)
+          </label>
+          <textarea
+            id="reason-note"
+            className="form-textarea"
+            rows={2}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
+      )}
+      {(problem || error) && (
+        <p className="field-error" role="status">
+          {problem ?? error}
+        </p>
+      )}
+      <button type="button" className="btn btn--primary" onClick={submit}>
+        {confirmLabel}
+      </button>
+      <button type="button" className="link-btn" onClick={onCancel}>
+        Cancel
+      </button>
+    </BottomSheet>
   );
 }

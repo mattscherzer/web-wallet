@@ -3,6 +3,7 @@ import { useUnlock } from './unlockContext';
 import { OWNER_CONFIRM_MS, OwnerConfirmContext, type Confirm } from './ownerConfirmContext';
 import { checkOwnerPassword } from './passwordCheck';
 import { useAuth } from './useAuth';
+import ConfirmDialog from './ConfirmDialog';
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -68,44 +69,14 @@ export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
     <OwnerConfirmContext.Provider value={confirm}>
       {children}
       {asking && (
-        <div className="modal-overlay">
-          <form
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Confirm your password"
-            onSubmit={submit}
-            noValidate
-          >
-            <h2 className="modal__title">Confirm your password</h2>
-            <p className="form-hint">This is for owners only. You won’t be asked again for 15 minutes.</p>
-            <div className="form-group">
-              <label className="form-label" htmlFor="owner-confirm-password">
-                Password
-              </label>
-              <input
-                id="owner-confirm-password"
-                type="password"
-                className="form-input"
-                autoComplete="current-password"
-                autoFocus
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            {error && (
-              <p role="alert" className="form-error">
-                {error}
-              </p>
-            )}
-            <button type="submit" className="btn btn--primary" disabled={busy}>
-              Confirm
-            </button>
-            <button type="button" className="btn btn--outline" onClick={() => settle(false)}>
-              Cancel
-            </button>
-          </form>
-        </div>
+        <ConfirmDialog
+          password={password}
+          onPassword={setPassword}
+          error={error}
+          busy={busy}
+          onSubmit={submit}
+          onCancel={() => settle(false)}
+        />
       )}
     </OwnerConfirmContext.Provider>
   );

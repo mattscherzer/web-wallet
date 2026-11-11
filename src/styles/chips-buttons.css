@@ -144,3 +144,32 @@
 .btn--cash-calc:hover:not(:disabled) {
   background: var(--color-primary-container);
 }
+
+/* Variants used in sheets and dialogs */
+.link-btn {
+  min-height: var(--touch-min);
+  border: 0;
+  background: none;
+  color: var(--color-focus);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.btn--danger {
+  width: 100%;
+  min-height: var(--touch-primary);
+  background: var(--color-error);
+  color: var(--color-text-inverse);
+}
+
+.btn--tall {
+  width: 100%;
+  min-height: var(--touch-primary);
+}
+
+.btn--ghost {
+  background: none;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 0 0 1px var(--color-text-secondary);
+}

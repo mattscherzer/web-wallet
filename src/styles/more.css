@@ -1,0 +1,39 @@
+/* =============================================
+   MORE
+   ============================================= */
+.more-reserve-icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-card);
+  color: var(--color-on-primary-container);
+}
+
+.more-id {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+}
+
+.more-id__lock {
+  min-height: 40px;
+  padding: 0 var(--space-md) 0 var(--space-sm);
+  font-size: var(--font-size-base);
+}
+
+.more-signout {
+  width: 100%;
+}
+
+.more-skeleton-amount {
+  width: 72px;
+  height: 16px;
+  border-radius: var(--radius-sm);
+}

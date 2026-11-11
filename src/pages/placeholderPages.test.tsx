@@ -4,7 +4,6 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 
 const reports = await import('./ReportsPage').catch(() => undefined);
-const more = await import('./MorePage').catch(() => undefined);
 
 function page(mod: typeof reports) {
   expect(mod, 'page module must exist').toBeDefined();
@@ -17,9 +16,8 @@ function page(mod: typeof reports) {
 }
 
 describe('placeholder pages', () => {
-  it('Reports and More each render a heading', () => {
+  it('Reports renders a heading', () => {
     expect(page(reports)).toMatch(/<h1[^>]*>Reports<\/h1>/);
-    expect(page(more)).toMatch(/<h1[^>]*>More<\/h1>/);
   });
 
   it('App declares the reports and more routes', () => {

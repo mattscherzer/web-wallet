@@ -83,7 +83,7 @@ describe('changes while locked', () => {
 
   it('T22 an owner action while locked asks to unlock, not for the password, and nothing is written', async () => {
     ref.fake.signIn('u-owner');
-    shell(null, '/admin');
+    shell(null, '/wallets/new');
     fireEvent.change(await screen.findByLabelText('Wallet name'), { target: { value: 'Sneaky' } });
     await lock();
     fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));

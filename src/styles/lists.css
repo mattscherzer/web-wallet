@@ -1,0 +1,134 @@
+/* =============================================
+   GROUPED LISTS (rows in rounded cards)
+   ============================================= */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-list > li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: calc(var(--space-sm) + var(--space-xs)) var(--space-md);
+  border-radius: var(--radius-xs);
+  background: var(--color-card);
+}
+
+.card-list > li:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-xs);
+}
+
+.card-list > li:last-child {
+  border-radius: var(--radius-xs) var(--radius-xs) var(--radius-lg) var(--radius-lg);
+}
+
+.card-list > li:only-child {
+  border-radius: var(--radius-lg);
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: var(--touch-min);
+}
+
+.list-row__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+
+.list-row__name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.list-row__name--muted {
+  color: var(--color-text-secondary);
+}
+
+.list-row__sub {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+.list-row__sub--mono {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+}
+
+.list-row--action {
+  color: var(--color-focus);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+/* A tappable row fills its whole card, so the card's own padding is dropped. */
+.card-list > li:has(> .list-row--link) {
+  padding: 0;
+}
+
+.card-list > li:has(> .list-row--reserve) {
+  background: var(--color-bg-secondary);
+}
+
+.list-row--link {
+  min-height: 64px;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.list-row__value {
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.list-row__chevron {
+  flex: none;
+  color: var(--color-text-secondary);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.facts__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  min-height: 56px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-card);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-secondary);
+}
+
+.facts__row dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+
+.facts__row:first-child {
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-xs);
+}
+
+.facts__row:last-child {
+  border-radius: var(--radius-xs) var(--radius-xs) var(--radius-lg) var(--radius-lg);
+}

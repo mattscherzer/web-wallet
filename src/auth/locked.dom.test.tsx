@@ -163,7 +163,7 @@ describe('unlocking as owner', () => {
   it('T17 locking forgets the 15-minute owner confirmation: the next owner action asks for the password again', async () => {
     ref.fake.signIn('u-owner');
     ref.fake.answerFunction('staff-admin', () => ({ data: { staff: [] } }));
-    shell(null, '/admin');
+    shell(null, '/wallets/new');
     fireEvent.change(await screen.findByLabelText('Wallet name'), { target: { value: 'One' } });
     fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));
     fireEvent.change(await screen.findByLabelText('Password'), { target: { value: 'owner-pw' } });
@@ -176,8 +176,14 @@ describe('unlocking as owner', () => {
     fireEvent.click(within(sheet()).getByRole('button', { name: 'Unlock' }));
     await waitFor(() => expect(noSheet()).toBeNull());
 
-    fireEvent.change(screen.getByLabelText('Wallet name'), { target: { value: 'Two' } });
-    fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));
+    fireEvent.click(screen.getByRole('link', { name: 'More' }));
+    fireEvent.click(await screen.findByRole('link', { name: /Wallets and staff/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Add staff' }));
+    const add = await screen.findByRole('dialog', { name: 'Add staff' });
+    fireEvent.change(within(add).getByLabelText('Name shown in the history'), { target: { value: 'Bo' } });
+    fireEvent.change(within(add).getByLabelText('Username'), { target: { value: 'bo' } });
+    fireEvent.change(within(add).getByLabelText('PIN'), { target: { value: '123456' } });
+    fireEvent.click(within(add).getByRole('button', { name: 'Add staff' }));
     expect(await screen.findByRole('dialog', { name: 'Confirm your password' })).toBeTruthy();
     expect(ref.fake.rpcCalls).toHaveLength(1);
   });
@@ -231,11 +237,13 @@ describe('unlock sheet edge cases', () => {
   // Tab inside the open sheet stays inside it
   it('T67', async () => {
     await lockedAsStaff();
-    const buttons = within(sheet()).getAllByRole('button').filter((b) => !(b as HTMLButtonElement).disabled);
+    const buttons = within(sheet())
+      .getAllByRole('button')
+      .filter((b) => !(b as HTMLButtonElement).disabled);
     buttons[buttons.length - 1].focus();
-    fireEvent.keyDown(document, { key: 'Tab' });
+    fireEvent.keyDown(document.activeElement!, { key: 'Tab' });
     expect(document.activeElement).toBe(buttons[0]);
-    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    fireEvent.keyDown(document.activeElement!, { key: 'Tab', shiftKey: true });
     expect(document.activeElement).toBe(buttons[buttons.length - 1]);
   });
 });
