@@ -10,6 +10,7 @@ import { wouldOverdraw } from '../domain/overdraw';
 import {
   CATEGORIES,
   TYPE_PARAMS,
+  descriptionLabel,
   initialRecordForm,
   switchRecordType,
   parseAmount,
@@ -111,12 +112,6 @@ export default function RecordPage() {
   const overdraws =
     form.type === 'outflow' && wouldOverdraw(loadedBalances?.[form.accountId] ?? null, parseAmount(form.amount));
   const categories = form.type === 'transfer' ? [] : CATEGORIES[form.type];
-  const descriptionLabel =
-    form.type === 'outflow'
-      ? 'Paid to or what for'
-      : form.type === 'inflow' && form.category === 'other'
-        ? 'What was it for?'
-        : 'Notes (optional)';
 
   return (
     <div className="record">
@@ -232,7 +227,7 @@ export default function RecordPage() {
 
         <div className="form-section">
           <label className="form-label" htmlFor={FIELD_IDS.description}>
-            {descriptionLabel}
+            {descriptionLabel(form)}
           </label>
           <input
             {...fieldProps('description')}

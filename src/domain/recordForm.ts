@@ -106,6 +106,13 @@ export function validateRecord(form: RecordForm): FieldError[] {
   return errors;
 }
 
+/** The description field's label; it is required for money out and for money in as "Other". */
+export function descriptionLabel(form: Pick<RecordForm, 'type' | 'category'>): string {
+  if (form.type === 'outflow') return 'Paid to or what for';
+  if (form.type === 'inflow' && form.category === 'other') return 'What was it for?';
+  return 'Notes (optional)';
+}
+
 const isReserve = (id: AccountId) => ACCOUNTS.find((a) => a.id === id)?.isReserve === true;
 
 /** How an entry changes the Available balance (operating accounts only). */

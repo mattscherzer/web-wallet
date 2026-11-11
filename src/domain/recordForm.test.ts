@@ -113,3 +113,12 @@ describe('initialRecordForm and switchRecordType', () => {
     expect(lib().switchRecordType({ ...typed, fromAccountId: 'bank' }, 'transfer').accountId).toBe('cash');
   });
 });
+
+describe('descriptionLabel', () => {
+  it('asks what money out was for, what Other money in was for, and otherwise offers notes', () => {
+    expect(lib().descriptionLabel(base({ type: 'outflow' }))).toBe('Paid to or what for');
+    expect(lib().descriptionLabel(base({ category: 'other' }))).toBe('What was it for?');
+    expect(lib().descriptionLabel(base())).toBe('Notes (optional)');
+    expect(lib().descriptionLabel(base({ type: 'transfer', category: '' }))).toBe('Notes (optional)');
+  });
+});
