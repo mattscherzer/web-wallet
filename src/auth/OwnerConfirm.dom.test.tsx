@@ -66,6 +66,28 @@ async function enterPassword(value: string) {
 }
 
 describe('owner password confirmation', () => {
+  it('closes on Escape without confirming and returns focus to the button that asked', async () => {
+    open('u-owner');
+    const opener = screen.getByRole('button', { name: 'Do owner thing' });
+    opener.focus();
+    fireEvent.click(opener);
+    fireEvent.keyDown(await screen.findByLabelText('Password'), { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByLabelText('Password')).toBeNull());
+    expect(done()).toBe('0');
+    expect(document.activeElement).toBe(opener);
+  });
+
+  it('lets the owner show and hide what they typed', async () => {
+    open('u-owner');
+    fireEvent.click(screen.getByRole('button', { name: 'Do owner thing' }));
+    const input = await screen.findByLabelText('Password');
+    expect(input.getAttribute('type')).toBe('password');
+    fireEvent.click(screen.getByRole('button', { name: 'Show password' }));
+    expect(input.getAttribute('type')).toBe('text');
+    fireEvent.click(screen.getByRole('button', { name: 'Hide password' }));
+    expect(input.getAttribute('type')).toBe('password');
+  });
+
   it('T19 an owner-only action asks for the password, stays open for 15 minutes, then asks again', async () => {
     expect(OWNER_CONFIRM_MS).toBe(15 * 60_000);
     open('u-owner');

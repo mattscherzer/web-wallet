@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Check, Plus, X } from 'lucide-react';
+import { Check, Plus } from 'lucide-react';
 import { fetchWalletAvailableBalances } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { walletInitials } from '../wallet/walletStore';
 import { formatCurrency } from '../utils/formatCurrency';
+import BottomSheet from './BottomSheet';
 
 /** Bottom sheet listing the wallets (design: WalletSwitcher). */
 export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
@@ -40,12 +41,6 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
     setAttempt((n) => n + 1);
   };
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
   const choose = (id: string) => {
     switchWallet(id);
     onClose();
@@ -53,71 +48,64 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="wallet-sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Wallets"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="wallet-sheet__header">
-          <h2 className="wallet-sheet__title">Wallets</h2>
-          <button type="button" className="wallet-sheet__close" aria-label="Close" onClick={onClose}>
-            <X size={24} aria-hidden="true" />
-          </button>
-        </div>
-        <p className="wallet-sheet__hint">Each wallet has its own accounts, categories, members and history.</p>
-
-        <ul className="wallet-sheet__list">
-          {wallets.map((w) => {
-            const isCurrent = w.id === current?.id;
-            return (
-              <li key={w.id}>
-                <button
-                  type="button"
-                  className={`wallet-row${isCurrent ? ' wallet-row--current' : ''}`}
-                  aria-current={isCurrent ? 'true' : undefined}
-                  onClick={() => choose(w.id)}
-                >
-                  <span className={`wallet-avatar${isCurrent ? ' wallet-avatar--current' : ''}`} aria-hidden="true">
-                    {walletInitials(w.name)}
+    <BottomSheet
+      title="Wallets"
+      text="Each wallet has its own accounts, categories, staff and history."
+      onClose={onClose}
+      showClose
+    >
+      <ul className="wallet-sheet__list">
+        {wallets.map((w) => {
+          const isCurrent = w.id === current?.id;
+          return (
+            <li key={w.id}>
+              <button
+                type="button"
+                className={`wallet-row${isCurrent ? ' wallet-row--current' : ''}`}
+                aria-current={isCurrent ? 'true' : undefined}
+                onClick={() => choose(w.id)}
+              >
+                <span className={`wallet-avatar wallet-avatar--${isCurrent ? 'current' : 'tonal'}`} aria-hidden="true">
+                  {walletInitials(w.name)}
+                </span>
+                <span className="wallet-row__text">
+                  <span className="wallet-row__name">{w.name}</span>
+                  <span className="wallet-row__balance">
+                    {profile ? `${profile.kind === 'owner' ? 'Owner' : 'Staff'} · ` : ''}
+                    {balances ? formatCurrency(balances[w.id] ?? 0) : failed ? 'Balance unavailable' : '…'}
                   </span>
-                  <span className="wallet-row__text">
-                    <span className="wallet-row__name">{w.name}</span>
-                    <span className="wallet-row__balance">
-                      {balances ? formatCurrency(balances[w.id] ?? 0) : failed ? 'Balance unavailable' : '…'}
-                    </span>
-                  </span>
-                  {isCurrent && <Check size={24} aria-hidden="true" />}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+                </span>
+                {isCurrent && <Check size={24} aria-hidden="true" />}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
 
-        {failed && (
-          <p role="alert" className="form-error">
-            Couldn’t load the balances.{' '}
-            <button type="button" className="wallet-sheet__retry" onClick={retry}>
-              Retry
-            </button>
-          </p>
-        )}
-
-        {canCreate && (
-          <button
-            type="button"
-            className="btn btn--outline wallet-sheet__new"
-            onClick={() => {
-              onClose();
-              navigate('/wallets/new');
-            }}
-          >
-            <Plus size={20} aria-hidden="true" /> New wallet
+      {failed && (
+        <p role="alert" className="form-error">
+          Couldn’t load the balances.{' '}
+          <button type="button" className="wallet-sheet__retry" onClick={retry}>
+            Retry
           </button>
-        )}
-      </div>
-    </div>
+        </p>
+      )}
+
+      {canCreate && (
+        <button
+          type="button"
+          className="btn btn--outline wallet-sheet__new"
+          onClick={() => {
+            onClose();
+            navigate('/wallets/new');
+          }}
+        >
+          <Plus size={20} aria-hidden="true" /> New wallet
+        </button>
+      )}
+      <p className="lead-text">
+        Staff belong to one wallet and see only that one. Owners see every wallet they created.
+      </p>
+    </BottomSheet>
   );
 }

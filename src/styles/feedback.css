@@ -16,6 +16,26 @@
 }
 
 /* =============================================
+   SKELETON LOADER
+   ============================================= */
+.skeleton {
+  display: block;
+  background: var(--color-bg-secondary);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 200ms);
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* =============================================
    EMPTY STATE
    ============================================= */
 .empty-state {

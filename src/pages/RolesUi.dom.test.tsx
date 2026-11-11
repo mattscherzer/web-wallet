@@ -60,7 +60,9 @@ describe('what each role is offered', () => {
     cleanup();
 
     show('u-anna', <MorePage />);
-    await screen.findByText('Staff · PIN sign-in');
+    await screen.findByText('Anna');
+    expect(await screen.findByText('Prudent Reserve')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Sign out of this phone' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Wallets and staff/ })).toBeNull();
     cleanup();
 

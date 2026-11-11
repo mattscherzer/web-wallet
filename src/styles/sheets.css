@@ -1,0 +1,63 @@
+/* =============================================
+   DIALOGS AND SHEETS (confirm password, bottom sheets)
+   ============================================= */
+.modal-overlay--top {
+  align-items: flex-start;
+  padding-top: 150px;
+}
+
+.confirm-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  background: var(--color-card);
+}
+
+.modal-overlay--bottom {
+  align-items: flex-end;
+  padding: 0;
+}
+
+.bottom-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: var(--max-width);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-sm) var(--space-lg) calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--color-card);
+}
+
+.bottom-sheet__handle {
+  align-self: center;
+  width: 32px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-outline);
+}
+
+.bottom-sheet__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.dialog-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.bottom-sheet__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}

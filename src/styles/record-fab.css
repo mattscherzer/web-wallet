@@ -38,7 +38,9 @@
 .record-menu {
   position: fixed;
   right: max(var(--page-padding), calc(50% - var(--max-width) / 2 + var(--page-padding)));
-  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-lg) + var(--space-md));
+  bottom: calc(
+    var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-lg) + var(--space-md)
+  );
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -70,7 +72,9 @@
 @media (min-width: 600px) {
   .record-fab {
     right: auto;
-    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--fab-size) - var(--page-padding));
+    left: calc(
+      max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--max-width) - var(--fab-size) - var(--page-padding)
+    );
     bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   }
 

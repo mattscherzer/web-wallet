@@ -1,151 +1,95 @@
 /* =============================================
-   ADMIN: wallets and staff
+   WALLETS AND STAFF (owner page)
    ============================================= */
-/* Wallets and staff */
-.admin-header {
+.admin {
   display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  height: 64px;
-  margin: 0 calc(var(--space-sm) * -1) 0 calc(var(--space-xs) * -1);
+  flex-direction: column;
 }
 
-.admin-header__title {
-  margin: 0;
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-}
-
-.admin-intro {
+.admin__intro {
   margin: var(--space-xs) var(--space-xs) 0;
-  font-size: var(--font-size-base);
-  line-height: 1.45;
   color: var(--color-text-secondary);
-}
-
-.admin-heading {
-  margin: 20px var(--space-xs) var(--space-sm);
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-secondary);
+  line-height: 20px;
 }
 
-.admin-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.admin-row {
+.admin-actions {
   display: flex;
   gap: var(--space-sm);
-  padding: 12px var(--space-md);
-  border-radius: var(--radius-xs);
-  background: var(--color-card);
+  padding-inline-start: 56px;
 }
 
-.admin-row:first-child {
-  border-top-left-radius: var(--radius-lg);
-  border-top-right-radius: var(--radius-lg);
-}
-
-.admin-row:last-child {
-  border-bottom-left-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-.admin-row--wallet {
-  align-items: center;
-  gap: var(--space-md);
-  min-height: 72px;
-}
-
-.admin-row--staff {
-  flex-direction: column;
-}
-
-.admin-row__top {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.admin-row__who {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  min-width: 0;
-}
-
-.admin-row__name {
-  font-weight: var(--font-weight-semibold);
-}
-
-.admin-row__sub {
-  font-size: var(--font-size-base);
-  font-weight: normal;
-  color: var(--color-text-secondary);
-}
-
-.admin-row__mono {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.admin-row__actions {
-  display: flex;
-  gap: var(--space-sm);
-  padding-left: 56px;
-}
-
-.admin-avatar {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  background: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-  font-size: 0.9375rem;
-  font-weight: var(--font-weight-extrabold);
-}
-
-.admin-avatar--wallet {
-  background: var(--color-hero-bg);
-  color: var(--color-hero-text);
-}
-
-.admin-pill {
-  height: 40px;
+.admin-action {
+  min-height: 40px;
   padding: 0 var(--space-md);
-  border: 0;
-  border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
-  color: var(--color-on-primary-container);
-  font: inherit;
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
 }
 
-.admin-pill--danger {
-  background: transparent;
+.admin-action--danger {
+  background: none;
   color: var(--color-error);
 }
 
-.admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+.admin__fab {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-height) + var(--space-md));
+  margin-top: var(--space-lg);
 }
 
-.admin > .btn {
-  margin-top: var(--space-md);
+.admin__bottom {
+  margin-top: auto;
 }
+
+.admin-blocked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+}
+
+.admin-blocked__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-bg-secondary);
+}
+
+/* Skeleton: the same shapes as the loaded page, so nothing jumps when data arrives */
+.admin-skeleton__title {
+  width: 40%;
+  height: 14px;
+  margin: var(--space-lg) var(--space-xs) var(--space-sm);
+}
+
+.admin-skeleton__avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.admin-skeleton__button {
+  width: 88px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.admin-skeleton__line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+}
+
+.admin-skeleton__line--name {
+  width: 55%;
+}
+
+.admin-skeleton__line--sub {
+  width: 30%;
+}
+
+/* A tappable row fills its whole card, so the card's own padding is dropped. */

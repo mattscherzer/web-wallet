@@ -74,11 +74,26 @@ select {
   background: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
 img {
   max-width: 100%;
   display: block;
+}
+
+/* Large title and the sentence under it, for sheets, dialogs and full-page messages */
+.title-lg {
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.lead-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+  line-height: 1.45;
 }

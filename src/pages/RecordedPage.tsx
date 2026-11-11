@@ -37,7 +37,11 @@ export default function RecordedPage() {
   const undo = async () => {
     if (!wallet || !requireUnlocked()) return;
     try {
-      await removeTransaction(tx.id, { walletId: wallet.id, reason: 'Entered by mistake', actor: profile?.displayName });
+      await removeTransaction(tx.id, {
+        walletId: wallet.id,
+        reason: 'Entered by mistake',
+        actor: profile?.displayName,
+      });
       navigate('/');
     } catch {
       setProblem("Couldn't undo this entry. Nothing was changed.");
@@ -107,7 +111,6 @@ export default function RecordedPage() {
           Undo this entry
         </button>
       </div>
-
     </div>
   );
 }

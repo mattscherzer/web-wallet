@@ -1,62 +1,59 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
+import { X } from 'lucide-react';
+import { useDialogFocus } from './useDialogFocus';
 
 interface BottomSheetProps {
-  /** The dialog's accessible name. */
-  label: string;
-  onClose: () => void;
+  /** Heading shown in the sheet and naming the dialog. Without it, `label` names a sheet that draws its own head. */
+  title?: string;
+  label?: string;
   className?: string;
+  text?: string;
+  onClose: () => void;
+  /** Show a close (X) button beside the title. */
+  showClose?: boolean;
   children: ReactNode;
 }
 
-/** A sheet that slides up from the bottom: backdrop tap and Escape close it, focus moves into it. */
-export default function BottomSheet({ label, onClose, className = '', children }: BottomSheetProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const close = useRef(onClose);
-  useEffect(() => {
-    close.current = onClose;
-  });
-
-  useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
-    ref.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current();
-      if (e.key !== 'Tab' || !ref.current) return;
-      // aria-modal: Tab wraps inside the sheet instead of reaching the page behind it.
-      const items = [...ref.current.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea')].filter(
-        (el) => !(el as HTMLButtonElement).disabled,
-      );
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (!first || !last) return;
-      const active = document.activeElement;
-      if (e.shiftKey && (active === first || active === ref.current)) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      previous?.focus?.();
-    };
-  }, []);
-
+/** A sheet that slides up over the page: drag handle, title, one sentence, then the content. */
+export default function BottomSheet({
+  title,
+  label,
+  className = '',
+  text,
+  onClose,
+  showClose,
+  children,
+}: BottomSheetProps) {
+  const titleId = useId();
+  const dialogRef = useDialogFocus(onClose);
   return (
-    <div className="bottom-sheet__scrim" onClick={onClose}>
+    <div className="modal-overlay modal-overlay--bottom" onClick={onClose}>
       <div
-        ref={ref}
+        ref={dialogRef}
         tabIndex={-1}
+        className={`bottom-sheet ${className}`.trim()}
         role="dialog"
         aria-modal="true"
-        aria-label={label}
-        className={`bottom-sheet ${className}`.trim()}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : label}
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="bottom-sheet__grabber" aria-hidden="true" />
+        <span className="bottom-sheet__handle" aria-hidden="true" />
+        {title && (
+          <div className="dialog-head">
+            <div className="bottom-sheet__title-row">
+              <h2 id={titleId} className="title-lg">
+                {title}
+              </h2>
+              {showClose && (
+                <button type="button" className="icon-btn" aria-label="Close" onClick={onClose}>
+                  <X size={24} aria-hidden="true" />
+                </button>
+              )}
+            </div>
+            {text && <p className="lead-text">{text}</p>}
+          </div>
+        )}
         {children}
       </div>
     </div>
