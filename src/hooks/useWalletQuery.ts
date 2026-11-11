@@ -67,7 +67,7 @@ export function useWalletQuery<T>(
       );
     }
     // `deps` has a fixed length per hook, so the spread is stable between renders.
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo -- deps has a fixed length per hook (see above)
   }, [walletId, ...deps]);
 
   useEffect(() => {

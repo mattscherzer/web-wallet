@@ -9,8 +9,7 @@ export async function exportHistory(walletId: string, walletName: string) {
     data = await fetchTransactions(walletId, { ascending: true });
   } catch (error) {
     console.error('Failed to fetch transactions for export:', error);
-    alert('Failed to export transactions.');
-    return;
+    throw error;
   }
 
   downloadTextFile('treasury_report.csv', buildHistoryCsv(data, walletName), 'text/csv;charset=utf-8;');

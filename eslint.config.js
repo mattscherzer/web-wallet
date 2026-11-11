@@ -22,9 +22,11 @@ const restrict = (files, message, ...groups) => ({
 });
 
 const tests = ['**/*.test.{ts,tsx}', 'src/test/**'];
+const source = ['src/**/*.{ts,tsx}', 'supabase/functions/**/*.ts'];
 
 export default defineConfig([
   globalIgnores(['dist']),
+  { linterOptions: { reportUnusedDisableDirectives: 'error' } },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -69,7 +71,37 @@ export default defineConfig([
     rel('db', 'platform', 'app'),
   ),
   {
+    files: source,
+    rules: {
+      eqeqeq: ['error', 'smart'],
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-alert': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
+      complexity: ['error', 15],
+      'max-depth': ['error', 3],
+      'max-params': ['error', 4],
+    },
+  },
+  {
+    files: ['src/domain/**', 'src/utils/**', 'src/hooks/**'],
+    rules: { '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }] },
+  },
+  {
     files: tests,
-    rules: { '@typescript-eslint/no-restricted-imports': 'off', 'no-restricted-globals': 'off' },
+    rules: {
+      '@typescript-eslint/no-restricted-imports': 'off',
+      'no-restricted-globals': 'off',
+      'max-lines': 'off',
+      complexity: 'off',
+      'max-depth': 'off',
+      'max-params': 'off',
+      'no-console': 'off',
+      'no-alert': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/consistent-type-assertions': 'off',
+    },
   },
 ]);

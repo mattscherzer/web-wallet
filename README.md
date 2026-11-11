@@ -25,7 +25,7 @@ A mobile-first Progressive Web App for tracking treasury funds across multiple a
 
 ## Architecture
 
-Dependencies point down; a layer never imports from a layer above it.
+Dependencies point down; a layer never imports from a layer above it. The rules every change follows are in [docs/coding-standards.md](docs/coding-standards.md).
 
 ```
 app/          composition root: App, routes, auth and wallet gates

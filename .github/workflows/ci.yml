@@ -29,6 +29,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Format
+        run: npm run format:check
+
       - name: Type-check
         run: npm run typecheck
 
@@ -39,3 +42,18 @@ jobs:
       # needs no secrets. See src/db/supabase.ts.
       - name: Build
         run: npm run build
+
+  pr-title:
+    name: PR title follows Conventional Commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if ! printf '%s' "$TITLE" | grep -Eq '^(feat|fix|refactor|perf|test|docs|style|build|ci|chore)(\([a-z0-9-]+\))?!?: .+'; then
+            echo "PR title must look like 'type(scope): summary'. See docs/coding-standards.md rule 12.1."
+            echo "Got: $TITLE"
+            exit 1
+          fi

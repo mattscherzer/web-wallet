@@ -19,7 +19,8 @@ export function useWalletsAndStaff() {
         w.map((wallet) =>
           listStaff(wallet.id).catch(() => {
             partial = true;
-            return [] as StaffMember[];
+            const none: StaffMember[] = [];
+            return none;
           }),
         ),
       );

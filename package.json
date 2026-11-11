@@ -12,6 +12,8 @@
     "db:seed": "psql \"postgresql://postgres:postgres@127.0.0.1:54322/postgres\" -f supabase/seed.sql",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier --write src supabase/functions eslint.config.js",
+    "format:check": "prettier --check src supabase/functions eslint.config.js",
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",

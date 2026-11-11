@@ -5,9 +5,15 @@ import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffLogin } from '../_shared/staffLogin.ts';
 import { mintStaffSession, type StaffSessionClient } from '../_shared/staffSession.ts';
 
-const url = Deno.env.get('SUPABASE_URL')!;
-const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+function env(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing environment variable ${name}`);
+  return value;
+}
+
+const url = env('SUPABASE_URL');
+const serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
+const anonKey = env('SUPABASE_ANON_KEY');
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
 // Compared against when the username is unknown, so that unknown and known names take the same time.

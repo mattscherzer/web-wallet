@@ -5,8 +5,14 @@ import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffAdmin } from '../_shared/staffAdmin.ts';
 import { createStaffAuthUser, type StaffUserCreator } from '../_shared/staffSession.ts';
 
-const url = Deno.env.get('SUPABASE_URL')!;
-const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+function env(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing environment variable ${name}`);
+  return value;
+}
+
+const url = env('SUPABASE_URL');
+const serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
 const userCreator: StaffUserCreator = {

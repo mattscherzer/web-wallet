@@ -13,10 +13,7 @@ env-files: .env
 ## Test rules
 - Never run bare `vitest` or `npm test` without `run`: watch mode hangs.
 - Wrap components using routing hooks (`useNavigate`, `useParams`, `Link`) in `<MemoryRouter>`.
-- Never make live Supabase requests in unit tests: mock the Supabase client boundary or use MSW.
+- Never make live Supabase requests in unit tests: use the fake client (`src/test/fakeSupabase.ts`) through `vi.mock`.
 
 ## Review checklist
-- Network & errors: what happens on 4xx/5xx, slow networks, rejected Supabase queries? Are loading and error states defined?
-- Auth & RLS: does the change respect user session boundaries in Supabase?
-- State: is data refetched or updated after mutations, so the UI never shows stale values?
-- Bundle & typing: unused Lucide icons, dangling `console.log`, type bypasses (`any`, `@ts-ignore`).
+- Apply `docs/coding-standards.md`; report violations of rules tagged `review` with the rule number.

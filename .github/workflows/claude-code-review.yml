@@ -39,19 +39,11 @@ jobs:
             1. Standards & Context:
                - Adhere strictly to the project's root `CLAUDE.md` and `.claude/skills/adversarial-review/SKILL.md`.
 
-            2. Architecture & Data Flow (Supabase & TanStack Query):
-               - Supabase / Auth: Ensure queries respect Row Level Security (RLS). Catch any exposed service-role keys (only anon key is allowed client-side). Ensure `.error` is handled on all Supabase calls.
-               - TanStack Query: Mutations must explicitly invalidate affected query keys (`queryClient.invalidateQueries`). Ensure loading and error states are rendered in the UI.
+            2. Apply `docs/coding-standards.md`.
 
-            3. Testing Hygiene (Vitest):
-               - Flag tautological tests that only assert on mock calls instead of DOM state.
-               - Verify that tests with query hooks use `{ defaultOptions: { queries: { retry: false } } }`.
-               - Ensure React Router components are wrapped in `<MemoryRouter>`.
-               - Supabase calls must be mocked; no live network calls in unit tests.
+            3. Report violations of the rules tagged `review`, citing the rule number (for example "rule 3.3").
 
-            4. TypeScript & UI (Vite / Tailwind v4):
-               - Prohibit 'any', loose casts ('as Type'), and non-null assertions ('!'). Require discriminated unions for async state.
-               - Flag dynamic string interpolations in Tailwind classes (e.g., `text-${color}-500`) that break the Tailwind scanner.
+            4. Do not report what lint, types, tests or CI already enforce (rules tagged `lint`, `types`, `format`, `test` or `CI`).
 
             5. Output Requirements:
                - Provide line-level actionable comments using the inline comment tool.

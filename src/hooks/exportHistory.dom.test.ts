@@ -33,4 +33,11 @@ describe('CSV download', () => {
     expect(text).toContain('b1');
     expect(text).not.toMatch(/a1|a2|a3/);
   });
+
+  it('rejects and downloads nothing when the entries cannot be fetched', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    ref.fake.failNext('transactions:select', { message: 'offline' });
+    await expect(exportHistory('wb', 'Spring Convention 2027')).rejects.toBeDefined();
+    expect(blobs).toHaveLength(0);
+  });
 });

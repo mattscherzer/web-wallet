@@ -31,6 +31,7 @@ export default function HistoryPage() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showRemoved, setShowRemoved] = useState(false);
+  const [exportFailed, setExportFailed] = useState(false);
   const transactions = useFilteredTransactions(filter, searchQuery, showRemoved);
   const grouped = groupByDate(transactions);
 
@@ -43,18 +44,25 @@ export default function HistoryPage() {
         {can('export') && (
           <button
             className="btn btn--outline page-header__action"
-            onClick={() =>
-              wallet &&
-              void confirmOwner().then((ok) => {
-                if (ok) return exportHistory(wallet.id, wallet.name);
-              })
-            }
+            onClick={() => {
+              if (!wallet) return;
+              setExportFailed(false);
+              void confirmOwner()
+                .then((ok) => (ok ? exportHistory(wallet.id, wallet.name) : undefined))
+                .catch(() => setExportFailed(true));
+            }}
             id="export-csv-btn"
           >
             <Download size={18} aria-hidden="true" /> Export CSV
           </button>
         )}
       </div>
+
+      {exportFailed && (
+        <p role="alert" className="form-error">
+          Couldn't export the history. Check your connection and try again.
+        </p>
+      )}
 
       <div className="search-bar" id="history-search-bar">
         <Search size={18} className="search-bar__icon" aria-hidden="true" />
