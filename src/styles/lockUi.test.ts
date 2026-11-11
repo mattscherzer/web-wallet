@@ -27,7 +27,14 @@ const lum = (hex: string) => {
 const ratio = (a: string, b: string) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
 
 // The classes the lock, unlock and sign-in screens are built from.
-const SELECTORS = ['.pin-pad__key', '.pin-dots', '.snackbar', '.unlock-sheet', '.app-bar__lock', '.app-bar__lock--locked'];
+const SELECTORS = [
+  '.pin-pad__key',
+  '.pin-dots',
+  '.snackbar',
+  '.unlock-sheet',
+  '.app-bar__lock',
+  '.app-bar__lock--locked',
+];
 
 describe('lock and sign-in styles', () => {
   it.each(SELECTORS)('%s is styled with design tokens only (no raw colours)', (selector) => {

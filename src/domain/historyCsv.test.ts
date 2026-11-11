@@ -153,6 +153,8 @@ describe('buildHistoryCsv', () => {
       tx({ type: 'inflow', amount: 12.5, account_id: 'bank', category: 'donation', date: '2026-02-03' }),
     ]);
 
-    expect(csv).toBe('Date,In,Out,What,Balance,Prudent Reserve,Created by\n03.02.26,12.50,,"Donation",12.50,+0.00,"Unknown / N/A"');
+    expect(csv).toBe(
+      'Date,In,Out,What,Balance,Prudent Reserve,Created by\n03.02.26,12.50,,"Donation",12.50,+0.00,"Unknown / N/A"',
+    );
   });
 });

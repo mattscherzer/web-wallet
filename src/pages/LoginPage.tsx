@@ -102,7 +102,9 @@ export default function LoginPage() {
   );
 
   const footer = (
-    <p className="login-footer">Stays signed in on this phone until you sign out. Locks after 30 minutes without use.</p>
+    <p className="login-footer">
+      Stays signed in on this phone until you sign out. Locks after 30 minutes without use.
+    </p>
   );
 
   const tabs = (
@@ -174,7 +176,13 @@ export default function LoginPage() {
           <h1 className="login-title">Hi, {name}</h1>
           <p className="login-text">{busy ? 'Checking your PIN' : `Enter your ${PIN_LENGTH}-digit PIN`}</p>
         </div>
-        <PinPad value={pin} onChange={onPin} disabled={busy} invalid={wrongPin} status={busy ? 'Signing you in…' : null}>
+        <PinPad
+          value={pin}
+          onChange={onPin}
+          disabled={busy}
+          invalid={wrongPin}
+          status={busy ? 'Signing you in…' : null}
+        >
           {alert}
         </PinPad>
         {!busy && (

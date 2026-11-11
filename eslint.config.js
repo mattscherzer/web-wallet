@@ -54,11 +54,10 @@ export default defineConfig([
       ],
     },
   },
-  restrict(
-    ['src/db/**', 'src/platform/**'],
-    'db and platform are adapters: no React and no upper layers',
-    [...ui, ...rel('auth', 'wallet', 'hooks', 'components', 'pages', 'app')],
-  ),
+  restrict(['src/db/**', 'src/platform/**'], 'db and platform are adapters: no React and no upper layers', [
+    ...ui,
+    ...rel('auth', 'wallet', 'hooks', 'components', 'pages', 'app'),
+  ]),
   restrict(
     ['src/auth/**', 'src/wallet/**', 'src/hooks/**'],
     'state layer sits below pages and app',

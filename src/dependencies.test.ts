@@ -10,7 +10,10 @@ type Lockfile = { packages: Record<string, Manifest> };
 
 describe('router dependency', () => {
   it('no source or test file imports the router shim', () => {
-    const files = import.meta.glob('/src/**/*.{ts,tsx}', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+    const files = import.meta.glob('/src/**/*.{ts,tsx}', { query: '?raw', import: 'default', eager: true }) as Record<
+      string,
+      string
+    >;
     const offenders = Object.entries(files)
       .filter(([, text]) => text.includes(SHIM))
       .map(([path]) => path);

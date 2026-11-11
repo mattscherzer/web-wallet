@@ -19,7 +19,14 @@ interface PinPadProps {
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 /** Six dots and a 3×4 number pad for a staff PIN. */
-export default function PinPad({ value, onChange, disabled = false, invalid = false, status = null, children }: PinPadProps) {
+export default function PinPad({
+  value,
+  onChange,
+  disabled = false,
+  invalid = false,
+  status = null,
+  children,
+}: PinPadProps) {
   const add = (digit: string) => {
     if (!disabled && value.length < PIN_LENGTH) onChange(value + digit);
   };

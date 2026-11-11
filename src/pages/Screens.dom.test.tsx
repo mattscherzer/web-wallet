@@ -46,7 +46,12 @@ function show(userId: string, node: React.ReactNode, path = '/') {
 describe('staff with no wallet', () => {
   it('T32 sees "No wallet yet" with the explanation, and Sign out ends the session', async () => {
     seed({ ...twoWalletRows(), wallets: [] });
-    show('u-anna', <WalletGate><p>the books</p></WalletGate>);
+    show(
+      'u-anna',
+      <WalletGate>
+        <p>the books</p>
+      </WalletGate>,
+    );
     expect(await screen.findByRole('heading', { name: 'No wallet yet' })).toBeTruthy();
     expect(screen.getByText('You aren’t a member of any wallet yet. Ask the owner to add you.')).toBeTruthy();
     expect(screen.queryByText('the books')).toBeNull();
@@ -56,7 +61,12 @@ describe('staff with no wallet', () => {
 
   it('T33 an owner with no wallet is welcomed and offered Create a wallet', async () => {
     seed({ ...twoWalletRows(), wallets: [] });
-    show('u-owner', <WalletGate><p>the books</p></WalletGate>);
+    show(
+      'u-owner',
+      <WalletGate>
+        <p>the books</p>
+      </WalletGate>,
+    );
     expect(await screen.findByRole('heading', { name: 'Keep your group’s books, together' })).toBeTruthy();
     expect(screen.getByRole('link', { name: /Create a wallet/ }).getAttribute('href')).toBe('/wallets/new');
   });

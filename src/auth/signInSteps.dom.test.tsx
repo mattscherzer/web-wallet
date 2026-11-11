@@ -94,7 +94,7 @@ describe('staff sign-in in two steps', () => {
     expect(screen.getByRole('img', { name: '0 of 6 digits entered' })).toBeTruthy();
   });
 
-  it('T27 after too many wrong tries sign-in shows a paused message and a timer from the server\'s retry time', async () => {
+  it("T27 after too many wrong tries sign-in shows a paused message and a timer from the server's retry time", async () => {
     ref.fake.answerFunction('staff-login', () => refused(429, { error: 'locked', retryAfter: 90 }));
     await toPinStep();
     press('000000');
@@ -172,11 +172,14 @@ describe('the sign-in screens follow the design', () => {
 
   // while the PIN is checked the design's loading indicator and "Signing you in…" show, and the Not-anna link is gone
   it('T64', async () => {
-    ref.fake.client.functions.invoke = (() => new Promise(() => {})) as unknown as typeof ref.fake.client.functions.invoke;
+    ref.fake.client.functions.invoke = (() =>
+      new Promise(() => {})) as unknown as typeof ref.fake.client.functions.invoke;
     await toPinStep();
     press('123456');
     const status = await screen.findByRole('status', { name: /checking/i });
-    expect(within(status).getByRole('img', { name: 'Loading' }).querySelector('animate[attributeName="d"]')).toBeTruthy();
+    expect(
+      within(status).getByRole('img', { name: 'Loading' }).querySelector('animate[attributeName="d"]'),
+    ).toBeTruthy();
     expect(within(status).getByText('Signing you in…')).toBeTruthy();
     expect(screen.getByText('Checking your PIN')).toBeTruthy();
     expect(screen.queryByRole('button', { name: /Not anna\?/ })).toBeNull();
