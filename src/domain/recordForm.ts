@@ -53,6 +53,29 @@ export interface RecordForm {
   date: string;
 }
 
+/** A blank form for the type; the account and category defaults depend on it. */
+export function initialRecordForm(type: RecordType, today: string): RecordForm {
+  return {
+    type,
+    amount: '',
+    accountId: type === 'transfer' ? 'bank' : 'cash',
+    fromAccountId: 'cash',
+    category: type === 'transfer' ? '' : CATEGORIES[type][0].id,
+    description: '',
+    date: today,
+  };
+}
+
+/** Changing the type resets the category; a transfer's destination is moved off its source. */
+export function switchRecordType(form: RecordForm, type: RecordType): RecordForm {
+  return {
+    ...form,
+    type,
+    category: type === 'transfer' ? '' : CATEGORIES[type][0].id,
+    accountId: type === 'transfer' ? (form.fromAccountId === 'bank' ? 'cash' : 'bank') : form.accountId,
+  };
+}
+
 export interface FieldError {
   field: 'amount' | 'accountId' | 'description' | 'date';
   message: string;

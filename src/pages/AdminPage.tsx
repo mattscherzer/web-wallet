@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { Plus, UserPlus } from 'lucide-react';
 import type { StaffMember } from '../domain/staff';
-import { useWalletsAndStaff } from '../hooks/useWalletsAndStaff';
+import { useStaffAdmin } from '../hooks/useStaffAdmin';
 import { useAuth } from '../auth/useAuth';
 import { useOptionalWallet } from '../wallet/useWallet';
 import { walletInitials } from '../domain/wallet';
@@ -27,7 +27,7 @@ type Sheet = { kind: 'add' } | { kind: 'pin'; member: StaffMember } | { kind: 'd
 
 function Dashboard() {
   const wallet = useOptionalWallet();
-  const { wallets, staff, loadError, loaded, reload } = useWalletsAndStaff();
+  const { wallets, staff, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } = useStaffAdmin();
   const [sheet, setSheet] = useState<Sheet | null>(null);
 
   if (!loaded) return <AdminSkeleton />;
@@ -89,6 +89,7 @@ function Dashboard() {
               <StaffRow
                 key={s.user_id}
                 member={s}
+                setStaffDisabled={setStaffDisabled}
                 onResetPin={() => setSheet({ kind: 'pin', member: s })}
                 onDisable={() => setSheet({ kind: 'disable', member: s })}
                 onDone={reload}
@@ -107,10 +108,20 @@ function Dashboard() {
         Add staff
       </button>
       {sheet?.kind === 'add' && (
-        <AddStaffSheet wallets={wallets} initialWalletId={shown?.id} onClose={close} onDone={done} />
+        <AddStaffSheet
+          wallets={wallets}
+          createStaff={createStaff}
+          initialWalletId={shown?.id}
+          onClose={close}
+          onDone={done}
+        />
       )}
-      {sheet?.kind === 'pin' && <ResetPinSheet member={sheet.member} onClose={close} onDone={done} />}
-      {sheet?.kind === 'disable' && <DisableSheet member={sheet.member} onClose={close} onDone={done} />}
+      {sheet?.kind === 'pin' && (
+        <ResetPinSheet member={sheet.member} resetStaffPin={resetStaffPin} onClose={close} onDone={done} />
+      )}
+      {sheet?.kind === 'disable' && (
+        <DisableSheet member={sheet.member} setStaffDisabled={setStaffDisabled} onClose={close} onDone={done} />
+      )}
     </div>
   );
 }

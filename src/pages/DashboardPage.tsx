@@ -1,22 +1,13 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import {
-  CreditCard,
-  ArrowLeftRight,
-  ChevronDown,
-  ChevronUp,
-  Coins,
-  QrCode,
-  PiggyBank,
-  ReceiptEuro,
-  HandCoins,
-} from 'lucide-react';
+import { CreditCard, ChevronDown, ChevronUp, Coins, QrCode, PiggyBank } from 'lucide-react';
 import { useBalanceSummary } from '../hooks/useBalances';
 import { useRecentTransactions } from '../hooks/useHistory';
 import Amount from '../components/Amount';
+import TransactionIcon from '../components/TransactionIcon';
 import { formatCurrency } from '../utils/formatCurrency';
 import { getAccountLabel, type AccountId } from '../domain/accounts';
-import { type Transaction } from '../domain/transaction';
+import { entryTitle, type Transaction } from '../domain/transaction';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
   cash: <Coins size={22} />,
@@ -107,29 +98,14 @@ export default function DashboardPage() {
 // ─── Dashboard Transaction Item ─────────────────────────
 function DashboardTransactionItem({ transaction: tx }: { transaction: Transaction }) {
   const [expanded, setExpanded] = useState(false);
-  const isInflow = tx.type === 'inflow';
   const isTransfer = tx.type === 'transfer';
-
-  const displayName = isTransfer
-    ? `${getAccountLabel(tx.from_account_id as AccountId)} → ${getAccountLabel(tx.account_id)}`
-    : tx.category
-      ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
-      : tx.notes || 'Transaction';
-
-  const iconClass = isTransfer
-    ? 'transaction-item__icon--transfer'
-    : isInflow
-      ? 'transaction-item__icon--inflow'
-      : 'transaction-item__icon--outflow';
 
   return (
     <div className="transaction-item">
       <div className="transaction-item__header" onClick={() => setExpanded(!expanded)}>
-        <div className={`transaction-item__icon ${iconClass}`}>
-          {isTransfer ? <ArrowLeftRight size={20} /> : isInflow ? <HandCoins size={20} /> : <ReceiptEuro size={20} />}
-        </div>
+        <TransactionIcon type={tx.type} coins />
         <div className="transaction-item__info">
-          <p className="transaction-item__name">{displayName}</p>
+          <p className="transaction-item__name">{entryTitle(tx, tx.notes || 'Transaction')}</p>
         </div>
         <span className="transaction-item__amount">
           <Amount type={tx.type} amount={tx.amount} />

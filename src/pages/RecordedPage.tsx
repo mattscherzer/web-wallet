@@ -2,21 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Check } from 'lucide-react';
 import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
-import { removeTransaction } from '../db/transactions';
 import { useEntry } from '../hooks/useEntry';
+import { useTransactionCommands } from '../hooks/useTransactionCommands';
 import Amount from '../components/Amount';
 import { formatDate, formatTime } from '../utils/dateHelpers';
 import { categoryLabel, typeParam } from '../domain/recordForm';
-import { useWallet } from '../wallet/useWallet';
-import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';
 
 /** Receipt shown right after saving: what was recorded, with Record another, Done and Undo. */
 export default function RecordedPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
-  const { current: wallet } = useWallet();
-  const { profile } = useAuth();
+  const { remove } = useTransactionCommands();
   const { requireUnlocked } = useUnlock();
   const { status, tx } = useEntry(id);
   const [problem, setProblem] = useState<string | null>(null);
@@ -36,13 +33,9 @@ export default function RecordedPage() {
   if (status === 'missing' || !tx) return <p className="empty-state__text">Entry not found</p>;
 
   const undo = async () => {
-    if (!wallet || !requireUnlocked()) return;
+    if (!requireUnlocked()) return;
     try {
-      await removeTransaction(tx.id, {
-        walletId: wallet.id,
-        reason: 'Entered by mistake',
-        actor: profile?.displayName,
-      });
+      await remove(tx.id, 'Entered by mistake');
       navigate('/');
     } catch {
       setProblem("Couldn't undo this entry. Nothing was changed.");

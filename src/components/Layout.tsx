@@ -3,19 +3,14 @@ import { Outlet } from 'react-router';
 import BottomNav from './BottomNav';
 import { RecordFab } from './RecordFab';
 import AppBar from './AppBar';
+import RouteFallback from './RouteFallback';
 
 export default function Layout() {
   return (
     <div className="app-layout">
       <main className="page-container">
         <AppBar />
-        <Suspense
-          fallback={
-            <div className="route-fallback" role="status" aria-label="Loading">
-              <span className="route-fallback__spinner" />
-            </div>
-          }
-        >
+        <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
       </main>

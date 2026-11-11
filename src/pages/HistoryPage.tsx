@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Download, Search } from 'lucide-react';
+import { Download, Search } from 'lucide-react';
 import { useFilteredTransactions } from '../hooks/useHistory';
-import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
-import { type Transaction } from '../domain/transaction';
+import { getAccountLabel } from '../domain/accounts';
+import { entryTitle, historyTotals, type Transaction } from '../domain/transaction';
 import Amount from '../components/Amount';
 import StatusChip from '../components/StatusChip';
+import TransactionIcon from '../components/TransactionIcon';
 import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate } from '../utils/dateHelpers';
-import { generateHistoryCsv } from '../utils/exportCsv';
-import { availableDelta, categoryLabel } from '../domain/recordForm';
+import { exportHistory } from '../hooks/exportHistory';
+import { availableDelta } from '../domain/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
@@ -33,9 +34,7 @@ export default function HistoryPage() {
   const transactions = useFilteredTransactions(filter, searchQuery, showRemoved);
   const grouped = groupByDate(transactions);
 
-  const live = transactions.filter((t) => !t.deleted);
-  const total = (type: 'inflow' | 'outflow') =>
-    live.filter((t) => t.type === type).reduce((sum, t) => sum + Number(t.amount), 0);
+  const totals = historyTotals(transactions);
 
   return (
     <>
@@ -47,7 +46,7 @@ export default function HistoryPage() {
             onClick={() =>
               wallet &&
               void confirmOwner().then((ok) => {
-                if (ok) return generateHistoryCsv(wallet.id, wallet.name);
+                if (ok) return exportHistory(wallet.id, wallet.name);
               })
             }
             id="export-csv-btn"
@@ -94,10 +93,10 @@ export default function HistoryPage() {
         </button>
       </div>
 
-      {live.length > 0 && (
+      {totals.count > 0 && (
         <p className="history-summary num">
-          {live.length} {live.length === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(total('inflow'), 'inflow')}{' '}
-          · out {formatSignedCurrency(total('outflow'), 'outflow')}
+          {totals.count} {totals.count === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(totals.inflow, 'inflow')}{' '}
+          · out {formatSignedCurrency(totals.outflow, 'outflow')}
         </p>
       )}
 
@@ -134,9 +133,7 @@ export default function HistoryPage() {
 function HistoryRow({ tx }: { tx: Transaction }) {
   const isTransfer = tx.type === 'transfer';
   const wasEdited = tx.created_at !== tx.updated_at && !tx.deleted;
-  const title = isTransfer
-    ? `${fromAccountLabel(tx)} → ${getAccountLabel(tx.account_id)}`
-    : categoryLabel(tx.category) || 'Entry';
+  const title = entryTitle(tx, 'Entry');
   const where = isTransfer ? '' : `${tx.type === 'inflow' ? 'Into' : 'From'} ${getAccountLabel(tx.account_id)}`;
   const meta = [where, tx.notes].filter(Boolean).join(' · ');
 
@@ -149,24 +146,10 @@ function HistoryRow({ tx }: { tx: Transaction }) {
       })
     : null;
 
-  const iconClass = isTransfer
-    ? 'transaction-item__icon--transfer'
-    : tx.type === 'inflow'
-      ? 'transaction-item__icon--inflow'
-      : 'transaction-item__icon--outflow';
-
   return (
     <div className={`transaction-item${tx.deleted ? ' transaction-item--removed' : ''}`}>
       <Link to={`/history/${tx.id}`} className="transaction-item__header">
-        <div className={`transaction-item__icon ${iconClass}`} aria-hidden="true">
-          {isTransfer ? (
-            <ArrowLeftRight size={20} />
-          ) : tx.type === 'inflow' ? (
-            <ArrowDownLeft size={20} />
-          ) : (
-            <ArrowUpRight size={20} />
-          )}
-        </div>
+        <TransactionIcon type={tx.type} />
         <div className="transaction-item__info">
           <p className="transaction-item__name">
             {title}

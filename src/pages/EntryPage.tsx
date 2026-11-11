@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, Pencil, RotateCcw, Trash2 } from 'lucide-react';
-import { EDIT_REASONS, REMOVE_REASONS, type AuditEntry, type Transaction } from '../domain/transaction';
+import { REMOVE_REASONS, canRemoveEntry } from '../domain/transaction';
 import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
-import { removeTransaction, restoreTransaction, updateTransaction } from '../db/transactions';
 import { useEntry } from '../hooks/useEntry';
+import { useTransactionCommands } from '../hooks/useTransactionCommands';
 import Amount from '../components/Amount';
+import EditEntrySheet from '../components/entry/EditEntrySheet';
+import HistoryEvent from '../components/entry/HistoryEvent';
 import ReasonSheet from '../components/ReasonSheet';
 import StatusChip from '../components/StatusChip';
 import { formatDate } from '../utils/dateHelpers';
-import { formatCurrency } from '../utils/formatCurrency';
-import { categoryLabel, parseAmount } from '../domain/recordForm';
-import { useWallet } from '../wallet/useWallet';
+import { categoryLabel } from '../domain/recordForm';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
 import { useUnlock } from '../auth/unlockContext';
@@ -21,22 +21,17 @@ type Sheet = 'edit' | 'remove' | null;
 
 const CHANGE_FAILED = "Couldn't save the change. Nothing was changed.";
 
-const exactTime = (iso: string) => new Date(iso).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'medium' });
-
 /** One entry: the amount, its details and the full change history, with Edit, Remove and Restore. */
 export default function EntryPage() {
   const { id = '' } = useParams();
-  const { current: wallet } = useWallet();
   const { status, tx, audit, refresh } = useEntry(id);
-  const { profile, user, can } = useAuth();
+  const { user, can } = useAuth();
   const confirmOwner = useOwnerConfirm();
   const { requireUnlocked } = useUnlock();
-  const actor = profile?.displayName;
+  const { update, remove, restore } = useTransactionCommands();
 
   const [sheet, setSheet] = useState<Sheet>(null);
   const [problem, setProblem] = useState<string | null>(null);
-  const [editAmount, setEditAmount] = useState('');
-  const [editNotes, setEditNotes] = useState('');
 
   if (status === 'loading')
     return (
@@ -67,8 +62,6 @@ export default function EntryPage() {
     );
   }
 
-  const walletId = wallet?.id ?? tx.wallet_id;
-
   const run = async (action: () => Promise<void>) => {
     // The app may have locked while a sheet was open.
     if (!requireUnlocked()) return;
@@ -84,8 +77,6 @@ export default function EntryPage() {
 
   const openEdit = () => {
     if (!requireUnlocked()) return;
-    setEditAmount(String(Number(tx.amount)));
-    setEditNotes(tx.notes);
     setProblem(null);
     setSheet('edit');
   };
@@ -168,7 +159,7 @@ export default function EntryPage() {
               className="btn btn--primary"
               onClick={() =>
                 void confirmOwner().then((ok) => {
-                  if (ok) return run(() => restoreTransaction(tx.id, { walletId, actor }));
+                  if (ok) return run(() => restore(tx.id));
                 })
               }
             >
@@ -180,7 +171,7 @@ export default function EntryPage() {
             <button type="button" className="btn btn--outline" onClick={openEdit}>
               <Pencil size={18} aria-hidden="true" /> Edit
             </button>
-            {(can('remove_entry') || (can('remove_own_entry') && (!user || tx.created_by === user.id))) && (
+            {canRemoveEntry({ can, userId: user?.id, tx }) && (
               <button
                 type="button"
                 className="btn btn--outline entry__remove"
@@ -206,7 +197,7 @@ export default function EntryPage() {
           withNote
           error={problem}
           onCancel={() => setSheet(null)}
-          onConfirm={(reason, note) => void run(() => removeTransaction(tx.id, { walletId, reason, note, actor }))}
+          onConfirm={(reason, note) => void run(() => remove(tx.id, reason, note))}
         >
           <p className="sheet__text">
             It stops counting in balances and reports. It stays in the history and can be restored.
@@ -215,109 +206,13 @@ export default function EntryPage() {
       )}
 
       {sheet === 'edit' && (
-        <ReasonSheet
-          title="Edit entry"
-          reasons={EDIT_REASONS}
-          reasonLabel="Reason for change"
-          confirmLabel="Save changes"
+        <EditEntrySheet
+          tx={tx}
           error={problem}
           onCancel={() => setSheet(null)}
-          validate={() => {
-            const amount = parseAmount(editAmount);
-            if (!(amount > 0)) return 'Enter an amount above zero, with up to two decimals';
-            if (amount === Number(tx.amount) && editNotes.trim() === tx.notes)
-              return 'Change the amount or the notes first';
-            return null;
-          }}
-          onConfirm={(reason) =>
-            void run(() =>
-              updateTransaction(
-                tx.id,
-                { amount: parseAmount(editAmount), notes: editNotes.trim() },
-                { walletId, reason, actor },
-              ),
-            )
-          }
-        >
-          <div className="form-section">
-            <label className="form-label" htmlFor="edit-amount">
-              Amount
-            </label>
-            <input
-              id="edit-amount"
-              type="text"
-              inputMode="decimal"
-              className="form-input num"
-              value={editAmount}
-              onChange={(e) => setEditAmount(e.target.value)}
-            />
-          </div>
-          <div className="form-section">
-            <label className="form-label" htmlFor="edit-notes">
-              Notes
-            </label>
-            <textarea
-              id="edit-notes"
-              className="form-textarea"
-              rows={2}
-              value={editNotes}
-              onChange={(e) => setEditNotes(e.target.value)}
-            />
-          </div>
-        </ReasonSheet>
+          onSave={(updates, reason) => void run(() => update(tx.id, updates, reason))}
+        />
       )}
     </div>
-  );
-}
-
-function amountOf(data?: Partial<Transaction> | null): number | undefined {
-  return data?.amount === undefined ? undefined : Number(data.amount);
-}
-
-function HistoryEvent({ entry, author }: { entry: AuditEntry; author: string }) {
-  const title =
-    entry.action === 'create'
-      ? 'Created'
-      : entry.action === 'update'
-        ? 'Edited'
-        : entry.action === 'restore'
-          ? 'Restored'
-          : 'Removed';
-
-  const before = amountOf(entry.previous_data);
-  const after = amountOf(entry.new_data);
-  const notesBefore = entry.previous_data?.notes;
-  const notesAfter = entry.new_data?.notes;
-
-  return (
-    <li className="history-log__event">
-      <p className="history-log__title">{title}</p>
-      <time className="history-log__time" dateTime={entry.timestamp}>
-        {exactTime(entry.timestamp)}
-      </time>
-      <p className="history-log__reason">By {author}</p>
-      {entry.action === 'update' && (
-        <ul className="history-log__changes">
-          {before !== undefined && after !== undefined && before !== after && (
-            <li>
-              Amount: <span className="sr-only">from </span>
-              <span className="num">{formatCurrency(before)}</span>
-              <span aria-hidden="true"> → </span>
-              <span className="sr-only"> to </span>
-              <span className="num">{formatCurrency(after)}</span>
-            </li>
-          )}
-          {notesBefore !== undefined && notesAfter !== undefined && notesBefore !== notesAfter && (
-            <li>
-              Notes: <span className="sr-only">from </span>“{notesBefore}”<span aria-hidden="true"> → </span>
-              <span className="sr-only"> to </span>“{notesAfter}”
-            </li>
-          )}
-        </ul>
-      )}
-      {entry.reason && <p className="history-log__reason">Reason: {entry.reason}</p>}
-      {entry.action === 'delete' && <p className="history-log__reason">No reason recorded</p>}
-      {entry.note && <p className="history-log__reason">Note: {entry.note}</p>}
-    </li>
   );
 }

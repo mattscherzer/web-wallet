@@ -87,3 +87,29 @@ describe('record preview and action', () => {
     expect(availableDelta({ type: 'outflow', amount: 10, accountId: 'cash', fromAccountId: null })).toBe(-10);
   });
 });
+
+describe('initialRecordForm and switchRecordType', () => {
+  it('starts money in on cash and a transfer on the bank with no category', () => {
+    expect(lib().initialRecordForm('inflow', '2026-10-07')).toMatchObject({
+      accountId: 'cash',
+      category: '7th-tradition',
+      date: '2026-10-07',
+      amount: '',
+    });
+    expect(lib().initialRecordForm('transfer', '2026-10-07')).toMatchObject({ accountId: 'bank', category: '' });
+  });
+
+  it('resets the category and moves a transfer destination off its source, keeping what was typed', () => {
+    const typed = base({ type: 'outflow', category: 'rent', amount: '5', accountId: 'paypal' });
+    expect(lib().switchRecordType(typed, 'inflow')).toMatchObject({
+      category: '7th-tradition',
+      amount: '5',
+      accountId: 'paypal',
+    });
+    expect(lib().switchRecordType({ ...typed, fromAccountId: 'cash' }, 'transfer')).toMatchObject({
+      category: '',
+      accountId: 'bank',
+    });
+    expect(lib().switchRecordType({ ...typed, fromAccountId: 'bank' }, 'transfer').accountId).toBe('cash');
+  });
+});

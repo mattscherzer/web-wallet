@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Check, Plus } from 'lucide-react';
-import { fetchWalletAvailableBalances } from '../db/wallets';
+import { useWalletBalances } from '../hooks/useWalletBalances';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { walletInitials } from '../domain/wallet';
@@ -15,31 +14,7 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { profile } = useAuth();
   // Only owners create wallets; the database refuses everyone else.
   const canCreate = !profile || profile.kind === 'owner'; // outside a login (isolated tests) nothing is hidden
-  const [balances, setBalances] = useState<Record<string, number> | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-
-  useEffect(() => {
-    let live = true;
-    fetchWalletAvailableBalances(wallets.map((w) => w.id))
-      .then((b) => {
-        if (!live) return;
-        setBalances(b);
-        setFailed(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load wallet balances:', err);
-        if (live) setFailed(true);
-      });
-    return () => {
-      live = false;
-    };
-  }, [wallets, attempt]);
-
-  const retry = () => {
-    setFailed(false);
-    setAttempt((n) => n + 1);
-  };
+  const { balances, failed, retry } = useWalletBalances(wallets);
 
   const choose = (id: string) => {
     switchWallet(id);

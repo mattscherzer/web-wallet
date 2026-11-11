@@ -1,4 +1,5 @@
-import type { Transaction } from '../domain/transaction';
+import { useMemo } from 'react';
+import { matchesSearch, type Transaction } from '../domain/transaction';
 import { fetchTransactions } from '../db/queries';
 import { useWalletData } from './useWalletQuery';
 
@@ -8,29 +9,17 @@ export function useFilteredTransactions(
   searchQuery: string,
   includeRemoved = false,
 ) {
-  return useWalletData<Transaction[]>(
-    async (walletId) => {
-      let results = await fetchTransactions(walletId, {
+  const fetched = useWalletData<Transaction[]>(
+    (walletId) =>
+      fetchTransactions(walletId, {
         type: filter === 'all' ? undefined : filter,
         removed: includeRemoved ? 'include' : 'exclude',
-      });
-
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        results = results.filter(
-          (t) =>
-            t.category.toLowerCase().includes(q) ||
-            t.notes.toLowerCase().includes(q) ||
-            (t.reason && t.reason.toLowerCase().includes(q)),
-        );
-      }
-
-      return results;
-    },
-    [filter, searchQuery, includeRemoved],
+      }),
+    [filter, includeRemoved],
     [],
     'transactions',
   );
+  return useMemo(() => fetched.filter((t) => matchesSearch(t, searchQuery)), [fetched, searchQuery]);
 }
 
 // ─── Recent transactions ────────────────────────────────

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
-import { generateHistoryCsv } from './exportCsv';
+import { exportHistory } from './exportHistory';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -27,7 +27,7 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('CSV download', () => {
   it('contains the wallet name on the first line and only that wallet’s entries', async () => {
-    await generateHistoryCsv('wb', 'Spring Convention 2027');
+    await exportHistory('wb', 'Spring Convention 2027');
     const text = await blobs[0].text();
     expect(text.split('\n')[0]).toBe('Wallet,"Spring Convention 2027"');
     expect(text).toContain('b1');
