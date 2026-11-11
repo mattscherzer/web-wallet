@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { safeStorage } from '../platform/storage';
 
 /** The app locks after this long without use. */
 export const IDLE_LOCK_MS = 30 * 60_000;
@@ -7,21 +8,27 @@ export const IDLE_LOCK_MS = 30 * 60_000;
 export const LAST_ACTIVITY_KEY = 'treasury.lastActivity';
 
 export function rememberActivity(now = Date.now()) {
-  try {
-    window.localStorage.setItem(LAST_ACTIVITY_KEY, String(now));
-  } catch {
-    // Storage blocked: the lock then only covers an app that stays open.
-  }
+  safeStorage.setItem(LAST_ACTIVITY_KEY, String(now));
 }
 
 /** True when the app was last used more than 30 minutes ago (never used before counts as not expired). */
 export function idleExpired(now = Date.now()): boolean {
-  try {
-    const last = Number(window.localStorage.getItem(LAST_ACTIVITY_KEY));
-    return last > 0 && now - last >= IDLE_LOCK_MS;
-  } catch {
-    return false;
-  }
+  const last = Number(safeStorage.getItem(LAST_ACTIVITY_KEY));
+  return last > 0 && now - last >= IDLE_LOCK_MS;
+}
+
+/** Kept in storage so a reload or reopened app is still locked. */
+const LOCKED_KEY = 'treasury.locked';
+export type LockReason = 'manual' | 'idle';
+
+export function readLock(): LockReason | null {
+  const v = safeStorage.getItem(LOCKED_KEY);
+  return v === 'manual' || v === 'idle' ? v : null;
+}
+
+export function writeLock(reason: LockReason | null) {
+  if (reason) safeStorage.setItem(LOCKED_KEY, reason);
+  else safeStorage.removeItem(LOCKED_KEY);
 }
 
 const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'touchstart', 'scroll'] as const;

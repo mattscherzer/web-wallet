@@ -2,6 +2,20 @@ import { supabase } from './supabase';
 import type { AccountId } from '../domain/accounts';
 import { isRemoveReason, type AuditAction, type Transaction } from '../domain/transaction';
 
+// The history row is written after the change; if it fails the change is undone, so nothing is changed without a trace.
+async function recordHistory(
+  row: Record<string, unknown>,
+  undo: () => PromiseLike<{ error: unknown }>,
+  undoFailed: string,
+  failed: string,
+): Promise<void> {
+  const { error: logError } = await supabase.from('audit_log').insert(row);
+  if (!logError) return;
+  const { error: undoError } = await undo();
+  if (undoError) console.error(undoFailed, undoError);
+  throw new Error(`${failed}: ${logError.message}`);
+}
+
 // ─── Create Transaction (inflow / outflow) ──────────────
 export async function createTransaction(
   data: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'deleted'>,
@@ -27,25 +41,20 @@ export async function createTransaction(
 
   const id = inserted.id;
 
-  const { error: logError } = await supabase.from('audit_log').insert({
-    wallet_id: data.wallet_id,
-    transaction_id: id,
-    action: 'create' as AuditAction,
-    timestamp: new Date().toISOString(),
-    actor: actor ?? null,
-    new_data: { ...data, id },
-  });
-
-  if (logError) {
-    // An entry without a history row must not be left behind.
-    const { error: rollbackError } = await supabase
-      .from('transactions')
-      .delete()
-      .eq('id', id)
-      .eq('wallet_id', data.wallet_id);
-    if (rollbackError) console.error('Could not remove entry after a history failure', rollbackError);
-    throw new Error(`Failed to create transaction: ${logError.message}`);
-  }
+  // An entry without a history row must not be left behind.
+  await recordHistory(
+    {
+      wallet_id: data.wallet_id,
+      transaction_id: id,
+      action: 'create' as AuditAction,
+      timestamp: new Date().toISOString(),
+      actor: actor ?? null,
+      new_data: { ...data, id },
+    },
+    () => supabase.from('transactions').delete().eq('id', id).eq('wallet_id', data.wallet_id),
+    'Could not remove entry after a history failure',
+    'Failed to create transaction',
+  );
 
   return id;
 }
@@ -99,28 +108,23 @@ export async function updateTransaction(
   if (error) throw new Error(`Failed to update transaction: ${error.message}`);
   if (!updated || updated.length === 0) throw new Error('Entry not found or removed');
 
-  const { error: logError } = await supabase.from('audit_log').insert({
-    wallet_id: existing.wallet_id,
-    transaction_id: id,
-    action: 'update' as AuditAction,
-    timestamp: now,
-    previous_data: previous,
-    new_data: { ...previous, ...updateData },
-    reason: meta.reason ?? null,
-    actor: meta.actor ?? null,
-  });
-
-  if (logError) {
-    // An edit is never kept without its history: put the old values back.
-    const original = Object.fromEntries(Object.entries(previous).filter(([key]) => key in updateData));
-    const { error: rollbackError } = await supabase
-      .from('transactions')
-      .update(original)
-      .eq('id', id)
-      .eq('wallet_id', existing.wallet_id);
-    if (rollbackError) console.error('Could not undo edit after a history failure', rollbackError);
-    throw new Error(`Failed to update transaction: ${logError.message}`);
-  }
+  // An edit is never kept without its history: put the old values back.
+  const original = Object.fromEntries(Object.entries(previous).filter(([key]) => key in updateData));
+  await recordHistory(
+    {
+      wallet_id: existing.wallet_id,
+      transaction_id: id,
+      action: 'update' as AuditAction,
+      timestamp: now,
+      previous_data: previous,
+      new_data: { ...previous, ...updateData },
+      reason: meta.reason ?? null,
+      actor: meta.actor ?? null,
+    },
+    () => supabase.from('transactions').update(original).eq('id', id).eq('wallet_id', existing.wallet_id),
+    'Could not undo edit after a history failure',
+    'Failed to update transaction',
+  );
 }
 
 // ─── Soft-remove / restore ──────────────────────────────
@@ -151,25 +155,25 @@ export async function removeTransaction(
   if (error) throw new Error(`Failed to remove transaction: ${error.message}`);
   if (!data || data.length === 0) throw new Error('Entry not found or already removed');
 
-  const { error: logError } = await supabase.from('audit_log').insert({
-    wallet_id: walletId,
-    transaction_id: id,
-    action: 'remove' as AuditAction,
-    timestamp: now,
-    reason,
-    note: note?.trim() || null,
-    actor: actor ?? null,
-  });
-
-  if (logError) {
-    const { error: rollbackError } = await supabase
-      .from('transactions')
-      .update({ deleted: false, removed_reason: null, removed_note: null, removed_by: null, removed_at: null })
-      .eq('id', id)
-      .eq('wallet_id', walletId);
-    if (rollbackError) console.error('Could not undo removal after a history failure', rollbackError);
-    throw new Error(`Failed to remove transaction: ${logError.message}`);
-  }
+  await recordHistory(
+    {
+      wallet_id: walletId,
+      transaction_id: id,
+      action: 'remove' as AuditAction,
+      timestamp: now,
+      reason,
+      note: note?.trim() || null,
+      actor: actor ?? null,
+    },
+    () =>
+      supabase
+        .from('transactions')
+        .update({ deleted: false, removed_reason: null, removed_note: null, removed_by: null, removed_at: null })
+        .eq('id', id)
+        .eq('wallet_id', walletId),
+    'Could not undo removal after a history failure',
+    'Failed to remove transaction',
+  );
 }
 
 export async function restoreTransaction(
@@ -200,21 +204,15 @@ export async function restoreTransaction(
   if (error) throw new Error(`Failed to restore transaction: ${error.message}`);
   if (!data || data.length === 0) throw new Error('Entry not found or not removed');
 
-  const { error: logError } = await supabase.from('audit_log').insert({
-    wallet_id: walletId,
-    transaction_id: id,
-    action: 'restore' as AuditAction,
-    timestamp: now,
-    actor: actor ?? null,
-  });
-
-  if (logError) {
-    const { error: rollbackError } = await supabase
-      .from('transactions')
-      .update({ deleted: true, ...removed })
-      .eq('id', id)
-      .eq('wallet_id', walletId);
-    if (rollbackError) console.error('Could not undo restore after a history failure', rollbackError);
-    throw new Error(`Failed to restore transaction: ${logError.message}`);
-  }
+  await recordHistory(
+    { wallet_id: walletId, transaction_id: id, action: 'restore' as AuditAction, timestamp: now, actor: actor ?? null },
+    () =>
+      supabase
+        .from('transactions')
+        .update({ deleted: true, ...removed })
+        .eq('id', id)
+        .eq('wallet_id', walletId),
+    'Could not undo restore after a history failure',
+    'Failed to restore transaction',
+  );
 }
