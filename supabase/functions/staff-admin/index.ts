@@ -3,21 +3,17 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffAdmin } from '../_shared/staffAdmin.ts';
-import { createStaffAuthUser, type StaffAdminClient } from '../_shared/staffSession.ts';
+import { createStaffAuthUser, type StaffUserCreator } from '../_shared/staffSession.ts';
 
 const url = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
-const userCreator: StaffAdminClient = {
-  generateLink: () => Promise.reject(new Error('not used here')),
-  verifyOtp: () => Promise.reject(new Error('not used here')),
-  signInWithPassword: () => Promise.reject(new Error('not used here')),
+const userCreator: StaffUserCreator = {
   createUser: async (input) => {
     const { data, error } = await admin.auth.admin.createUser(input);
     return { data: { user: data.user ? { id: data.user.id } : null }, error };
   },
-  getUserEmail: () => Promise.reject(new Error('not used here')),
 };
 
 const fail = (what: string, error: { message: string } | null) => {
