@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Transaction } from '../db/database';
+import type { Transaction } from './transaction';
 import { buildHistoryCsv, buildHistoryCsvRows, HISTORY_CSV_HEADER } from './historyCsv';
 
 let seq = 0;

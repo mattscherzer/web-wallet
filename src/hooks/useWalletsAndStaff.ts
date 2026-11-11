@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { listStaff, type StaffMember } from './admin';
-import { fetchWallets, type Wallet } from './wallets';
+import { listStaff } from '../db/admin';
+import { type StaffMember } from '../domain/staff';
+import { fetchWallets } from '../db/wallets';
+import { type Wallet } from '../domain/wallet';
 
 /** Every wallet the owner can see and the staff of all of them. `loaded` flips once the first attempt has finished. */
 export function useWalletsAndStaff() {

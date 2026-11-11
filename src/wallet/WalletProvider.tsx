@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createWallet, fetchWallets, type Wallet } from '../db/wallets';
+import { createWallet, fetchWallets } from '../db/wallets';
+import { type Wallet } from '../domain/wallet';
 import { WalletContext, type WalletValue } from './walletContext';
-import { pickCurrentWallet, readCurrentWalletId, writeCurrentWalletId } from './walletStore';
+import { pickCurrentWallet } from '../domain/wallet';
+import { readCurrentWalletId, writeCurrentWalletId } from './walletStore';
 
 type WalletStorage = Pick<Storage, 'getItem' | 'setItem'>;
 

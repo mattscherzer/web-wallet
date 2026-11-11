@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-
-export type Role = 'owner' | 'staff';
+import type { Role } from '../domain/access';
 
 export interface AuthUser {
   id: string;

@@ -1,31 +1,4 @@
-import { supabase } from '../db/supabase';
-
-/** The staff username used last on this device: sign-in prefills it and unlock re-checks that person's PIN. */
-export const LAST_STAFF_KEY = 'treasury.lastStaffUsername';
-
-export function readLastStaff(): string {
-  try {
-    return window.localStorage.getItem(LAST_STAFF_KEY) ?? '';
-  } catch {
-    return '';
-  }
-}
-
-export function forgetStaff() {
-  try {
-    window.localStorage.removeItem(LAST_STAFF_KEY);
-  } catch {
-    // Storage blocked: nothing was remembered anyway.
-  }
-}
-
-export function rememberStaff(username: string) {
-  try {
-    window.localStorage.setItem(LAST_STAFF_KEY, username);
-  } catch {
-    // Storage blocked: the username just isn't remembered.
-  }
-}
+import { supabase } from './supabase';
 
 export interface StaffSession {
   access_token: string;
@@ -37,7 +10,8 @@ export interface StaffSession {
  * What a PIN check came to: `wrong` (the server refused the username or PIN), `paused` (too many wrong tries, wait
  * `retryAfter` seconds) or `error` (the server could not be reached or failed: not the person's mistake).
  */
-type Refused = { ok: false; kind: 'wrong' } | { ok: false; kind: 'paused'; retryAfter: number } | { ok: false; kind: 'error' };
+type Refused =
+  { ok: false; kind: 'wrong' } | { ok: false; kind: 'paused'; retryAfter: number } | { ok: false; kind: 'error' };
 export type StaffLoginResult = { ok: true; session: StaffSession } | Refused;
 export type StaffCheckResult = { ok: true; userId: string } | Refused;
 
@@ -58,7 +32,9 @@ async function askStaffLogin(body: Record<string, unknown>): Promise<{ data: unk
     }
     return { ok: false, kind: 'error' };
   }
-  return (error as { message?: string }).message === WRONG ? { ok: false, kind: 'wrong' } : { ok: false, kind: 'error' };
+  return (error as { message?: string }).message === WRONG
+    ? { ok: false, kind: 'wrong' }
+    : { ok: false, kind: 'error' };
 }
 
 /** Asks the `staff-login` edge function to check a username and PIN and start a session. */

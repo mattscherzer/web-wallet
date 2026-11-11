@@ -1,12 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
-import {
-  availableByWallet,
-  createWallet,
-  fetchWalletAvailableBalances,
-  fetchWallets,
-  MAX_WALLET_NAME,
-} from './wallets';
+import { MAX_WALLET_NAME } from '../domain/wallet';
+import { createWallet, fetchWalletAvailableBalances, fetchWallets } from './wallets';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
@@ -58,16 +53,6 @@ describe('fetchWallets', () => {
   it('fails loudly when the request fails', async () => {
     ref.fake.failNext('wallets:select', { message: 'offline' });
     await expect(fetchWallets()).rejects.toThrow(/offline/);
-  });
-});
-
-describe('availableByWallet', () => {
-  it('adds up available money per wallet, leaves the reserve out, and lists empty wallets as 0', () => {
-    const rows = [
-      ...twoWalletRows().transactions,
-      { wallet_id: 'wa', type: 'inflow', amount: 500, account_id: 'prudent_reserve', from_account_id: null },
-    ] as never[];
-    expect(availableByWallet(['wa', 'wb', 'wc'], rows)).toEqual({ wa: 949.8, wb: 7, wc: 0 });
   });
 });
 

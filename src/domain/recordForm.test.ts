@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AccountId } from '../db/accounts';
+import type { AccountId } from './accounts';
 
 // Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./recordForm').catch(() => undefined);

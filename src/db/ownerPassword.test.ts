@@ -6,7 +6,7 @@ const auth = vi.hoisted(() => ({
 }));
 vi.mock('@supabase/supabase-js', () => ({ createClient: () => ({ auth }) }));
 
-import { checkOwnerPassword } from './passwordCheck';
+import { checkOwnerPassword } from './ownerPassword';
 
 beforeEach(() => {
   auth.signInWithPassword.mockReset();

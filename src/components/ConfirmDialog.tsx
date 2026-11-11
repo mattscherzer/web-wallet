@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { useDialogFocus } from '../components/useDialogFocus';
-import { Field } from '../components/FilledField';
+import { useDialogFocus } from './useDialogFocus';
+import { Field } from './FilledField';
 
 interface ConfirmDialogProps {
   password: string;

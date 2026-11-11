@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, type FakeSupabase } from '../test/fakeSupabase';
-import { createTransaction, createTransfer, removeTransaction, updateTransaction } from './database';
+import { createTransaction, createTransfer, removeTransaction, updateTransaction } from './transactions';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({

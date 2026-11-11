@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { Check, X } from 'lucide-react';
-import { WalletNameError } from '../db/wallets';
+import { WalletNameError } from '../domain/wallet';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';

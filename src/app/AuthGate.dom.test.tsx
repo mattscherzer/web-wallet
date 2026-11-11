@@ -12,9 +12,9 @@ import {
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
-import { AuthProvider } from './AuthProvider';
+import { AuthProvider } from '../auth/AuthProvider';
 import { AuthGate } from './AuthGate';
-import { useAuth } from './useAuth';
+import { useAuth } from '../auth/useAuth';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({

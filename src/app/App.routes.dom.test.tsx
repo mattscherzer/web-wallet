@@ -2,14 +2,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { createFakeSupabase, twoWalletRows, type FakeSupabase } from './test/fakeSupabase';
-import { memoryStorage } from './test/walletTestKit';
-import { CURRENT_WALLET_KEY } from './wallet/walletStore';
-import { WalletProvider } from './wallet/WalletProvider';
+import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
+import { memoryStorage } from '../test/walletTestKit';
+import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
+import { WalletProvider } from '../wallet/WalletProvider';
 import { AppRoutes } from './App';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
-vi.mock('./db/supabase', () => ({
+vi.mock('../db/supabase', () => ({
   supabase: new Proxy(
     {},
     {

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Check } from 'lucide-react';
-import { getAccountLabel, fromAccountLabel, removeTransaction } from '../db/database';
-import { useEntry } from '../db/hooks';
+import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
+import { removeTransaction } from '../db/transactions';
+import { useEntry } from '../hooks/useEntry';
 import Amount from '../components/Amount';
 import { formatDate, formatTime } from '../utils/dateHelpers';
-import { categoryLabel, typeParam } from '../utils/recordForm';
+import { categoryLabel, typeParam } from '../domain/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';

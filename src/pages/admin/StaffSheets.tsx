@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { ChevronDown, KeyRound, UserPlus, UserX } from 'lucide-react';
-import { createStaff, resetStaffPin, setStaffDisabled, type StaffMember } from '../../db/admin';
-import type { Wallet } from '../../db/wallets';
-import { PIN_LENGTH, isPin } from '../../auth/pin';
+import { createStaff, resetStaffPin, setStaffDisabled } from '../../db/admin';
+import { type StaffMember } from '../../domain/staff';
+import type { Wallet } from '../../domain/wallet';
+import { PIN_LENGTH, isPin } from '../../domain/pin';
 import { useOwnerAction } from '../../auth/useOwnerAction';
 import BottomSheet from '../../components/BottomSheet';
 import { Field, InlineError, PinInput } from '../../components/FilledField';

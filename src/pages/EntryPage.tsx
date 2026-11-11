@@ -1,29 +1,21 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ArrowLeft, Pencil, RotateCcw, Trash2 } from 'lucide-react';
-import {
-  EDIT_REASONS,
-  REMOVE_REASONS,
-  getAccountLabel,
-  fromAccountLabel,
-  removeTransaction,
-  restoreTransaction,
-  updateTransaction,
-  type AuditEntry,
-  type Transaction,
-} from '../db/database';
-import { useEntry } from '../db/hooks';
+import { EDIT_REASONS, REMOVE_REASONS, type AuditEntry, type Transaction } from '../domain/transaction';
+import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
+import { removeTransaction, restoreTransaction, updateTransaction } from '../db/transactions';
+import { useEntry } from '../hooks/useEntry';
 import Amount from '../components/Amount';
 import ReasonSheet from '../components/ReasonSheet';
 import StatusChip from '../components/StatusChip';
 import { formatDate } from '../utils/dateHelpers';
 import { formatCurrency } from '../utils/formatCurrency';
-import { categoryLabel, parseAmount } from '../utils/recordForm';
+import { categoryLabel, parseAmount } from '../domain/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
 import { useUnlock } from '../auth/unlockContext';
-import { authorLabel } from '../utils/authorLabel';
+import { authorLabel } from '../domain/authorLabel';
 
 type Sheet = 'edit' | 'remove' | null;
 

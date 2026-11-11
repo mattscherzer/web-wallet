@@ -12,7 +12,7 @@ import {
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { AuthProvider } from './AuthProvider';
-import { AuthGate } from './AuthGate';
+import { AuthGate } from '../app/AuthGate';
 import { IDLE_LOCK_MS, LAST_ACTIVITY_KEY } from './idleLock';
 import { useAuth } from './useAuth';
 

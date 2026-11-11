@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeAccountBalances, type BalanceInput } from './balances';
+import { availableByWallet, computeAccountBalances, summarizeBalances, type BalanceInput } from './balances';
+import { twoWalletRows } from '../test/fakeSupabase';
 
 const inflow = (account_id: BalanceInput['account_id'], amount: number | string): BalanceInput => ({
   type: 'inflow',
@@ -113,5 +114,25 @@ describe('computeAccountBalances', () => {
 
     expect(computeAccountBalances(txs).cash).toBe(10);
     expect(txs).toEqual([inflow('cash', 10)]);
+  });
+});
+
+describe('availableByWallet', () => {
+  it('adds up available money per wallet, leaves the reserve out, and lists empty wallets as 0', () => {
+    const rows = [
+      ...twoWalletRows().transactions,
+      { wallet_id: 'wa', type: 'inflow', amount: 500, account_id: 'prudent_reserve', from_account_id: null },
+    ] as never[];
+    expect(availableByWallet(['wa', 'wb', 'wc'], rows)).toEqual({ wa: 949.8, wb: 7, wc: 0 });
+  });
+});
+
+describe('summarizeBalances', () => {
+  it('groups the accounts and totals the spendable and overall money', () => {
+    const s = summarizeBalances({ cash: 10, paypal: 5, bank: 20, prudent_reserve: 100 });
+    expect(s.main.map((a) => a.balance)).toEqual([10, 5, 20]);
+    expect(s.reserve.map((a) => a.balance)).toEqual([100]);
+    expect(s.spendableTotal).toBe(35);
+    expect(s.grandTotal).toBe(135);
   });
 });

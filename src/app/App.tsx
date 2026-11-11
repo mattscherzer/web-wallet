@@ -1,25 +1,25 @@
 import { lazy } from 'react';
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router';
-import Layout from './components/Layout';
-import { WalletProvider } from './wallet/WalletProvider';
-import WalletGate from './wallet/WalletGate';
-import { legacyRedirect } from './components/recordMenu';
-import { AuthProvider } from './auth/AuthProvider';
-import { AuthGate } from './auth/AuthGate';
-import { OwnerConfirmProvider } from './auth/OwnerConfirm';
+import Layout from '../components/Layout';
+import { WalletProvider } from '../wallet/WalletProvider';
+import WalletGate from './WalletGate';
+import { legacyRedirect } from '../components/recordMenu';
+import { AuthProvider } from '../auth/AuthProvider';
+import { AuthGate } from './AuthGate';
+import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
 
 // Routes are code-split so the initial load only pulls the dashboard.
 // Layout renders the Suspense boundary, which keeps the bottom nav mounted
 // while a route chunk is fetched.
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-const RecordPage = lazy(() => import('./pages/RecordPage'));
-const RecordedPage = lazy(() => import('./pages/RecordedPage'));
-const HistoryPage = lazy(() => import('./pages/HistoryPage'));
-const EntryPage = lazy(() => import('./pages/EntryPage'));
-const ReportsPage = lazy(() => import('./pages/ReportsPage'));
-const MorePage = lazy(() => import('./pages/MorePage'));
-const NewWalletPage = lazy(() => import('./pages/NewWalletPage'));
-const AdminPage = lazy(() => import('./pages/AdminPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+const RecordPage = lazy(() => import('../pages/RecordPage'));
+const RecordedPage = lazy(() => import('../pages/RecordedPage'));
+const HistoryPage = lazy(() => import('../pages/HistoryPage'));
+const EntryPage = lazy(() => import('../pages/EntryPage'));
+const ReportsPage = lazy(() => import('../pages/ReportsPage'));
+const MorePage = lazy(() => import('../pages/MorePage'));
+const NewWalletPage = lazy(() => import('../pages/NewWalletPage'));
+const AdminPage = lazy(() => import('../pages/AdminPage'));
 
 /** The route table with its wallet gate; the router and wallet provider come from the caller. */
 export function AppRoutes() {

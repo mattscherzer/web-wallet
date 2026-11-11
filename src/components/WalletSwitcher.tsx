@@ -4,7 +4,7 @@ import { Check, Plus } from 'lucide-react';
 import { fetchWalletAvailableBalances } from '../db/wallets';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
-import { walletInitials } from '../wallet/walletStore';
+import { walletInitials } from '../domain/wallet';
 import { formatCurrency } from '../utils/formatCurrency';
 import BottomSheet from './BottomSheet';
 

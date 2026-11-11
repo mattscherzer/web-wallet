@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import type { CountState } from '../utils/cashCount';
+import type { CountState } from '../domain/cashCount';
 
 // Loaded dynamically so a missing module fails the assertion below instead of crashing the file.
 const view = await import('./CashCountView').catch(() => undefined);
-const logic = await import('../utils/cashCount').catch(() => undefined);
+const logic = await import('../domain/cashCount').catch(() => undefined);
 
 function render(state?: CountState) {
   expect(view, 'src/components/CashCountView.tsx must exist').toBeDefined();

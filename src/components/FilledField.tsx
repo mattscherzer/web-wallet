@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { CircleAlert } from 'lucide-react';
-import { PIN_LENGTH } from '../auth/pin';
+import { PIN_LENGTH } from '../domain/pin';
 
 /** A problem message with its icon, shown under a field or a form. */
 export function InlineError({ message }: { message: string | null }) {

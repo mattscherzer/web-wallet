@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
-import type { AccountId } from './accounts';
-import type { AuditEntry, Transaction, TransactionType } from './database';
-import { computeAccountBalances, type BalanceInput } from './balances';
+import type { AccountId } from '../domain/accounts';
+import type { AuditEntry, Transaction, TransactionType } from '../domain/transaction';
+import { computeAccountBalances, type BalanceInput } from '../domain/balances';
 
 const PAGE_SIZE = 1000;
 

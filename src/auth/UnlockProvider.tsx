@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import Snackbar from '../components/Snackbar';
-import UnlockSheet from './UnlockSheet';
+import UnlockSheet from '../components/UnlockSheet';
 import { UnlockContext, type UnlockApi } from './unlockContext';
 import { useAuth } from './useAuth';
 

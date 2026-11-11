@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { AuthProvider } from '../auth/AuthProvider';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
-import WalletGate from '../wallet/WalletGate';
+import WalletGate from '../app/WalletGate';
 import {
   createFakeSupabase,
   FAKE_MEMBERS,
@@ -23,7 +23,7 @@ const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
   supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
-vi.mock('../auth/passwordCheck', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
+vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
 
 function seed(rows: Record<string, Record<string, unknown>[]>) {
   ref.fake = createFakeSupabase(

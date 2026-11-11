@@ -4,10 +4,11 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
 import { useWallet } from '../wallet/useWallet';
-import { useAccountBalances, useTransactions } from './hooks';
+import { useAccountBalances } from './useBalances';
+import { useFilteredTransactions } from './useHistory';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
-vi.mock('./supabase', () => ({
+vi.mock('../db/supabase', () => ({
   supabase: new Proxy(
     {},
     {
@@ -22,7 +23,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const setup = () =>
-  renderHook(() => ({ wallet: useWallet(), txs: useTransactions(), balances: useAccountBalances() }), {
+  renderHook(() => ({ wallet: useWallet(), txs: useFilteredTransactions('all', ''), balances: useAccountBalances() }), {
     wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
   });
 

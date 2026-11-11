@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { wouldOverdraw } from './expense';
+import { wouldOverdraw } from './overdraw';
 
 describe('wouldOverdraw', () => {
   it('is false when the balance covers the amount exactly', () => {

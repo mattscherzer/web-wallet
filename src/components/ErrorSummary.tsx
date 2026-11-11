@@ -1,5 +1,5 @@
 import type { Ref } from 'react';
-import type { FieldError } from '../utils/recordForm';
+import type { FieldError } from '../domain/recordForm';
 
 interface ErrorSummaryProps {
   errors: FieldError[];

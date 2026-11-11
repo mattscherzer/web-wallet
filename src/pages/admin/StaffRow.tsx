@@ -1,7 +1,8 @@
-import { setStaffDisabled, type StaffMember } from '../../db/admin';
+import { setStaffDisabled } from '../../db/admin';
+import { type StaffMember } from '../../domain/staff';
 import { useOwnerAction } from '../../auth/useOwnerAction';
 import { InlineError } from '../../components/FilledField';
-import { walletInitials } from '../../wallet/walletStore';
+import { walletInitials } from '../../domain/wallet';
 
 interface StaffRowProps {
   member: StaffMember;

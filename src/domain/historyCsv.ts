@@ -1,5 +1,5 @@
-import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from '../db/accounts';
-import type { Transaction } from '../db/database';
+import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from './accounts';
+import type { Transaction } from './transaction';
 import { authorLabel } from './authorLabel';
 
 export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by'];

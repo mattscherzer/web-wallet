@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { Calculator, X } from 'lucide-react';
-import { ACCOUNTS, createTransaction, getAccountLabel, type AccountId } from '../db/database';
-import { useLoadedAccountBalances } from '../db/hooks';
-import { emptyBalances } from '../db/balances';
+import { ACCOUNTS, getAccountLabel, type AccountId } from '../domain/accounts';
+import { createTransaction } from '../db/transactions';
+import { useLoadedAccountBalances } from '../hooks/useBalances';
+import { emptyBalances } from '../domain/balances';
 import { getTodayString } from '../utils/dateHelpers';
 import { formatCurrency } from '../utils/formatCurrency';
-import { wouldOverdraw } from '../utils/expense';
+import { wouldOverdraw } from '../domain/overdraw';
 import {
   CATEGORIES,
   TYPE_PARAMS,
@@ -18,7 +19,7 @@ import {
   type FieldError,
   type RecordForm,
   type RecordType,
-} from '../utils/recordForm';
+} from '../domain/recordForm';
 import ErrorSummary from '../components/ErrorSummary';
 import CashCalculator from '../components/CashCalculator';
 import { useWallet } from '../wallet/useWallet';

@@ -14,8 +14,8 @@ import {
 } from '../test/fakeSupabase';
 import { refused } from '../test/lockTestKit';
 import { AuthProvider } from './AuthProvider';
-import { AuthGate } from './AuthGate';
-import { LAST_STAFF_KEY } from './staffLogin';
+import { AuthGate } from '../app/AuthGate';
+import { LAST_STAFF_KEY } from './lastStaff';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({

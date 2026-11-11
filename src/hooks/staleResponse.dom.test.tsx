@@ -4,10 +4,10 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
 import { useWallet } from '../wallet/useWallet';
-import { useTransactions } from './hooks';
+import { useFilteredTransactions } from './useHistory';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
-vi.mock('./supabase', () => ({
+vi.mock('../db/supabase', () => ({
   supabase: new Proxy(
     {},
     {
@@ -25,7 +25,7 @@ describe('slow answer from the previous wallet', () => {
   it('does not wipe the data of the wallet you switched to', async () => {
     // The first wallet's list is still on its way when the user switches.
     const release = ref.fake.holdNext('transactions:select');
-    const { result } = renderHook(() => ({ wallet: useWallet(), txs: useTransactions() }), {
+    const { result } = renderHook(() => ({ wallet: useWallet(), txs: useFilteredTransactions('all', '') }), {
       wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
     });
     await waitFor(() => expect(result.current.wallet.current?.id).toBe('wa'));

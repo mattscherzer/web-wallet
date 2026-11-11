@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Lock, X } from 'lucide-react';
-import BottomSheet from '../components/BottomSheet';
-import Countdown from '../components/Countdown';
-import PinPad from '../components/PinPad';
-import TextField from '../components/TextField';
-import type { AccessResult } from './authContext';
-import { PIN_LENGTH } from './pin';
-import { readLastStaff } from './staffLogin';
-import { useAuth } from './useAuth';
+import BottomSheet from './BottomSheet';
+import Countdown from './Countdown';
+import PinPad from './PinPad';
+import TextField from './TextField';
+import type { AccessResult } from '../auth/authContext';
+import { PIN_LENGTH } from '../domain/pin';
+import { readLastStaff } from '../auth/lastStaff';
+import { useAuth } from '../auth/useAuth';
 
 type Problem = Exclude<AccessResult, { ok: true }> | null;
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Delete } from 'lucide-react';
 import LoadingIndicator from './LoadingIndicator';
-import { PIN_LENGTH } from '../auth/pin';
+import { PIN_LENGTH } from '../domain/pin';
 
 interface PinPadProps {
   value: string;

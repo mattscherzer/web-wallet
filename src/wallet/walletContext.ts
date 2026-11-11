@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Wallet } from '../db/wallets';
+import type { Wallet } from '../domain/wallet';
 
 export interface WalletValue {
   wallets: Wallet[];

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useUnlock } from './unlockContext';
 import { OWNER_CONFIRM_MS, OwnerConfirmContext, type Confirm } from './ownerConfirmContext';
-import { checkOwnerPassword } from './passwordCheck';
+import { checkOwnerPassword } from '../db/ownerPassword';
 import { useAuth } from './useAuth';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 

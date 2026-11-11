@@ -1,17 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { supabase } from '../db/supabase';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
-import {
-  AuthContext,
-  type AccessResult,
-  type AuthProfile,
-  type AuthUser,
-  type AuthValue,
-  type Role,
-} from './authContext';
-import { checkOwnerPassword } from './passwordCheck';
+import { AuthContext, type AccessResult, type AuthProfile, type AuthUser, type AuthValue } from './authContext';
+import type { Role } from '../domain/access';
+import { checkOwnerPassword } from '../db/ownerPassword';
 import { idleExpired, rememberActivity, useIdleLock } from './idleLock';
-import { checkStaffPin, forgetStaff, readLastStaff, rememberStaff, requestStaffLogin } from './staffLogin';
+import { checkStaffPin, requestStaffLogin } from '../db/staffLogin';
+import { forgetStaff, readLastStaff, rememberStaff } from './lastStaff';
 
 type State = Pick<AuthValue, 'status' | 'user' | 'profile'> & { permissions: ReadonlySet<string> };
 const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null, permissions: new Set() };

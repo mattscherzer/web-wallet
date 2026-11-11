@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Download, Search } from 'lucide-react';
-import { useFilteredTransactions } from '../db/hooks';
-import { getAccountLabel, fromAccountLabel, type Transaction } from '../db/database';
+import { useFilteredTransactions } from '../hooks/useHistory';
+import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
+import { type Transaction } from '../domain/transaction';
 import Amount from '../components/Amount';
 import StatusChip from '../components/StatusChip';
 import { formatCurrency, formatSignedCurrency } from '../utils/formatCurrency';
 import { getDateGroupLabel, groupByDate } from '../utils/dateHelpers';
 import { generateHistoryCsv } from '../utils/exportCsv';
-import { availableDelta, categoryLabel } from '../utils/recordForm';
+import { availableDelta, categoryLabel } from '../domain/recordForm';
 import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Plus, UserPlus } from 'lucide-react';
-import type { StaffMember } from '../db/admin';
-import { useWalletsAndStaff } from '../db/useWalletsAndStaff';
+import type { StaffMember } from '../domain/staff';
+import { useWalletsAndStaff } from '../hooks/useWalletsAndStaff';
 import { useAuth } from '../auth/useAuth';
 import { useOptionalWallet } from '../wallet/useWallet';
-import { walletInitials } from '../wallet/walletStore';
+import { walletInitials } from '../domain/wallet';
 import AdminHeader from './admin/AdminHeader';
 import AdminSkeleton from './admin/AdminSkeleton';
 import OwnersOnly from './admin/OwnersOnly';

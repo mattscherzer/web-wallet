@@ -1,5 +1,5 @@
-import { ACCOUNTS, getAccountLabel, type AccountId } from '../db/accounts';
-import { formatSignedCurrency } from './formatCurrency';
+import { ACCOUNTS, getAccountLabel, type AccountId } from './accounts';
+import { formatSignedCurrency } from '../utils/formatCurrency';
 
 export type RecordType = 'inflow' | 'outflow' | 'transfer';
 

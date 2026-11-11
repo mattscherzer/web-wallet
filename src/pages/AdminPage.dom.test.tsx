@@ -19,7 +19,7 @@ const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
   supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
-vi.mock('../auth/passwordCheck', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
+vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
 
 beforeEach(() => {
   ref.fake = createFakeSupabase(

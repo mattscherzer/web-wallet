@@ -11,10 +11,12 @@ import {
   ReceiptEuro,
   HandCoins,
 } from 'lucide-react';
-import { useBalanceSummary, useRecentTransactions } from '../db/hooks';
+import { useBalanceSummary } from '../hooks/useBalances';
+import { useRecentTransactions } from '../hooks/useHistory';
 import Amount from '../components/Amount';
 import { formatCurrency } from '../utils/formatCurrency';
-import { getAccountLabel, type Transaction, type AccountId } from '../db/database';
+import { getAccountLabel, type AccountId } from '../domain/accounts';
+import { type Transaction } from '../domain/transaction';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
   cash: <Coins size={22} />,

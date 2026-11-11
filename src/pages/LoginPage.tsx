@@ -3,9 +3,9 @@ import { ArrowLeft, Lock, TriangleAlert } from 'lucide-react';
 import Countdown from '../components/Countdown';
 import PinPad from '../components/PinPad';
 import TextField from '../components/TextField';
-import { PIN_LENGTH } from './pin';
-import { readLastStaff } from './staffLogin';
-import { useAuth } from './useAuth';
+import { PIN_LENGTH } from '../domain/pin';
+import { readLastStaff } from '../auth/lastStaff';
+import { useAuth } from '../auth/useAuth';
 
 export default function LoginPage() {
   const { signIn, signInStaff } = useAuth();

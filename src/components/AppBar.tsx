@@ -3,7 +3,7 @@ import { ChevronDown, Lock, LockOpen } from 'lucide-react';
 import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';
 import { useOptionalWallet } from '../wallet/useWallet';
-import { walletInitials } from '../wallet/walletStore';
+import { walletInitials } from '../domain/wallet';
 
 // Loaded on first open: keeps the data layer out of the shell's initial code.
 const WalletSwitcher = lazy(() => import('./WalletSwitcher'));

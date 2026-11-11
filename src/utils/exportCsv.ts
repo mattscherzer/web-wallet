@@ -1,6 +1,6 @@
 import { fetchTransactions } from '../db/queries';
-import type { Transaction } from '../db/database';
-import { buildHistoryCsv } from './historyCsv';
+import type { Transaction } from '../domain/transaction';
+import { buildHistoryCsv } from '../domain/historyCsv';
 
 export async function generateHistoryCsv(walletId: string, walletName: string) {
   let data: Transaction[];
