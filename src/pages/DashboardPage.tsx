@@ -29,14 +29,12 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* Hero Balance Card */}
       <div className="balance-hero" id="total-balance-card">
         <p className="balance-hero__label">Available to spend</p>
         <p className="balance-hero__amount">{formatCurrency(spendableTotal)}</p>
         <p className="balance-hero__total">Available in total: {formatCurrency(grandTotal)}</p>
       </div>
 
-      {/* Main Account Cards */}
       <p className="section-title">Accounts</p>
       <div className="segmented-list">
         {mainAccounts.map((account) => (
@@ -50,7 +48,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Reserve Accounts */}
       {reserveAccounts.length > 0 && (
         <>
           {reserveAccounts.map((account) => (
@@ -68,7 +65,6 @@ export default function DashboardPage() {
         </>
       )}
 
-      {/* Recent Transactions */}
       <div className="section-header">
         <p className="section-title">Recent Activity</p>
         {recentTransactions.length > 0 && (
@@ -95,7 +91,6 @@ export default function DashboardPage() {
   );
 }
 
-// ─── Dashboard Transaction Item ─────────────────────────
 function DashboardTransactionItem({ transaction: tx }: { transaction: Transaction }) {
   const [expanded, setExpanded] = useState(false);
   const isTransfer = tx.type === 'transfer';

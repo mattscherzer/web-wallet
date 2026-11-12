@@ -2,10 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../db/supabase';
 import { useOptionalWallet } from '../wallet/useWallet';
 
-// ─── Generic hook for Supabase queries with real-time ───
-// Everything is scoped to the open wallet: the query gets its id, the live
-// channel only listens to its rows, and data fetched for another wallet is
-// never returned.
 interface QueryState<T> {
   data: T;
   /** True once the open wallet has answered at least once; a later failed refresh keeps the data on screen. */

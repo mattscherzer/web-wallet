@@ -15,7 +15,6 @@ async function recordHistory(
   throw new Error(`${failed}: ${logError.message}`);
 }
 
-// ─── Create Transaction (inflow / outflow) ──────────────
 export async function createTransaction(
   data: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'deleted'>,
   actor?: string,
@@ -58,7 +57,6 @@ export async function createTransaction(
   return id;
 }
 
-// ─── Update Transaction ─────────────────────────────────
 export async function updateTransaction(
   id: string,
   updates: Partial<Omit<Transaction, 'id' | 'created_at' | 'deleted'>>,
@@ -104,10 +102,7 @@ export async function updateTransaction(
   );
 }
 
-// ─── Soft-remove / restore ──────────────────────────────
 // A removed entry stays in the books, marked removed, and stops counting in balances.
-// The change history is written after the change; if it can't be written the change is undone,
-// so an entry is never removed or restored without a trace.
 export async function removeTransaction(
   id: string,
   { walletId, reason, note, actor }: { walletId: string; reason: string; note?: string; actor?: string },

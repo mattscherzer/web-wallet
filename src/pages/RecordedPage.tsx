@@ -9,7 +9,6 @@ import { formatDate, formatTime } from '../utils/dateHelpers';
 import { categoryLabel, typeParam } from '../domain/recordForm';
 import { useUnlock } from '../auth/unlockContext';
 
-/** Receipt shown right after saving: what was recorded, with Record another, Done and Undo. */
 export default function RecordedPage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();

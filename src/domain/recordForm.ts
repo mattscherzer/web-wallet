@@ -169,7 +169,6 @@ export function recordActionLabel(form: RecordForm, locale?: string): string {
   return `Record ${money} from ${getAccountLabel(form.fromAccountId)} to ${to}`;
 }
 
-/** The row to save for a valid form. */
 export function toTransactionInput(form: RecordForm, walletId: string) {
   const description = form.description.trim();
   const base = {

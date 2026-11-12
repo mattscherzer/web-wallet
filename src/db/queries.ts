@@ -23,7 +23,6 @@ export interface TransactionQuery {
   /** Removed entries are left out by default; they never count in balances. */
   removed?: 'exclude' | 'include';
   limit?: number;
-  /** Oldest first. Default is newest first. */
   ascending?: boolean;
 }
 

@@ -2,7 +2,6 @@ import type { AuditEntry, Transaction } from '../domain/transaction';
 import { fetchAuditLog, fetchTransaction } from '../db/queries';
 import { useWalletQuery } from './useWalletQuery';
 
-// ─── One entry with its change history ──────────────────
 export type EntryStatus = 'loading' | 'ready' | 'missing' | 'error';
 
 /** An entry (removed or not) and its history. `refresh` re-reads both after a change. */

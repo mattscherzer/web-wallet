@@ -4,7 +4,6 @@ interface SnackbarProps {
   onAction: () => void;
 }
 
-/** A short notice above the bottom bar with one action. */
 export default function Snackbar({ message, actionLabel, onAction }: SnackbarProps) {
   return (
     <div className="snackbar" role="status">

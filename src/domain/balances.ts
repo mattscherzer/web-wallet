@@ -14,15 +14,7 @@ export function emptyBalances(): Record<AccountId, number> {
   return { cash: 0, paypal: 0, bank: 0, prudent_reserve: 0 };
 }
 
-/**
- * Per-account balances from a list of transactions.
- *
- * - inflow:   credits `account_id`
- * - outflow:  debits `account_id`
- * - transfer: credits `account_id` (destination), debits `from_account_id` (source)
- *
- * Soft-deleted transactions are skipped.
- */
+/** A transfer credits `account_id` (the destination) and debits `from_account_id`; removed entries are skipped. */
 export function computeAccountBalances(transactions: Iterable<BalanceInput>): Record<AccountId, number> {
   const balances = emptyBalances();
 
@@ -36,9 +28,9 @@ export function computeAccountBalances(transactions: Iterable<BalanceInput>): Re
     } else if (t.type === 'outflow') {
       balances[t.account_id] -= amount;
     } else if (t.type === 'transfer') {
-      balances[t.account_id] += amount; // destination
+      balances[t.account_id] += amount;
       if (t.from_account_id) {
-        balances[t.from_account_id] -= amount; // source
+        balances[t.from_account_id] -= amount;
       }
     }
   }
@@ -61,7 +53,6 @@ export function availableByWallet(walletIds: string[], rows: WalletBalanceRow[])
 
 const sumBalances = (accounts: { balance: number }[]) => accounts.reduce((sum, a) => sum + a.balance, 0);
 
-/** Main and reserve accounts with balances, plus the spendable (main) and overall totals. */
 export function summarizeBalances(balances: Record<AccountId, number>) {
   const withBalance = (account: Account) => ({
     ...account,

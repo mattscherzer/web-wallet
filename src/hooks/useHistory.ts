@@ -3,7 +3,6 @@ import { matchesSearch, type Transaction } from '../domain/transaction';
 import { fetchTransactions } from '../db/queries';
 import { useWalletData } from './useWalletQuery';
 
-// ─── Filtered transactions ──────────────────────────────
 export function useFilteredTransactions(
   filter: 'all' | 'inflow' | 'outflow' | 'transfer',
   searchQuery: string,
@@ -22,7 +21,6 @@ export function useFilteredTransactions(
   return useMemo(() => fetched.filter((t) => matchesSearch(t, searchQuery)), [fetched, searchQuery]);
 }
 
-// ─── Recent transactions ────────────────────────────────
 export function useRecentTransactions(limit = 5) {
   return useWalletData<Transaction[]>(
     (walletId) => fetchTransactions(walletId, { limit }),

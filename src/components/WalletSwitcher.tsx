@@ -7,7 +7,6 @@ import { walletInitials } from '../domain/wallet';
 import { formatCurrency } from '../utils/formatCurrency';
 import BottomSheet from './BottomSheet';
 
-/** Bottom sheet listing the wallets (design: WalletSwitcher). */
 export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { wallets, current, switchWallet } = useWallet();
   const navigate = useNavigate();

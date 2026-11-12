@@ -19,7 +19,6 @@ type Sheet = 'edit' | 'remove' | null;
 
 const CHANGE_FAILED = "Couldn't save the change. Nothing was changed.";
 
-/** One entry: the amount, its details and the full change history, with Edit, Remove and Restore. */
 export default function EntryPage() {
   const { id = '' } = useParams();
   const { status, tx, audit, refresh } = useEntry(id);

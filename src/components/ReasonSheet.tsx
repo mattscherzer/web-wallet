@@ -13,11 +13,9 @@ interface ReasonSheetProps {
   onConfirm: (reason: string, note: string) => void;
   onCancel: () => void;
   withNote?: boolean;
-  /** A problem from the last attempt, e.g. that saving failed. */
   error?: string | null;
 }
 
-/** A bottom sheet that asks for a reason (and optionally a note) before a change is made. */
 export default function ReasonSheet({
   title,
   reasons,

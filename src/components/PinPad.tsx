@@ -12,13 +12,11 @@ interface PinPadProps {
   invalid?: boolean;
   /** Shown in place of the keys while the PIN is being checked. */
   status?: string | null;
-  /** Rendered under the dots, e.g. an error message. */
   children?: ReactNode;
 }
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-/** Six dots and a 3×4 number pad for a staff PIN. */
 export default function PinPad({
   value,
   onChange,

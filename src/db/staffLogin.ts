@@ -37,7 +37,6 @@ async function askStaffLogin(body: Record<string, unknown>): Promise<{ data: unk
     : { ok: false, kind: 'error' };
 }
 
-/** Asks the `staff-login` edge function to check a username and PIN and start a session. */
 export async function requestStaffLogin(username: string, pin: string): Promise<StaffLoginResult> {
   const answer = await askStaffLogin({ username, pin });
   if (!('data' in answer)) return answer;

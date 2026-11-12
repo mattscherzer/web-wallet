@@ -25,7 +25,6 @@ export function pickCurrentWallet(wallets: Wallet[], storedId: string | null): W
   return wallets.find((w) => w.id === storedId) ?? wallets[0] ?? null;
 }
 
-/** Up to two letters for the wallet avatar. */
 export function walletInitials(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '?';

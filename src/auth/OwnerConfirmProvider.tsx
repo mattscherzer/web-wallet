@@ -37,7 +37,6 @@ export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
     // An action can start a moment before the login has finished loading.
     while (latest.current.auth.status === 'loading') await wait(20);
     if (latest.current.auth.profile?.kind !== 'owner') return false;
-    // View only: unlock first, then try again.
     if (latest.current.auth.locked) {
       latest.current.openUnlock();
       return false;

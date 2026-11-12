@@ -91,7 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applyLock],
   );
 
-  // Ends the session on this device only: other devices of the same account stay signed in.
   const signOut = useCallback(async () => {
     forgetWallet();
     forgetStaff(); // handing the phone over: the next person types their own username
@@ -119,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!ok) return { ok: false, kind: 'wrong' };
       } else {
         const username = readLastStaff();
-        if (!username) return { ok: false, kind: 'error' }; // nobody to check the PIN for
+        if (!username) return { ok: false, kind: 'error' };
         const result = await checkStaffPin(username, secret);
         if (!result.ok) return result;
         // The PIN has to belong to the person signed in on this phone, not just to some staff member.

@@ -11,5 +11,4 @@ export const signInWithPassword = (email: string, password: string) =>
 
 export const setSession = (tokens: { access_token: string; refresh_token: string }) => supabase.auth.setSession(tokens);
 
-/** Ends the session on this device only. */
 export const signOutLocal = () => supabase.auth.signOut({ scope: 'local' });

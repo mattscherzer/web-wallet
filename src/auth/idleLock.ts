@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { safeStorage } from '../platform/storage';
 
-/** The app locks after this long without use. */
 export const IDLE_LOCK_MS = 30 * 60_000;
 
 /** When the app was last used, kept so a closed or reloaded app still locks after 30 minutes. */
