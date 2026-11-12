@@ -1,6 +1,3 @@
-/**
- * Format a date string (YYYY-MM-DD) for display
- */
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00');
   return date.toLocaleDateString('en-US', {
@@ -10,9 +7,6 @@ export function formatDate(dateStr: string): string {
   });
 }
 
-/**
- * Get a relative date label: TODAY, YESTERDAY, or formatted date
- */
 export function getDateGroupLabel(dateStr: string): string {
   const today = new Date();
   const todayStr = toISODateString(today);
@@ -34,16 +28,10 @@ export function getDateGroupLabel(dateStr: string): string {
     .toUpperCase();
 }
 
-/**
- * Get today's date as ISO string (YYYY-MM-DD)
- */
 export function getTodayString(): string {
   return toISODateString(new Date());
 }
 
-/**
- * Convert a Date to YYYY-MM-DD
- */
 export function toISODateString(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -51,9 +39,6 @@ export function toISODateString(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-/**
- * Format time from ISO datetime
- */
 export function formatTime(isoDatetime: string): string {
   const date = new Date(isoDatetime);
   return date.toLocaleTimeString('en-US', {
@@ -62,9 +47,6 @@ export function formatTime(isoDatetime: string): string {
   });
 }
 
-/**
- * Group transactions by date
- */
 export function groupByDate<T extends { date: string }>(items: T[]): Map<string, T[]> {
   const groups = new Map<string, T[]>();
   for (const item of items) {

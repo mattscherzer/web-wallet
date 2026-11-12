@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createWallet, fetchWallets, type Wallet } from '../db/wallets';
+import { createWallet, fetchWallets } from '../db/wallets';
+import { type Wallet } from '../domain/wallet';
 import { WalletContext, type WalletValue } from './walletContext';
-import { pickCurrentWallet, readCurrentWalletId, writeCurrentWalletId } from './walletStore';
+import { pickCurrentWallet } from '../domain/wallet';
+import { safeStorage } from '../platform/storage';
+import { readCurrentWalletId, writeCurrentWalletId } from './walletStore';
 
 type WalletStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
-function defaultStorage(): WalletStorage {
-  try {
-    return window.localStorage;
-  } catch {
-    return { getItem: () => null, setItem: () => {} };
-  }
-}
-
 export function WalletProvider({ children, storage }: { children: ReactNode; storage?: WalletStorage }) {
-  const store = useMemo(() => storage ?? defaultStorage(), [storage]);
+  const store = useMemo(() => storage ?? safeStorage, [storage]);
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [status, setStatus] = useState<WalletValue['status']>('loading');
   const [storedId, setStoredId] = useState(() => readCurrentWalletId(store));

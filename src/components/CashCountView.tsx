@@ -8,7 +8,7 @@ import {
   type CountAction,
   type CountState,
   type Mode,
-} from '../utils/cashCount';
+} from '../domain/cashCount';
 import { formatCurrency } from '../utils/formatCurrency';
 
 interface CashCountViewProps {

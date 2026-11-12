@@ -2,8 +2,8 @@ import { Link } from 'react-router';
 import { ChevronRight, Lock, LockOpen, Shield } from 'lucide-react';
 import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';
-import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS, type Account } from '../db/accounts';
-import { useLoadedAccountBalances } from '../db/hooks';
+import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS, type Account } from '../domain/accounts';
+import { useLoadedAccountBalances } from '../hooks/useBalances';
 import { formatCurrency } from '../utils/formatCurrency';
 
 export default function MorePage() {

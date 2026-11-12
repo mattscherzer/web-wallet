@@ -11,16 +11,47 @@ A mobile-first Progressive Web App for tracking treasury funds across multiple a
 - 🔢 **Cash Calculator** — Count bills and coins (€0.01 to €50) to calculate totals
 - 🔒 **Owner & staff login** — owners sign in with email and password, staff with a username and 6-digit PIN; people only see the wallets they belong to; every entry records who made it; the app locks after 30 minutes of no use
 - 📝 **Audit Trail** — Full change history for every transaction
-- 📱 **Offline-First PWA** — Works without internet, installable on mobile
+- 📱 **Installable PWA** — Installs on mobile; the app shell is cached, the data needs a connection
 
 ## Tech Stack
 
 - **React 19** + **TypeScript** + **Vite**
-- **IndexedDB** via Dexie.js (offline-first data storage)
-- **React Router v7** (client-side routing)
+- **Supabase**: Postgres with row-level security, Auth and Edge Functions
+- **React Router 7** (client-side routing)
 - **Lucide React** (icons)
 - **vite-plugin-pwa** (service worker + manifest)
 - **Vanilla CSS** with custom properties
+- **Vitest** with jsdom for UI tests and PGlite (real Postgres in WASM) for migration tests
+
+## Architecture
+
+Dependencies point down; a layer never imports from a layer above it. The rules every change follows are in [docs/coding-standards.md](docs/coding-standards.md).
+
+```
+app/          composition root: App, routes, auth and wallet gates
+pages/        screens
+components/   reusable UI
+auth/ wallet/ hooks/   app state: providers, contexts, hooks
+db/           platform/                Supabase adapters, browser adapters (no React)
+domain/       utils/                   pure code
+```
+
+- `app/`: wires everything together; the only layer allowed to import any other.
+- `pages/`, `components/`: UI. They reach data through hooks and context, never `db/` or `platform/`.
+- `auth/`, `wallet/`, `hooks/`: React state and the hooks that call `db/` and `platform/`.
+- `db/`: Supabase queries and mappers, no React.
+- `platform/`: browser APIs (localStorage, file download), no React.
+- `domain/`: business rules and types (transactions, record form validation).
+- `utils/`: generic helpers (currency, dates), same rules as `domain/`.
+- `test/`: shared test fakes.
+
+The boundaries are enforced by ESLint (`npm run lint`, see `eslint.config.js`). `import type` is allowed everywhere, and test files are exempt.
+
+Three ideas hold it together:
+
+- **Pure domain layer.** Business rules take plain values and return plain values. They have no React, Supabase or browser APIs (`window`, `document` and `localStorage` are lint errors there), so they are unit-tested without React or a database.
+- **Security lives in the database.** Row-level security policies decide who can read and write what. A `role_permissions` table is read by both the policies and the UI, so they cannot drift apart. The UI only hides what the database would refuse anyway.
+- **Edge functions are pure handlers.** `staff-login` and `staff-admin` receive their dependencies (database calls, PIN hashing, the auth admin client) as arguments (ports and adapters). Only a thin entry file wires in the real Supabase clients, so the logic is unit-tested without Deno.
 
 ## Getting Started
 
@@ -39,6 +70,7 @@ npm run dev        # uses .env.development -> http://127.0.0.1:54321
 | `npm run db:start` / `db:stop` | Start / stop the local stack |
 | `npm run db:reset` | **Destructive.** Wipes the local DB, re-applies `supabase/migrations`, loads `supabase/seed.sql` |
 | `npm run db:seed` | Non-destructive: re-runs `supabase/seed.sql` (inserts are idempotent) |
+| `npm test` / `npm run lint` / `npm run typecheck` | Vitest, ESLint (including the layer boundaries), `tsc -b` |
 | `npm run dev:prod` | Runs the app against **production**, using `.env.prod.local` |
 
 The seed contains fake transactions, audit entries and two local logins: the owner `owner@example.test` (password `password123`, Owner tab) and the staff member `anna` (PIN `123456`, Staff tab). After changing a migration, rebuild the local database with `npm run db:reset`.

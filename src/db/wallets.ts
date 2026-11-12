@@ -1,19 +1,7 @@
 import { supabase } from './supabase';
-import { MAIN_ACCOUNTS } from './accounts';
-import { computeAccountBalances, type BalanceInput } from './balances';
+import { availableByWallet, type BalanceInput } from '../domain/balances';
+import { validateWalletName, WalletNameError, type Wallet } from '../domain/wallet';
 import { fetchAllRows } from './queries';
-
-export const MAX_WALLET_NAME = 60;
-
-export interface Wallet {
-  id: string;
-  name: string;
-  currency: 'EUR';
-  created_at: string;
-}
-
-/** A problem with the name the user typed, safe to show as is. */
-export class WalletNameError extends Error {}
 
 export async function fetchWallets(): Promise<Wallet[]> {
   const { data, error } = await supabase.from('wallets').select('*').order('created_at', { ascending: true });
@@ -23,11 +11,7 @@ export async function fetchWallets(): Promise<Wallet[]> {
 
 /** Creates a wallet with the logged-in owner as its owner, in one step in the database. */
 export async function createWallet(rawName: string): Promise<Wallet> {
-  const name = rawName.trim();
-  if (!name) throw new WalletNameError('Enter a wallet name');
-  if (name.length > MAX_WALLET_NAME) {
-    throw new WalletNameError(`That name is too long (max ${MAX_WALLET_NAME} characters)`);
-  }
+  const name = validateWalletName(rawName);
 
   const { data: id, error } = await supabase.rpc('create_wallet', { name });
   if (error) {
@@ -41,17 +25,6 @@ export async function createWallet(rawName: string): Promise<Wallet> {
 }
 
 type WalletBalanceRow = BalanceInput & { wallet_id: string };
-
-/** Available money (operating accounts only) per wallet; wallets without entries are 0. */
-export function availableByWallet(walletIds: string[], rows: WalletBalanceRow[]): Record<string, number> {
-  const result: Record<string, number> = {};
-  for (const id of walletIds) {
-    const balances = computeAccountBalances(rows.filter((r) => r.wallet_id === id));
-    const total = MAIN_ACCOUNTS.reduce((sum, a) => sum + (balances[a.id] ?? 0), 0);
-    result[id] = Math.round(total * 100) / 100;
-  }
-  return result;
-}
 
 export async function fetchWalletAvailableBalances(walletIds: string[]): Promise<Record<string, number>> {
   const rows = await fetchAllRows<WalletBalanceRow>((from, to) =>

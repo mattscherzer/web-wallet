@@ -9,14 +9,7 @@ const reducedMotion = () =>
 export default function LoadingIndicator({ size = 72 }: { size?: number }) {
   const still = reducedMotion();
   return (
-    <svg
-      className="loading-indicator"
-      role="img"
-      aria-label="Loading"
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-    >
+    <svg className="loading-indicator" role="img" aria-label="Loading" width={size} height={size} viewBox="0 0 48 48">
       <circle className="loading-indicator__disc" cx="24" cy="24" r="24" />
       <g>
         <path className="loading-indicator__shape" d={LOADING_SHAPES[0]}>

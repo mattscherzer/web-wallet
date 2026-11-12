@@ -21,7 +21,7 @@ vi.mock('../db/supabase', () => ({
 }));
 // The password is checked on a separate client that never touches the app's own session.
 const check = vi.hoisted(() => vi.fn(async (_email: string, password: string) => password === 'owner-pw'));
-vi.mock('./passwordCheck', () => ({ checkOwnerPassword: check }));
+vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: check }));
 
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });

@@ -3,12 +3,11 @@ import { ChevronDown, Lock, LockOpen } from 'lucide-react';
 import { useAuth } from '../auth/useAuth';
 import { useUnlock } from '../auth/unlockContext';
 import { useOptionalWallet } from '../wallet/useWallet';
-import { walletInitials } from '../wallet/walletStore';
+import { walletInitials } from '../domain/wallet';
 
 // Loaded on first open: keeps the data layer out of the shell's initial code.
 const WalletSwitcher = lazy(() => import('./WalletSwitcher'));
 
-/** Top bar with the open wallet's name; opens the wallet switcher. Draws nothing without a wallet. */
 export default function AppBar() {
   const wallet = useOptionalWallet();
   const [open, setOpen] = useState(false);

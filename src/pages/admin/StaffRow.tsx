@@ -1,16 +1,18 @@
-import { setStaffDisabled, type StaffMember } from '../../db/admin';
+import { type StaffMember } from '../../domain/staff';
 import { useOwnerAction } from '../../auth/useOwnerAction';
 import { InlineError } from '../../components/FilledField';
-import { walletInitials } from '../../wallet/walletStore';
+import { walletInitials } from '../../domain/wallet';
+import type { StaffAdmin } from '../../hooks/useStaffAdmin';
 
 interface StaffRowProps {
   member: StaffMember;
+  setStaffDisabled: StaffAdmin['setStaffDisabled'];
   onResetPin: () => void;
   onDisable: () => void;
   onDone: () => Promise<void>;
 }
 
-export default function StaffRow({ member, onResetPin, onDisable, onDone }: StaffRowProps) {
+export default function StaffRow({ member, setStaffDisabled, onResetPin, onDisable, onDone }: StaffRowProps) {
   const enable = useOwnerAction(() => setStaffDisabled(member.user_id, false), onDone);
   return (
     <li>

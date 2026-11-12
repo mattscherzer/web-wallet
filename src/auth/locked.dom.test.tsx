@@ -11,14 +11,14 @@ import {
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { findSheet, noSheet, pass, pressPin, refused, rememberStaff, shell, sheet } from '../test/lockTestKit';
-import { LAST_STAFF_KEY } from './staffLogin';
+import { LAST_STAFF_KEY } from './lastStaff';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
   supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
 const check = vi.hoisted(() => vi.fn(async (_email: string, password: string) => password === 'owner-pw'));
-vi.mock('./passwordCheck', () => ({ checkOwnerPassword: check }));
+vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: check }));
 
 beforeEach(() => {
   localStorage.clear();

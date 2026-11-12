@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-
-export type Role = 'owner' | 'staff';
+import type { Role } from '../domain/access';
 
 export interface AuthUser {
   id: string;
@@ -34,9 +33,7 @@ export interface AuthValue {
   signIn(email: string, password: string): Promise<string | null>;
   /** Staff login with username and 6-digit PIN. */
   signInStaff(username: string, pin: string): Promise<AccessResult>;
-  /** Ends the session on this device only. */
   signOut(): Promise<void>;
-  /** Makes the app view only; the person stays signed in. */
   lock(): Promise<void>;
   /** Re-checks who is holding the phone: the staff PIN or the owner's password. Unlocks when it matches. */
   unlock(secret: string): Promise<AccessResult>;

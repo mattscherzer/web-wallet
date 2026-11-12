@@ -12,7 +12,7 @@ import {
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { AuthProvider } from './AuthProvider';
-import { AuthGate } from './AuthGate';
+import { AuthGate } from '../app/AuthGate';
 import { IDLE_LOCK_MS, LAST_ACTIVITY_KEY } from './idleLock';
 import { useAuth } from './useAuth';
 
@@ -91,6 +91,15 @@ describe('inactivity lock', () => {
     await pass(2 * MIN);
     expect(signedInAndLocked()).toBe(true);
     expect(ref.fake.signOutScopes).toEqual([]);
+  });
+
+  it('T1b steady use keeps the remembered last-use time fresh, so a reload after long use is not locked', async () => {
+    await openApp();
+    for (let i = 0; i < 150; i++) {
+      fireEvent.keyDown(document, { key: 'a' });
+      await pass(4_000);
+    }
+    expect(Date.now() - Number(localStorage.getItem(LAST_ACTIVITY_KEY))).toBeLessThan(10_000);
   });
 
   it('T2 the Lock button locks at once without signing out; only Sign out ends the session', async () => {

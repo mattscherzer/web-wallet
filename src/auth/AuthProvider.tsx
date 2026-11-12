@@ -1,66 +1,18 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { supabase } from '../db/supabase';
+import { getSession, onAuthStateChange, setSession, signInWithPassword, signOutLocal } from '../db/session';
+import { loadProfile } from '../db/profile';
+import { safeStorage } from '../platform/storage';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
-import {
-  AuthContext,
-  type AccessResult,
-  type AuthProfile,
-  type AuthUser,
-  type AuthValue,
-  type Role,
-} from './authContext';
-import { checkOwnerPassword } from './passwordCheck';
-import { idleExpired, rememberActivity, useIdleLock } from './idleLock';
-import { checkStaffPin, forgetStaff, readLastStaff, rememberStaff, requestStaffLogin } from './staffLogin';
+import { AuthContext, type AccessResult, type AuthValue } from './authContext';
+import { checkOwnerPassword } from '../db/ownerPassword';
+import { idleExpired, readLock, rememberActivity, useIdleLock, writeLock, type LockReason } from './idleLock';
+import { checkStaffPin, requestStaffLogin } from '../db/staffLogin';
+import { forgetStaff, readLastStaff, rememberStaff } from './lastStaff';
 
 type State = Pick<AuthValue, 'status' | 'user' | 'profile'> & { permissions: ReadonlySet<string> };
 const SIGNED_OUT: State = { status: 'signedOut', user: null, profile: null, permissions: new Set() };
 
-function forgetWallet() {
-  try {
-    window.localStorage.removeItem(CURRENT_WALLET_KEY);
-  } catch {
-    // Storage blocked: nothing was remembered anyway.
-  }
-}
-
-/** Kept in storage so a reload or reopened app is still locked. */
-const LOCKED_KEY = 'treasury.locked';
-type LockReason = 'manual' | 'idle';
-
-function readLock(): LockReason | null {
-  try {
-    const v = window.localStorage.getItem(LOCKED_KEY);
-    return v === 'manual' || v === 'idle' ? v : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeLock(reason: LockReason | null) {
-  try {
-    if (reason) window.localStorage.setItem(LOCKED_KEY, reason);
-    else window.localStorage.removeItem(LOCKED_KEY);
-  } catch {
-    // Storage blocked: the lock then lasts until the app is reloaded.
-  }
-}
-
-async function loadProfile(user: AuthUser): Promise<{ profile: AuthProfile; permissions: ReadonlySet<string> }> {
-  const { data, error } = await supabase.from('profiles').select('display_name, kind').eq('id', user.id).single();
-  if (error || !data) {
-    console.error('Failed to load the profile:', error);
-    // Without a profile nothing is offered; the database refuses anyway.
-    return { profile: { displayName: user.email, kind: 'staff' }, permissions: new Set() };
-  }
-  const kind: Role = data.kind === 'owner' ? 'owner' : 'staff';
-  const perms = await supabase.from('role_permissions').select('action').eq('role', kind);
-  if (perms.error) console.error('Failed to load the permissions:', perms.error);
-  return {
-    profile: { displayName: String(data.display_name) || user.email, kind },
-    permissions: new Set((perms.data ?? []).map((p) => String(p.action))),
-  };
-}
+const forgetWallet = () => safeStorage.removeItem(CURRENT_WALLET_KEY);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>({ ...SIGNED_OUT, status: 'loading' });
@@ -84,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (live) setState({ status: 'signedIn', user, profile, permissions });
     };
 
-    supabase.auth.getSession().then(
+    getSession().then(
       async ({ data }) => {
         // The app was closed or reloaded after the idle limit: it comes back locked, still signed in.
         if (data.session && idleExpired() && !readLock()) applyLock('idle');
@@ -96,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     );
 
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data } = onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         forgetWallet();
         applyLock(null);
@@ -115,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(
     async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      const { error } = await signInWithPassword(email.trim(), password);
       if (!error) applyLock(null);
       return error ? error.message : null;
     },
@@ -127,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const name = username.trim().toLowerCase();
       const result = await requestStaffLogin(name, pin);
       if (!result.ok) return result.kind === 'error' ? { ok: false, kind: 'error' } : result;
-      const { error } = await supabase.auth.setSession({
+      const { error } = await setSession({
         access_token: result.session.access_token,
         refresh_token: result.session.refresh_token,
       });
@@ -139,12 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applyLock],
   );
 
-  // Ends the session on this device only: other devices of the same account stay signed in.
   const signOut = useCallback(async () => {
     forgetWallet();
     forgetStaff(); // handing the phone over: the next person types their own username
     applyLock(null);
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    const { error } = await signOutLocal();
     if (error) console.error('Failed to sign out:', error);
     setState(SIGNED_OUT);
   }, [applyLock]);
@@ -167,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!ok) return { ok: false, kind: 'wrong' };
       } else {
         const username = readLastStaff();
-        if (!username) return { ok: false, kind: 'error' }; // nobody to check the PIN for
+        if (!username) return { ok: false, kind: 'error' };
         const result = await checkStaffPin(username, secret);
         if (!result.ok) return result;
         // The PIN has to belong to the person signed in on this phone, not just to some staff member.

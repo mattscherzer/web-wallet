@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { CashCountView } from './CashCountView';
-import { applyAndClose, countReducer, initialCountState } from '../utils/cashCount';
+import { applyAndClose, countReducer, initialCountState } from '../domain/cashCount';
 
 interface CashCalculatorProps {
   isOpen: boolean;

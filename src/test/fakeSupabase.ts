@@ -55,7 +55,7 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
   }
 
   class Query implements PromiseLike<Result> {
-    private op: 'select' | 'insert' | 'update' = 'select';
+    private op: 'select' | 'insert' | 'update' | 'delete' = 'select';
     private payload: Row | Row[] = {};
     private filters: [string, unknown][] = [];
     private orders: { column: string; ascending: boolean }[] = [];
@@ -79,6 +79,10 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
     update(payload: Row) {
       this.op = 'update';
       this.payload = payload;
+      return this;
+    }
+    delete() {
+      this.op = 'delete';
       return this;
     }
     eq(column: string, value: unknown) {
@@ -127,14 +131,20 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
           ...r,
         }));
         rows.push(...inserted);
-        return { data: this.single_ ? inserted[0] : inserted, error: null };
+        const copies = inserted.map((r) => ({ ...r }));
+        return { data: this.single_ ? copies[0] : copies, error: null };
       }
 
       let matched = rows.filter((r) => this.filters.every(([c, v]) => r[c] === v));
 
       if (this.op === 'update') {
         matched.forEach((r) => Object.assign(r, this.payload));
-        return { data: matched, error: null };
+        return { data: matched.map((r) => ({ ...r })), error: null };
+      }
+
+      if (this.op === 'delete') {
+        for (const r of matched) rows.splice(rows.indexOf(r), 1);
+        return { data: matched.map((r) => ({ ...r })), error: null };
       }
 
       for (const { column, ascending } of [...this.orders].reverse()) {
@@ -147,6 +157,7 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
       // Like the real API: at most 1000 rows per request unless a range says otherwise.
       matched = this.window ? matched.slice(this.window[0], this.window[1] + 1) : matched.slice(0, 1000);
       if (this.max !== undefined) matched = matched.slice(0, this.max);
+      matched = matched.map((r) => ({ ...r }));
       if (this.single_) {
         return matched[0] ? { data: matched[0], error: null } : { data: null, error: { message: 'not found' } };
       }

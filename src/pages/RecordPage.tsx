@@ -1,28 +1,29 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { Calculator, X } from 'lucide-react';
-import { ACCOUNTS, createTransaction, getAccountLabel, type AccountId } from '../db/database';
-import { useLoadedAccountBalances } from '../db/hooks';
-import { emptyBalances } from '../db/balances';
+import { getAccountLabel } from '../domain/accounts';
+import { useLoadedAccountBalances } from '../hooks/useBalances';
+import { useTransactionCommands } from '../hooks/useTransactionCommands';
 import { getTodayString } from '../utils/dateHelpers';
 import { formatCurrency } from '../utils/formatCurrency';
-import { wouldOverdraw } from '../utils/expense';
+import { wouldOverdraw } from '../domain/overdraw';
 import {
   CATEGORIES,
   TYPE_PARAMS,
+  descriptionLabel,
+  initialRecordForm,
+  switchRecordType,
   parseAmount,
   recordActionLabel,
-  recordPreview,
-  toTransactionInput,
   validateRecord,
   type FieldError,
   type RecordForm,
   type RecordType,
-} from '../utils/recordForm';
+} from '../domain/recordForm';
 import ErrorSummary from '../components/ErrorSummary';
 import CashCalculator from '../components/CashCalculator';
-import { useWallet } from '../wallet/useWallet';
-import { useAuth } from '../auth/useAuth';
+import AccountChoices from '../components/record/AccountChoices';
+import BalancePreview from '../components/record/BalancePreview';
 import { useUnlock } from '../auth/unlockContext';
 
 const TYPES: { id: RecordType; label: string }[] = [
@@ -43,25 +44,15 @@ const SAVE_FAILED = "Couldn't record this entry. Nothing was saved. Try again.";
 /** One screen for money in, money out and transfers. The type comes from the address (?type=in|out|transfer). */
 export default function RecordPage() {
   const navigate = useNavigate();
-  const { current: wallet } = useWallet();
-  const { profile } = useAuth();
+  const { create } = useTransactionCommands();
   const { requireUnlocked } = useUnlock();
   const [params] = useSearchParams();
   // null until the balances have really been fetched, so nothing is previewed or warned from zeros.
   const loadedBalances = useLoadedAccountBalances();
 
-  const [form, setForm] = useState<RecordForm>(() => {
-    const type = TYPE_PARAMS[params.get('type') ?? ''] ?? 'inflow';
-    return {
-      type,
-      amount: '',
-      accountId: type === 'transfer' ? 'bank' : 'cash',
-      fromAccountId: 'cash',
-      category: type === 'transfer' ? '' : CATEGORIES[type][0].id,
-      description: '',
-      date: getTodayString(),
-    };
-  });
+  const [form, setForm] = useState<RecordForm>(() =>
+    initialRecordForm(TYPE_PARAMS[params.get('type') ?? ''] ?? 'inflow', getTodayString()),
+  );
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [errorRound, setErrorRound] = useState(0);
   const [showCount, setShowCount] = useState(false);
@@ -77,11 +68,7 @@ export default function RecordPage() {
   const set = (patch: Partial<RecordForm>) => setForm((f) => ({ ...f, ...patch }));
   const setType = (type: RecordType) => {
     setErrors([]);
-    set({
-      type,
-      category: type === 'transfer' ? '' : CATEGORIES[type][0].id,
-      accountId: type === 'transfer' ? (form.fromAccountId === 'bank' ? 'cash' : 'bank') : form.accountId,
-    });
+    setForm((f) => switchRecordType(f, type));
   };
 
   const submit = (e: FormEvent) => {
@@ -98,13 +85,9 @@ export default function RecordPage() {
   };
 
   const save = async () => {
-    if (!wallet) {
-      setSaveError(SAVE_FAILED);
-      return;
-    }
     setSaving(true);
     try {
-      const id = await createTransaction(toTransactionInput(form, wallet.id), profile?.displayName);
+      const id = await create(form);
       navigate(`/recorded/${id}`);
     } catch {
       setSaveError(SAVE_FAILED);
@@ -126,34 +109,9 @@ export default function RecordPage() {
     );
 
   const isTransfer = form.type === 'transfer';
-  const preview = recordPreview(form, loadedBalances ?? emptyBalances());
   const overdraws =
     form.type === 'outflow' && wouldOverdraw(loadedBalances?.[form.accountId] ?? null, parseAmount(form.amount));
   const categories = form.type === 'transfer' ? [] : CATEGORIES[form.type];
-  const descriptionLabel =
-    form.type === 'outflow'
-      ? 'Paid to or what for'
-      : form.type === 'inflow' && form.category === 'other'
-        ? 'What was it for?'
-        : 'Notes (optional)';
-
-  const accountChoices = (name: string, value: AccountId, onPick: (id: AccountId) => void, invalidId?: string) => (
-    <div className="choice-group" role="radiogroup" aria-label={name}>
-      {ACCOUNTS.map((a) => (
-        <label key={a.id} className={`choice${value === a.id ? ' choice--on' : ''}`}>
-          <input
-            type="radio"
-            name={name}
-            value={a.id}
-            checked={value === a.id}
-            onChange={() => onPick(a.id)}
-            id={a.id === value ? invalidId : undefined}
-          />
-          <span>{a.name}</span>
-        </label>
-      ))}
-    </div>
-  );
 
   return (
     <div className="record">
@@ -219,20 +177,31 @@ export default function RecordPage() {
           <>
             <div className="form-section">
               <span className="form-label">From account</span>
-              {accountChoices('From account', form.fromAccountId, (id) => set({ fromAccountId: id }))}
+              <AccountChoices
+                name="From account"
+                value={form.fromAccountId}
+                onPick={(id) => set({ fromAccountId: id })}
+              />
             </div>
             <div className="form-section">
               <span className="form-label">To account</span>
-              {accountChoices('To account', form.accountId, (id) => set({ accountId: id }), FIELD_IDS.accountId)}
+              <AccountChoices
+                name="To account"
+                value={form.accountId}
+                onPick={(id) => set({ accountId: id })}
+                invalidId={FIELD_IDS.accountId}
+              />
               {message('accountId')}
             </div>
           </>
         ) : (
           <div className="form-section">
             <span className="form-label">{form.type === 'inflow' ? 'Into account' : 'From account'}</span>
-            {accountChoices(form.type === 'inflow' ? 'Into account' : 'From account', form.accountId, (id) =>
-              set({ accountId: id }),
-            )}
+            <AccountChoices
+              name={form.type === 'inflow' ? 'Into account' : 'From account'}
+              value={form.accountId}
+              onPick={(id) => set({ accountId: id })}
+            />
           </div>
         )}
 
@@ -258,7 +227,7 @@ export default function RecordPage() {
 
         <div className="form-section">
           <label className="form-label" htmlFor={FIELD_IDS.description}>
-            {descriptionLabel}
+            {descriptionLabel(form)}
           </label>
           <input
             {...fieldProps('description')}
@@ -284,22 +253,7 @@ export default function RecordPage() {
           {message('date')}
         </div>
 
-        <div className="preview" aria-live="polite">
-          {loadedBalances === null && <p className="preview__line">Checking balances…</p>}
-          {loadedBalances !== null &&
-            preview.lines.map((line, i) => (
-              <p key={`${line.accountId}-${i}`} className="preview__line">
-                <span>{getAccountLabel(line.accountId)}</span>
-                <span className="num">→ {formatCurrency(line.after)}</span>
-              </p>
-            ))}
-          {loadedBalances !== null && (
-            <p className="preview__line">
-              <span>Available</span>
-              <span className="num">→ {formatCurrency(preview.availableAfter)}</span>
-            </p>
-          )}
-        </div>
+        <BalancePreview form={form} balances={loadedBalances} />
 
         {overdraws && (
           <p className="form-warning" role="status">

@@ -3,17 +3,23 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffLogin } from '../_shared/staffLogin.ts';
-import { mintStaffSession, type StaffAdminClient } from '../_shared/staffSession.ts';
+import { mintStaffSession, type StaffSessionClient } from '../_shared/staffSession.ts';
 
-const url = Deno.env.get('SUPABASE_URL')!;
-const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+function env(name: string): string {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing environment variable ${name}`);
+  return value;
+}
+
+const url = env('SUPABASE_URL');
+const serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
+const anonKey = env('SUPABASE_ANON_KEY');
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
 // Compared against when the username is unknown, so that unknown and known names take the same time.
 const DUMMY_HASH = bcrypt.hashSync('000000', 10);
 
-const sessionClient: StaffAdminClient = {
+const sessionClient: StaffSessionClient = {
   generateLink: async ({ email }) => {
     const { data, error } = await admin.auth.admin.generateLink({ type: 'magiclink', email });
     return { data: data?.properties ? { properties: { email_otp: data.properties.email_otp } } : null, error };
@@ -24,8 +30,6 @@ const sessionClient: StaffAdminClient = {
     const { data, error } = await fresh.auth.verifyOtp({ email, token, type: 'email' });
     return { data: { session: data.session as unknown as Record<string, unknown> | null }, error };
   },
-  signInWithPassword: () => Promise.reject(new Error('staff never sign in with a password')),
-  createUser: () => Promise.reject(new Error('not used here')),
   getUserEmail: async (userId) => {
     const { data, error } = await admin.auth.admin.getUserById(userId);
     if (error || !data.user?.email) throw new Error('unknown staff login');

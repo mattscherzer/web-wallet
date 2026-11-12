@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { AuthProvider } from '../auth/AuthProvider';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
-import WalletGate from '../wallet/WalletGate';
+import WalletGate from '../app/WalletGate';
 import {
   createFakeSupabase,
   FAKE_MEMBERS,
@@ -23,7 +23,7 @@ const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
   supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
-vi.mock('../auth/passwordCheck', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
+vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: async (_e: string, p: string) => p === 'owner-pw' }));
 
 function seed(rows: Record<string, Record<string, unknown>[]>) {
   ref.fake = createFakeSupabase(
@@ -46,7 +46,12 @@ function show(userId: string, node: React.ReactNode, path = '/') {
 describe('staff with no wallet', () => {
   it('T32 sees "No wallet yet" with the explanation, and Sign out ends the session', async () => {
     seed({ ...twoWalletRows(), wallets: [] });
-    show('u-anna', <WalletGate><p>the books</p></WalletGate>);
+    show(
+      'u-anna',
+      <WalletGate>
+        <p>the books</p>
+      </WalletGate>,
+    );
     expect(await screen.findByRole('heading', { name: 'No wallet yet' })).toBeTruthy();
     expect(screen.getByText('You aren’t a member of any wallet yet. Ask the owner to add you.')).toBeTruthy();
     expect(screen.queryByText('the books')).toBeNull();
@@ -56,7 +61,12 @@ describe('staff with no wallet', () => {
 
   it('T33 an owner with no wallet is welcomed and offered Create a wallet', async () => {
     seed({ ...twoWalletRows(), wallets: [] });
-    show('u-owner', <WalletGate><p>the books</p></WalletGate>);
+    show(
+      'u-owner',
+      <WalletGate>
+        <p>the books</p>
+      </WalletGate>,
+    );
     expect(await screen.findByRole('heading', { name: 'Keep your group’s books, together' })).toBeTruthy();
     expect(screen.getByRole('link', { name: /Create a wallet/ }).getAttribute('href')).toBe('/wallets/new');
   });

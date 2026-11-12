@@ -2,7 +2,6 @@ import { Link } from 'react-router';
 import { Lock, Plus } from 'lucide-react';
 import { useAuth } from '../auth/useAuth';
 
-/** First run: this device has no wallet yet. */
 export default function WelcomePage() {
   const { profile, signOut } = useAuth();
   if (profile && profile.kind !== 'owner') {

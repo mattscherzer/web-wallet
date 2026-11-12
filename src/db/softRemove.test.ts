@@ -12,7 +12,7 @@ vi.mock('./supabase', () => ({
 }));
 
 // Loaded dynamically so missing exports fail the assertion instead of crashing the file.
-const db = await import('./database');
+const db = await import('./transactions');
 const queries = await import('./queries');
 const api = db as unknown as {
   removeTransaction?: (

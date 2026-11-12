@@ -43,4 +43,19 @@ describe('History page export', () => {
     expect(text).toContain('b1');
     expect(text).not.toMatch(/a1|a2|a3/);
   });
+
+  it('shows an inline error when the export fails and clears it on the next attempt', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(walletApp(<HistoryPage />, { current: 'wb' }));
+    await screen.findByText(/b1/);
+    ref.fake.failNext('transactions:select', { message: 'offline' });
+    fireEvent.click(screen.getByRole('button', { name: /Export CSV/ }));
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      "Couldn't export the history. Check your connection and try again.",
+    );
+    expect(blobs).toHaveLength(0);
+    fireEvent.click(screen.getByRole('button', { name: /Export CSV/ }));
+    await waitFor(() => expect(blobs).toHaveLength(1));
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
 });

@@ -1,13 +1,6 @@
 import { supabase } from './supabase';
-import { functionErrorMessage } from '../auth/functionError';
-
-export interface StaffMember {
-  user_id: string;
-  username: string;
-  display_name: string;
-  wallet_id: string;
-  disabled: boolean;
-}
+import { functionErrorMessage } from './functionError';
+import type { StaffMember } from '../domain/staff';
 
 /** One call to the staff-admin edge function (it checks that the caller owns the wallet involved). */
 async function staffAdmin<T>(body: Record<string, unknown>): Promise<T> {

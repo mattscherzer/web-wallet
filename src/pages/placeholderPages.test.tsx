@@ -21,7 +21,7 @@ describe('placeholder pages', () => {
   });
 
   it('App declares the reports and more routes', () => {
-    const app = readFileSync(new URL('../App.tsx', import.meta.url), 'utf8');
+    const app = readFileSync(new URL('../app/App.tsx', import.meta.url), 'utf8');
     expect(app).toMatch(/path="reports"/);
     expect(app).toMatch(/path="more"/);
   });

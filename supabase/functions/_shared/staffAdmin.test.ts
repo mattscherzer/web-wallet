@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { handleStaffAdmin, type StaffAdminDeps } from './staffAdmin';
 
 const OWNER = 'owner-token';
@@ -91,6 +91,17 @@ describe('staff admin', () => {
     expect(bad.status).toBe(500);
     expect(failing.log).toEqual(['auth:new-Mia', 'deleted:new-Mia']);
     expect(failing.users.size).toBe(0);
+  });
+
+  it('T14b2 a disable whose ban fails is undone, so the staff member is not left half disabled', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const s = setup({
+      setBanned: async () => {
+        throw new Error('auth down');
+      },
+    });
+    expect((await s.call(OWNER, { action: 'disable', user_id: 'u-anna' })).status).toBe(500);
+    expect(s.log).toEqual(['disable:u-anna', 'enable:u-anna']);
   });
 
   it('T14b the owner can reset a PIN and disable or re-enable staff', async () => {

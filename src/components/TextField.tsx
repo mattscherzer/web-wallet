@@ -6,12 +6,18 @@ interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   /** A password field gets a show/hide toggle. */
   password?: boolean;
   type?: string;
-  /** Small helper line under the field. */
   hint?: string;
 }
 
-/** A labelled input; password fields can be shown and hidden. */
-export default function TextField({ label, password = false, type = 'text', id, className = '', hint, ...rest }: TextFieldProps) {
+export default function TextField({
+  label,
+  password = false,
+  type = 'text',
+  id,
+  className = '',
+  hint,
+  ...rest
+}: TextFieldProps) {
   const auto = useId();
   const inputId = id ?? auto;
   const [shown, setShown] = useState(false);

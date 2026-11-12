@@ -9,12 +9,10 @@ interface BottomSheetProps {
   className?: string;
   text?: string;
   onClose: () => void;
-  /** Show a close (X) button beside the title. */
   showClose?: boolean;
   children: ReactNode;
 }
 
-/** A sheet that slides up over the page: drag handle, title, one sentence, then the content. */
 export default function BottomSheet({
   title,
   label,

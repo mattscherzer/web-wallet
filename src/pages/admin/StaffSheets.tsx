@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { ChevronDown, KeyRound, UserPlus, UserX } from 'lucide-react';
-import { createStaff, resetStaffPin, setStaffDisabled, type StaffMember } from '../../db/admin';
-import type { Wallet } from '../../db/wallets';
-import { PIN_LENGTH, isPin } from '../../auth/pin';
+import { type StaffMember } from '../../domain/staff';
+import type { Wallet } from '../../domain/wallet';
+import { PIN_LENGTH, isPin } from '../../domain/pin';
 import { useOwnerAction } from '../../auth/useOwnerAction';
 import BottomSheet from '../../components/BottomSheet';
 import { Field, InlineError, PinInput } from '../../components/FilledField';
+import type { StaffAdmin } from '../../hooks/useStaffAdmin';
 
 const PIN_PROBLEM = `The PIN must be exactly ${PIN_LENGTH} digits`;
 const PIN_HINT = `${PIN_LENGTH} digits. Hand it over in person.`;
@@ -17,10 +18,11 @@ interface SheetProps {
 
 export function AddStaffSheet({
   wallets,
+  createStaff,
   initialWalletId,
   onClose,
   onDone,
-}: SheetProps & { wallets: Wallet[]; initialWalletId?: string }) {
+}: SheetProps & { wallets: Wallet[]; createStaff: StaffAdmin['createStaff']; initialWalletId?: string }) {
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [pin, setPin] = useState('');
@@ -91,7 +93,12 @@ export function AddStaffSheet({
   );
 }
 
-export function ResetPinSheet({ member, onClose, onDone }: SheetProps & { member: StaffMember }) {
+export function ResetPinSheet({
+  member,
+  resetStaffPin,
+  onClose,
+  onDone,
+}: SheetProps & { member: StaffMember; resetStaffPin: StaffAdmin['resetStaffPin'] }) {
   const [pin, setPin] = useState('');
   const { error, setError, busy, go } = useOwnerAction(() => resetStaffPin(member.user_id, pin), onDone);
   const submit = (e: FormEvent) => {
@@ -127,7 +134,12 @@ export function ResetPinSheet({ member, onClose, onDone }: SheetProps & { member
   );
 }
 
-export function DisableSheet({ member, onClose, onDone }: SheetProps & { member: StaffMember }) {
+export function DisableSheet({
+  member,
+  setStaffDisabled,
+  onClose,
+  onDone,
+}: SheetProps & { member: StaffMember; setStaffDisabled: StaffAdmin['setStaffDisabled'] }) {
   const { error, busy, go } = useOwnerAction(() => setStaffDisabled(member.user_id, true), onDone);
   const name = member.display_name;
   return (

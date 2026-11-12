@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { pickCurrentWallet, readCurrentWalletId, writeCurrentWalletId } from './walletStore';
+import { pickCurrentWallet } from '../domain/wallet';
+import { readCurrentWalletId, writeCurrentWalletId } from './walletStore';
 
 const broken = {
   getItem: () => {
