@@ -93,6 +93,15 @@ describe('inactivity lock', () => {
     expect(ref.fake.signOutScopes).toEqual([]);
   });
 
+  it('T1b steady use keeps the remembered last-use time fresh, so a reload after long use is not locked', async () => {
+    await openApp();
+    for (let i = 0; i < 150; i++) {
+      fireEvent.keyDown(document, { key: 'a' });
+      await pass(4_000);
+    }
+    expect(Date.now() - Number(localStorage.getItem(LAST_ACTIVITY_KEY))).toBeLessThan(10_000);
+  });
+
   it('T2 the Lock button locks at once without signing out; only Sign out ends the session', async () => {
     await openApp();
     fireEvent.click(screen.getByRole('button', { name: 'Lock' }));

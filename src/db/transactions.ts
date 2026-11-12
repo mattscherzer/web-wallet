@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import type { AccountId } from '../domain/accounts';
 import { isRemoveReason, type AuditAction, type Transaction } from '../domain/transaction';
 
 // The history row is written after the change; if it fails the change is undone, so nothing is changed without a trace.
@@ -57,28 +56,6 @@ export async function createTransaction(
   );
 
   return id;
-}
-
-// ─── Create Transfer (between accounts) ─────────────────
-export async function createTransfer(data: {
-  wallet_id: string;
-  amount: number;
-  date: string;
-  from_account_id: AccountId;
-  account_id: AccountId;
-  notes: string;
-}): Promise<string> {
-  return createTransaction({
-    wallet_id: data.wallet_id,
-    type: 'transfer',
-    amount: data.amount,
-    date: data.date,
-    account_id: data.account_id,
-    from_account_id: data.from_account_id,
-    category: 'transfer',
-    notes: data.notes,
-    reason: null,
-  });
 }
 
 // ─── Update Transaction ─────────────────────────────────

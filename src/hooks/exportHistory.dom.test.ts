@@ -40,4 +40,24 @@ describe('CSV download', () => {
     await expect(exportHistory('wb', 'Spring Convention 2027')).rejects.toBeDefined();
     expect(blobs).toHaveLength(0);
   });
+
+  it('includes every entry of a wallet with more than 1000', async () => {
+    const rows = Array.from({ length: 1001 }, (_, i) => ({
+      id: `m${i}`,
+      wallet_id: 'wb',
+      type: 'inflow',
+      amount: 1,
+      date: '2026-04-01',
+      account_id: 'bank',
+      from_account_id: null,
+      category: 'sales',
+      notes: `n${i}`,
+      deleted: false,
+      created_at: new Date(Date.UTC(2026, 3, 1, 0, 0, i)).toISOString(),
+    }));
+    ref.fake = createFakeSupabase({ ...twoWalletRows(), transactions: rows });
+    await exportHistory('wb', 'Spring Convention 2027');
+    const text = await blobs[0].text();
+    expect(text).toContain('n1000');
+  });
 });

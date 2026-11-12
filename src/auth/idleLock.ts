@@ -39,6 +39,7 @@ const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'touchstart', 'scroll'] as co
  */
 export function useIdleLock(active: boolean, onLock: () => void) {
   const lastActivity = useRef(0);
+  const lastWrite = useRef(0);
   const lock = useRef(onLock);
   useEffect(() => {
     lock.current = onLock;
@@ -48,6 +49,7 @@ export function useIdleLock(active: boolean, onLock: () => void) {
     if (!active) return;
     lastActivity.current = Date.now();
     rememberActivity(lastActivity.current);
+    lastWrite.current = lastActivity.current;
     let timer: ReturnType<typeof setTimeout>;
 
     const check = () => {
@@ -63,7 +65,10 @@ export function useIdleLock(active: boolean, onLock: () => void) {
     const touch = () => {
       const now = Date.now();
       // Written at most every few seconds: storage writes on every scroll or key press would be wasteful.
-      if (now - lastActivity.current > 5_000) rememberActivity(now);
+      if (now - lastWrite.current > 5_000) {
+        rememberActivity(now);
+        lastWrite.current = now;
+      }
       lastActivity.current = now;
     };
     const onVisible = () => {

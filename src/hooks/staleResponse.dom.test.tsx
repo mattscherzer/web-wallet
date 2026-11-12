@@ -38,4 +38,22 @@ describe('slow answer from the previous wallet', () => {
     });
     expect(result.current.txs.map((t) => t.notes)).toEqual(['b1']);
   });
+
+  it('keeps the answer for the newest filter when an older request for the same wallet lands last', async () => {
+    const release = ref.fake.holdNext('transactions:select');
+    const { result, rerender } = renderHook(
+      ({ filter }: { filter: 'all' | 'outflow' }) => ({
+        wallet: useWallet(),
+        txs: useFilteredTransactions(filter, ''),
+      }),
+      { wrapper: ({ children }) => walletApp(children, { current: 'wa' }), initialProps: { filter: 'all' } },
+    );
+    await waitFor(() => expect(result.current.wallet.current?.id).toBe('wa'));
+    rerender({ filter: 'outflow' });
+    await waitFor(() => expect(result.current.txs.map((t) => t.notes)).toEqual(['a2']));
+    await act(async () => {
+      release();
+    });
+    expect(result.current.txs.map((t) => t.notes)).toEqual(['a2']);
+  });
 });

@@ -31,18 +31,22 @@ export async function fetchTransactions(
   walletId: string,
   { type, removed = 'exclude', limit, ascending = false }: TransactionQuery = {},
 ): Promise<Transaction[]> {
-  let query = supabase
-    .from('transactions')
-    .select('*')
-    .eq('wallet_id', walletId)
-    .order('date', { ascending })
-    .order('created_at', { ascending });
+  const build = () => {
+    // `id` last: pages are only stable when the order has no ties.
+    let query = supabase
+      .from('transactions')
+      .select('*')
+      .eq('wallet_id', walletId)
+      .order('date', { ascending })
+      .order('created_at', { ascending })
+      .order('id', { ascending });
+    if (removed === 'exclude') query = query.eq('deleted', false);
+    if (type) query = query.eq('type', type);
+    return query;
+  };
 
-  if (removed === 'exclude') query = query.eq('deleted', false);
-  if (type) query = query.eq('type', type);
-  if (limit !== undefined) query = query.limit(limit);
-
-  const { data, error } = await query;
+  if (limit === undefined) return fetchAllRows<Transaction>((from, to) => build().range(from, to));
+  const { data, error } = await build().limit(limit);
   if (error) throw error;
   return (data ?? []) as Transaction[];
 }

@@ -40,11 +40,16 @@ export function useWalletQuery<T>(
     openWalletId.current = walletId;
   }, [walletId]);
 
+  // Only the newest request may answer: an older one for the same wallet (other filter, earlier refresh) is dropped.
+  const newest = useRef(0);
+
   const refresh = useCallback(async () => {
     if (!walletId) return;
+    const request = ++newest.current;
+    const isCurrent = () => openWalletId.current === walletId && newest.current === request;
     try {
       const result = await queryFn(walletId);
-      if (openWalletId.current === walletId)
+      if (isCurrent())
         setState({
           walletId,
           data: result,
@@ -53,7 +58,7 @@ export function useWalletQuery<T>(
         });
     } catch (err) {
       console.error('Supabase query error:', err);
-      if (openWalletId.current !== walletId) return;
+      if (!isCurrent()) return;
       // Keep this wallet's data if it has some; never carry over another wallet's.
       setState((prev) =>
         prev.walletId === walletId

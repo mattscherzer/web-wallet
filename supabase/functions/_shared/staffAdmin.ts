@@ -84,7 +84,13 @@ function onStaffMember(act: (targetId: string, body: Record<string, unknown>, de
 
 const setDisabledAndBanned = (disabled: boolean) => async (userId: string, _body: Record<string, unknown>, deps: StaffAdminDeps) => {
   await deps.setDisabled(userId, disabled);
-  await deps.setBanned(userId, disabled);
+  try {
+    await deps.setBanned(userId, disabled);
+  } catch (error) {
+    // Half done is worse than failed: put the flag back so the owner sees the real state.
+    await deps.setDisabled(userId, !disabled).catch((cleanup) => console.error('staff-admin: could not undo', cleanup));
+    throw error;
+  }
 };
 
 // A new action is one more entry here; the handler below does not change.

@@ -1,12 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFakeSupabase, type FakeSupabase } from '../test/fakeSupabase';
-import {
-  createTransaction,
-  createTransfer,
-  removeTransaction,
-  restoreTransaction,
-  updateTransaction,
-} from './transactions';
+import { createTransaction, removeTransaction, restoreTransaction, updateTransaction } from './transactions';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('./supabase', () => ({
@@ -36,19 +30,6 @@ describe('writing to the chosen wallet', () => {
       reason: null,
     });
     expect(ref.fake.tables.transactions[0].wallet_id).toBe('wb');
-    expect(ref.fake.tables.audit_log[0].wallet_id).toBe('wb');
-  });
-
-  it('stores a transfer and its history record under the wallet', async () => {
-    await createTransfer({
-      wallet_id: 'wb',
-      amount: 5,
-      date: '2026-04-01',
-      from_account_id: 'bank',
-      account_id: 'cash',
-      notes: '',
-    });
-    expect(ref.fake.tables.transactions[0]).toMatchObject({ wallet_id: 'wb', type: 'transfer' });
     expect(ref.fake.tables.audit_log[0].wallet_id).toBe('wb');
   });
 
