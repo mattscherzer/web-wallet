@@ -1,3 +1,4 @@
+import { useHoldLockNotice } from '../../auth/unlockContext';
 import { indexStyle } from '../../components/indexStyle';
 import AdminHeader from './AdminHeader';
 
@@ -25,6 +26,7 @@ function SkeletonRows({ count, actions }: { count: number; actions?: boolean }) 
 }
 
 export default function AdminSkeleton() {
+  useHoldLockNotice();
   return (
     <div className="admin" role="status" aria-busy="true" aria-label="Loading wallets and staff">
       <AdminHeader />
