@@ -216,6 +216,22 @@ describe('the idle lock banner', () => {
       vi.useRealTimers();
     }
   });
+
+  it('the bar dismisses itself after a few seconds', async () => {
+    vi.useFakeTimers();
+    try {
+      rememberStaff();
+      ref.fake.signIn('u-anna');
+      shell();
+      await pass(100);
+      await pass(31 * 60_000);
+      expect(screen.getByText('Locked after 30 minutes without use')).toBeTruthy();
+      await pass(10_000);
+      expect(screen.queryByText('Locked after 30 minutes without use')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('unlock sheet edge cases', () => {

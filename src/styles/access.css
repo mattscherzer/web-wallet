@@ -238,7 +238,7 @@
   position: fixed;
   left: var(--page-padding);
   right: var(--page-padding);
-  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-md));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-md));
   z-index: 900;
   display: flex;
   align-items: center;
@@ -248,19 +248,81 @@
   min-height: var(--touch-primary);
   margin: 0 auto;
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-primary);
+  border-radius: var(--radius-xs);
+  background: var(--color-inverse-surface);
+  color: var(--color-inverse-on-surface);
+  box-shadow: var(--shadow-fab);
+  font-size: var(--font-size-base);
+  /* A separate property from the entry and exit transforms, so a drag and an animation don't fight */
+  translate: var(--snackbar-drag, 0) 0;
+  touch-action: pan-y;
+  /* --snackbar-ms comes from Snackbar.tsx so the exit ends when the component unmounts */
+  --snackbar-exit-ms: 200ms;
+  animation:
+    snackbar-in 250ms cubic-bezier(0.2, 0, 0, 1) both,
+    snackbar-out var(--snackbar-exit-ms) cubic-bezier(0.2, 0, 0, 1) calc(var(--snackbar-ms) - var(--snackbar-exit-ms))
+      forwards;
+}
+
+@keyframes snackbar-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes snackbar-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.snackbar__message {
+  flex: 1;
 }
 
 .snackbar__action {
   min-height: var(--touch-min);
+  padding: 0 var(--space-sm);
   border: 0;
   background: none;
-  color: var(--color-focus);
+  color: var(--color-inverse-primary);
   font: inherit;
   font-weight: var(--font-weight-bold);
   cursor: pointer;
+}
+
+.snackbar__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  margin-right: calc(var(--space-sm) * -1);
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Clears the nav and FAB when the layout has them; the loading and error screens before it do not */
+body:has(.record-fab) .snackbar {
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md) * 2);
+}
+
+@media (min-width: 600px) {
+  .snackbar {
+    left: calc(max(var(--rail-offset), (100% - var(--max-width)) / 2) + var(--page-padding));
+    right: auto;
+    width: calc(var(--max-width) - 2 * var(--page-padding));
+    margin: 0;
+    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  }
+
+  body:has(.record-fab) .snackbar {
+    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md));
+  }
 }
 
 /* Header lock button */

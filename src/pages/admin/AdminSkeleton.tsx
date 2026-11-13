@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useHoldLockNotice } from '../../auth/unlockContext';
 import AdminHeader from './AdminHeader';
 
 function SkeletonRows({ count, actions }: { count: number; actions?: boolean }) {
@@ -26,6 +27,7 @@ function SkeletonRows({ count, actions }: { count: number; actions?: boolean }) 
 
 /** Same shapes as the loaded page, so nothing jumps when the data arrives. */
 export default function AdminSkeleton() {
+  useHoldLockNotice();
   return (
     <div className="admin" role="status" aria-busy="true" aria-label="Loading wallets and staff">
       <AdminHeader />
