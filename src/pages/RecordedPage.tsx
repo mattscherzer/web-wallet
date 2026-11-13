@@ -5,6 +5,8 @@ import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
 import { useEntry } from '../hooks/useEntry';
 import { useTransactionCommands } from '../hooks/useTransactionCommands';
 import Amount from '../components/Amount';
+import LoadFailed from '../components/LoadFailed';
+import PageLoading from '../components/PageLoading';
 import { formatDate, formatTime } from '../utils/dateHelpers';
 import { categoryLabel, typeParam } from '../domain/recordForm';
 import { useUnlock } from '../auth/unlockContext';
@@ -14,21 +16,11 @@ export default function RecordedPage() {
   const navigate = useNavigate();
   const { remove } = useTransactionCommands();
   const { requireUnlocked } = useUnlock();
-  const { status, tx } = useEntry(id);
+  const { status, tx, refresh } = useEntry(id);
   const [problem, setProblem] = useState<string | null>(null);
 
-  if (status === 'loading')
-    return (
-      <p role="status" className="empty-state__text">
-        Loading…
-      </p>
-    );
-  if (status === 'error')
-    return (
-      <p role="alert" className="field-error">
-        Couldn't load this entry. Check your connection and try again.
-      </p>
-    );
+  if (status === 'loading') return <PageLoading />;
+  if (status === 'error') return <LoadFailed what="this entry" onRetry={() => void refresh()} />;
   if (status === 'missing' || !tx) return <p className="empty-state__text">Entry not found</p>;
 
   const undo = async () => {

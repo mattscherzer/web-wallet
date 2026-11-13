@@ -1,6 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { CreditCard, ChevronDown, ChevronUp, Coins, QrCode, PiggyBank } from 'lucide-react';
+import { OverviewSkeleton } from '../components/LoadingSkeletons';
+import NotLoaded from '../components/NotLoaded';
 import { useBalanceSummary } from '../hooks/useBalances';
 import { useRecentTransactions } from '../hooks/useHistory';
 import Amount from '../components/Amount';
@@ -24,8 +26,36 @@ const ICON_CLASSES: Record<string, string> = {
 };
 
 export default function DashboardPage() {
-  const { main: mainAccounts, reserve: reserveAccounts, spendableTotal, grandTotal } = useBalanceSummary();
-  const recentTransactions = useRecentTransactions(5);
+  const {
+    loaded: balancesLoaded,
+    failed: balancesFailed,
+    refresh: refreshBalances,
+    main: mainAccounts,
+    reserve: reserveAccounts,
+    spendableTotal,
+    grandTotal,
+  } = useBalanceSummary();
+  const {
+    data: recentTransactions,
+    loaded: recentLoaded,
+    failed: recentFailed,
+    refresh: refreshRecent,
+  } = useRecentTransactions(5);
+
+  // Until the wallet has answered the balances are zeros: show the loading design, never €0.00.
+  if (!balancesLoaded || !recentLoaded) {
+    return (
+      <NotLoaded
+        failed={balancesFailed || recentFailed}
+        what="your balances"
+        onRetry={() => {
+          void refreshBalances();
+          void refreshRecent();
+        }}
+        skeleton={<OverviewSkeleton />}
+      />
+    );
+  }
 
   return (
     <>

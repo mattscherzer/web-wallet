@@ -5,7 +5,7 @@ import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fa
 import { walletApp } from '../test/walletTestKit';
 import { useWallet } from '../wallet/useWallet';
 import { useAccountBalances } from './useBalances';
-import { useFilteredTransactions } from './useHistory';
+import { useFilteredTransactionsState } from './useHistory';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -23,9 +23,16 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const setup = () =>
-  renderHook(() => ({ wallet: useWallet(), txs: useFilteredTransactions('all', ''), balances: useAccountBalances() }), {
-    wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
-  });
+  renderHook(
+    () => ({
+      wallet: useWallet(),
+      txs: useFilteredTransactionsState('all', '').transactions,
+      balances: useAccountBalances(),
+    }),
+    {
+      wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
+    },
+  );
 
 describe('data follows the current wallet', () => {
   it('shows the new wallet’s data after switching, and never the old wallet’s', async () => {

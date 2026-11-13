@@ -35,6 +35,7 @@
   --color-hero-decor: #173a66;
   --color-hero-text: #ffffff;
   --color-hero-text-secondary: #b9c6da;
+  --color-skeleton-on-hero: var(--color-hero-text-secondary);
   --color-hero-focus: #ffffff;
 
   /* Focus, links and overlays */
@@ -139,6 +140,7 @@
     --color-hero-decor: #1b3f6e;
     --color-hero-text: #ffffff;
     --color-hero-text-secondary: #b9c6da;
+    --color-skeleton-on-hero: #3d6aae;
     --color-hero-focus: #8ab4f8;
 
     --color-focus: #8ab4f8;
