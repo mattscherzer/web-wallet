@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Download, Search } from 'lucide-react';
-import { useFilteredTransactions } from '../hooks/useHistory';
+import { HistorySkeleton } from '../components/LoadingSkeletons';
+import NotLoaded from '../components/NotLoaded';
+import { useFilteredTransactionsState } from '../hooks/useHistory';
 import { getAccountLabel } from '../domain/accounts';
 import { entryTitle, historyTotals, type Transaction } from '../domain/transaction';
 import Amount from '../components/Amount';
@@ -32,7 +34,7 @@ export default function HistoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showRemoved, setShowRemoved] = useState(false);
   const [exportFailed, setExportFailed] = useState(false);
-  const transactions = useFilteredTransactions(filter, searchQuery, showRemoved);
+  const { transactions, loaded, failed, refresh } = useFilteredTransactionsState(filter, searchQuery, showRemoved);
   const grouped = groupByDate(transactions);
 
   const totals = historyTotals(transactions);
@@ -64,76 +66,83 @@ export default function HistoryPage() {
         </p>
       )}
 
-      <div className="search-bar" id="history-search-bar">
-        <Search size={18} className="search-bar__icon" aria-hidden="true" />
-        <input
-          type="search"
-          className="search-bar__input"
-          placeholder="Search history"
-          aria-label="Search history"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          id="history-search-input"
-        />
-      </div>
-
-      <div className="filter-pills">
-        {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={`filter-pill${filter === f ? ' filter-pill--active' : ''}`}
-            aria-pressed={filter === f}
-            onClick={() => setFilter(f)}
-            id={`filter-${f}`}
-          >
-            {FILTER_LABELS[f]}
-          </button>
-        ))}
-        <button
-          type="button"
-          className={`filter-pill${showRemoved ? ' filter-pill--active' : ''}`}
-          aria-pressed={showRemoved}
-          onClick={() => setShowRemoved((v) => !v)}
-          id="filter-removed"
-        >
-          Removed
-        </button>
-      </div>
-
-      {totals.count > 0 && (
-        <p className="history-summary num">
-          {totals.count} {totals.count === 1 ? 'entry' : 'entries'} · in {formatSignedCurrency(totals.inflow, 'inflow')}{' '}
-          · out {formatSignedCurrency(totals.outflow, 'outflow')}
-        </p>
+      {!loaded && (
+        <NotLoaded failed={failed} what="the history" onRetry={() => void refresh()} skeleton={<HistorySkeleton />} />
       )}
-
-      {transactions.length === 0 && (
-        <div className="empty-state">
-          <p className="empty-state__text">{searchQuery ? 'No matching entries' : 'No entries yet'}</p>
-          {!searchQuery && (
-            <>
-              <p className="empty-state__hint">
-                Money in, money out and transfers you record appear here, newest first.
-              </p>
-              <Link to="/record?type=in" className="btn btn--primary">
-                Record money in
-              </Link>
-            </>
-          )}
-        </div>
-      )}
-
-      {Array.from(grouped.entries()).map(([date, txs]) => (
-        <div className="date-group" key={date}>
-          <div className="date-group__label">{getDateGroupLabel(date)}</div>
-          <div className="segmented-list">
-            {txs.map((tx) => (
-              <HistoryRow key={tx.id} tx={tx} />
-            ))}
+      {loaded && (
+        <>
+          <div className="search-bar" id="history-search-bar">
+            <Search size={18} className="search-bar__icon" aria-hidden="true" />
+            <input
+              type="search"
+              className="search-bar__input"
+              placeholder="Search history"
+              aria-label="Search history"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              id="history-search-input"
+            />
           </div>
-        </div>
-      ))}
+
+          <div className="filter-pills">
+            {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
+              <button
+                key={f}
+                type="button"
+                className={`filter-pill${filter === f ? ' filter-pill--active' : ''}`}
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+                id={`filter-${f}`}
+              >
+                {FILTER_LABELS[f]}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`filter-pill${showRemoved ? ' filter-pill--active' : ''}`}
+              aria-pressed={showRemoved}
+              onClick={() => setShowRemoved((v) => !v)}
+              id="filter-removed"
+            >
+              Removed
+            </button>
+          </div>
+
+          {totals.count > 0 && (
+            <p className="history-summary num">
+              {totals.count} {totals.count === 1 ? 'entry' : 'entries'} · in{' '}
+              {formatSignedCurrency(totals.inflow, 'inflow')} · out {formatSignedCurrency(totals.outflow, 'outflow')}
+            </p>
+          )}
+
+          {transactions.length === 0 && (
+            <div className="empty-state">
+              <p className="empty-state__text">{searchQuery ? 'No matching entries' : 'No entries yet'}</p>
+              {!searchQuery && (
+                <>
+                  <p className="empty-state__hint">
+                    Money in, money out and transfers you record appear here, newest first.
+                  </p>
+                  <Link to="/record?type=in" className="btn btn--primary">
+                    Record money in
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
+
+          {Array.from(grouped.entries()).map(([date, txs]) => (
+            <div className="date-group" key={date}>
+              <div className="date-group__label">{getDateGroupLabel(date)}</div>
+              <div className="segmented-list">
+                {txs.map((tx) => (
+                  <HistoryRow key={tx.id} tx={tx} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </>
   );
 }

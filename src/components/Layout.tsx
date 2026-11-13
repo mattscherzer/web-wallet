@@ -3,14 +3,14 @@ import { Outlet } from 'react-router';
 import BottomNav from './BottomNav';
 import { RecordFab } from './RecordFab';
 import AppBar from './AppBar';
-import RouteFallback from './RouteFallback';
+import { RouteSkeleton } from './LoadingSkeletons';
 
 export default function Layout() {
   return (
     <div className="app-layout">
       <main className="page-container">
         <AppBar />
-        <Suspense fallback={<RouteFallback />}>
+        <Suspense fallback={<RouteSkeleton />}>
           <Outlet />
         </Suspense>
       </main>
