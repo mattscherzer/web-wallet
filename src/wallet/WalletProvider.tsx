@@ -15,7 +15,7 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
   const [storedId, setStoredId] = useState(() => readCurrentWalletId(store));
 
   const newest = useRef(0);
-  const reload = useCallback(() => {
+  const load = useCallback((onFail: () => void) => {
     const mine = ++newest.current;
     return fetchWallets().then(
       (list) => {
@@ -25,10 +25,12 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
       },
       (err) => {
         console.error('Failed to load wallets:', err);
-        if (mine === newest.current) setStatus('error');
+        if (mine === newest.current) onFail();
       },
     );
   }, []);
+  const reload = useCallback(() => load(() => setStatus('error')), [load]);
+  const refresh = useCallback(() => load(() => {}), [load]);
 
   useEffect(() => {
     void reload();
@@ -51,16 +53,6 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
     },
     [switchWallet],
   );
-
-  const refresh = useCallback(async () => {
-    const mine = ++newest.current;
-    try {
-      const list = await fetchWallets();
-      if (mine === newest.current) setWallets(list);
-    } catch (err) {
-      console.error('Failed to refresh the wallets:', err);
-    }
-  }, []);
 
   const value = useMemo<WalletValue>(
     () => ({

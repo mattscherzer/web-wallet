@@ -1,19 +1,14 @@
-import { useState } from 'react';
 import { WifiOff } from 'lucide-react';
+import { useRetry } from '../hooks/useRetry';
 import { CHECK_CONNECTION } from '../utils/copy';
 import LoadingIndicator from './LoadingIndicator';
 
 export default function WalletsFailed({ reload }: { reload: () => Promise<void> }) {
-  const [retrying, setRetrying] = useState(false);
-  const retry = async () => {
-    setRetrying(true);
-    await reload();
-    setRetrying(false);
-  };
+  const { retrying, retry } = useRetry(reload);
   return (
     <div className="wallet-error">
       <span className={`wallet-error__mark${retrying ? ' wallet-error__mark--busy' : ''}`} aria-hidden="true">
-        {retrying ? <LoadingIndicator size={96} /> : <WifiOff size={40} />}
+        {retrying ? <LoadingIndicator /> : <WifiOff size={40} />}
       </span>
       <h1 className="title-lg">Couldn’t load your wallets</h1>
       <p className="lead-text" role="alert">

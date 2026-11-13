@@ -4,12 +4,13 @@ import { type StaffMember } from '../domain/staff';
 import { fetchWallets } from '../db/wallets';
 import { type Wallet } from '../domain/wallet';
 
+const NONE: ReadonlySet<string> = new Set();
+
 /** Every wallet the owner can see and the staff of all of them. `loaded` flips once the first attempt has finished. */
 export function useWalletsAndStaff() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
-  const [staffUnknown, setStaffUnknown] = useState<ReadonlySet<string>>(new Set());
-  const [loadError, setLoadError] = useState(false);
+  const [problem, setProblem] = useState<'wallets' | ReadonlySet<string> | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   const reload = useCallback(async () => {
@@ -26,11 +27,10 @@ export function useWalletsAndStaff() {
       const unknown = new Set(results.filter((r) => !r.list).map((r) => r.id));
       setWallets(w);
       setStaff([...new Map(results.flatMap((r) => r.list ?? []).map((s) => [s.user_id, s])).values()]);
-      setStaffUnknown(unknown);
-      setLoadError(unknown.size > 0);
+      setProblem(unknown.size > 0 ? unknown : null);
     } catch (err) {
       console.error('Failed to load wallets and staff:', err);
-      setLoadError(true);
+      setProblem('wallets');
     }
     setLoaded(true);
   }, []);
@@ -40,5 +40,6 @@ export function useWalletsAndStaff() {
     void reload();
   }, [reload]);
 
-  return { wallets, staff, staffUnknown, loadError, loaded, reload };
+  const staffUnknown = problem instanceof Set ? problem : NONE;
+  return { wallets, staff, staffUnknown, loadError: problem !== null, loaded, reload };
 }

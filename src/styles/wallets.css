@@ -245,6 +245,11 @@
   background: none;
 }
 
+.wallet-error__mark .loading-indicator {
+  width: 100%;
+  height: 100%;
+}
+
 .wallet-error__action {
   align-self: stretch;
   margin-top: var(--space-lg);

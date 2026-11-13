@@ -4,6 +4,7 @@ import { Plus, UserPlus } from 'lucide-react';
 import FormError from '../components/FormError';
 import { couldnt } from '../utils/copy';
 import type { StaffMember } from '../domain/staff';
+import { useRetry } from '../hooks/useRetry';
 import { useStaffAdmin } from '../hooks/useStaffAdmin';
 import { useAuth } from '../auth/useAuth';
 import { useOptionalWallet } from '../wallet/useWallet';
@@ -37,6 +38,7 @@ function Dashboard() {
   const { wallets, staff, staffUnknown, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } =
     useStaffAdmin();
   const [sheet, setSheet] = useState<Sheet | null>(null);
+  const { retrying, retry } = useRetry(reload);
 
   if (!loaded) return <AdminSkeleton />;
 
@@ -57,8 +59,8 @@ function Dashboard() {
       {loadError && (
         <FormError>
           {couldnt('load everything')}{' '}
-          <button type="button" className="form-error__retry" onClick={() => void reload()}>
-            Retry
+          <button type="button" className="form-error__retry" disabled={retrying} onClick={() => void retry()}>
+            {retrying ? 'Retrying…' : 'Retry'}
           </button>
         </FormError>
       )}
