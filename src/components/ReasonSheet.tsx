@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import BottomSheet from './BottomSheet';
+import FormError from './FormError';
 
 interface ReasonSheetProps {
   title: string;
@@ -67,11 +68,7 @@ export default function ReasonSheet({
           />
         </div>
       )}
-      {(problem || error) && (
-        <p className="field-error" role="status">
-          {problem ?? error}
-        </p>
-      )}
+      {(problem || error) && <FormError>{problem ?? error}</FormError>}
       <button type="button" className="btn btn--primary" onClick={submit}>
         {confirmLabel}
       </button>

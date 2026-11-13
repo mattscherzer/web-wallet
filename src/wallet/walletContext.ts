@@ -9,7 +9,8 @@ export interface WalletValue {
   switchWallet: (id: string) => void;
   /** Creates a wallet and opens it. Rejects with the reason if it could not be created. */
   addWallet: (name: string) => Promise<Wallet>;
-  reload: () => void;
+  /** Fetches the wallets again; stays on the current screen until it settles, and never rejects. */
+  reload: () => Promise<void>;
   /** Fetches the wallets again without showing the loading screen (e.g. after an owner created one elsewhere). */
   refresh: () => Promise<void>;
 }

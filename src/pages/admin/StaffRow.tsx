@@ -1,6 +1,6 @@
 import { type StaffMember } from '../../domain/staff';
 import { useOwnerAction } from '../../auth/useOwnerAction';
-import { InlineError } from '../../components/FilledField';
+import FormError from '../../components/FormError';
 import { walletInitials } from '../../domain/wallet';
 import type { StaffAdmin } from '../../hooks/useStaffAdmin';
 
@@ -58,7 +58,7 @@ export default function StaffRow({ member, setStaffDisabled, onResetPin, onDisab
           </button>
         )}
       </div>
-      <InlineError message={enable.error} />
+      {enable.error && <FormError>{enable.error}</FormError>}
     </li>
   );
 }

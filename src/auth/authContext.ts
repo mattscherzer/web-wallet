@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { couldnt } from '../utils/copy';
 import type { Role } from '../domain/access';
 
 export interface AuthUser {
@@ -40,3 +41,6 @@ export interface AuthValue {
 }
 
 export const AuthContext = createContext<AuthValue | null>(null);
+
+export const COULDNT_CHECK = couldnt('check');
+export const COULD_NOT_SIGN_IN = couldnt('sign in');

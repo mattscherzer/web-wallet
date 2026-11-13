@@ -51,7 +51,7 @@ describe('History page export', () => {
     ref.fake.failNext('transactions:select', { message: 'offline' });
     fireEvent.click(screen.getByRole('button', { name: /Export CSV/ }));
     expect((await screen.findByRole('alert')).textContent).toBe(
-      "Couldn't export the history. Check your connection and try again.",
+      'Couldn’t export the history. Check your connection and try again.',
     );
     expect(blobs).toHaveLength(0);
     fireEvent.click(screen.getByRole('button', { name: /Export CSV/ }));

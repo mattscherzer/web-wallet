@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
 import WalletGate from './WalletGate';
@@ -54,6 +54,16 @@ describe('wallet gate', () => {
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Create a wallet/ })).toBeNull();
+  });
+
+  it('keeps the error screen with a busy Retry while retrying, then opens the app', async () => {
+    ref.fake = createFakeSupabase(twoWalletRows());
+    ref.fake.failNext('wallets:select', { message: 'offline' });
+    gate();
+    fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
+    expect((screen.getByRole('button', { name: 'Retrying…' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull();
+    expect(await screen.findByText('the app')).toBeTruthy();
   });
 
   it('shows a loading state first', () => {

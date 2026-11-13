@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import WelcomePage from '../pages/WelcomePage';
 import { useWallet } from '../wallet/useWallet';
+import WalletsFailed from '../components/WalletsFailed';
 import { AppShellSkeleton } from '../components/LoadingSkeletons';
 
 /** Shows the app once a wallet is open; Welcome when there is none; an error with Retry if wallets could not be loaded. */
@@ -11,16 +12,7 @@ export default function WalletGate({ children }: { children: ReactNode }) {
 
   if (status === 'loading') return <AppShellSkeleton />;
 
-  if (status === 'error') {
-    return (
-      <div className="wallet-error" role="alert">
-        <p>Couldn’t load your wallets.</p>
-        <button type="button" className="btn btn--primary" onClick={reload}>
-          Retry
-        </button>
-      </div>
-    );
-  }
+  if (status === 'error') return <WalletsFailed reload={reload} />;
 
   if (wallets.length === 0 && pathname !== '/wallets/new') return <WelcomePage />;
   return <>{children}</>;

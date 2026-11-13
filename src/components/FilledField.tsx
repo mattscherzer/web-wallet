@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { CircleAlert } from 'lucide-react';
 import { PIN_LENGTH } from '../domain/pin';
 
-export function InlineError({ message }: { message: string | null }) {
+function InlineError({ message }: { message: string | null }) {
   return (
     message && (
       <p role="alert" className="inline-error">

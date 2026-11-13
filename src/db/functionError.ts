@@ -10,10 +10,8 @@ export async function functionErrorMessage(error: unknown, fallback: string): Pr
       }
       if (body.error) return body.error;
     } catch {
-      // not JSON: keep the fallback
+      // not JSON: fall through to the fallback
     }
-    return fallback;
   }
-  const message = (error as { message?: string } | null)?.message;
-  return message || fallback;
+  return fallback;
 }

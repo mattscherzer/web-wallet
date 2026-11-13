@@ -3,7 +3,7 @@ import { getSession, onAuthStateChange, setSession, signInWithPassword, signOutL
 import { loadProfile } from '../db/profile';
 import { safeStorage } from '../platform/storage';
 import { CURRENT_WALLET_KEY } from '../wallet/walletStore';
-import { AuthContext, type AccessResult, type AuthValue } from './authContext';
+import { AuthContext, COULD_NOT_SIGN_IN, type AccessResult, type AuthValue } from './authContext';
 import { checkOwnerPassword } from '../db/ownerPassword';
 import { idleExpired, readLock, rememberActivity, useIdleLock, writeLock, type LockReason } from './idleLock';
 import { checkStaffPin, requestStaffLogin } from '../db/staffLogin';
@@ -69,7 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string) => {
       const { error } = await signInWithPassword(email.trim(), password);
       if (!error) applyLock(null);
-      return error ? error.message : null;
+      if (!error) return null;
+      console.error('Owner sign-in failed:', error);
+      return error.code === 'invalid_credentials' ? 'Wrong email or password.' : COULD_NOT_SIGN_IN;
     },
     [applyLock],
   );

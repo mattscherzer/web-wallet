@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useOwnerConfirm } from './OwnerConfirm';
+import { UserMessageError } from '../domain/userMessageError';
+import { couldnt } from '../utils/copy';
 
 /** Runs an owner action: asks for the password first (once per 15 minutes), shows what went wrong. */
 export function useOwnerAction(run: () => Promise<void>, onDone: () => Promise<void>) {
@@ -16,7 +18,7 @@ export function useOwnerAction(run: () => Promise<void>, onDone: () => Promise<v
         await onDone();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof UserMessageError ? err.message : couldnt('do that'));
     }
     setBusy(false);
   };

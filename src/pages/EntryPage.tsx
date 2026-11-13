@@ -9,6 +9,7 @@ import EntryActions from '../components/entry/EntryActions';
 import EntryDetails from '../components/entry/EntryDetails';
 import EntrySummary from '../components/entry/EntrySummary';
 import HistoryEvent from '../components/entry/HistoryEvent';
+import FormError from '../components/FormError';
 import LoadFailed from '../components/LoadFailed';
 import PageLoading from '../components/PageLoading';
 import ReasonSheet from '../components/ReasonSheet';
@@ -84,11 +85,7 @@ export default function EntryPage() {
         ))}
       </ol>
 
-      {problem && !sheet && (
-        <p className="field-error" role="alert">
-          {problem}
-        </p>
-      )}
+      {problem && !sheet && <FormError>{problem}</FormError>}
 
       <EntryActions
         removed={tx.deleted}

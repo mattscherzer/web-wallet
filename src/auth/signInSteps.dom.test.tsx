@@ -131,11 +131,25 @@ describe('owner sign-in', () => {
     type('Email', 'olga@x.org');
     type('Password', 'wrong');
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-    expect((await screen.findByRole('alert')).textContent).toMatch(/invalid/i);
+    expect((await screen.findByRole('alert')).textContent).toBe('Wrong email or password.');
     expect(screen.queryByText('the books')).toBeNull();
     type('Password', 'owner-pw');
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
     await waitFor(() => expect(screen.queryByText('the books')).not.toBeNull());
+  });
+});
+
+describe('owner sign-in when the server cannot be reached', () => {
+  it('says so, in words that do not show the raw error', async () => {
+    open();
+    fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
+    ref.fake.failNext('auth:signIn', { message: 'Failed to fetch' });
+    type('Email', 'olga@x.org');
+    type('Password', 'owner-pw');
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Couldn’t sign in. Check your connection and try again.',
+    );
   });
 });
 

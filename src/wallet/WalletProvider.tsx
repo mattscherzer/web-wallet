@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createWallet, fetchWallets } from '../db/wallets';
 import { type Wallet } from '../domain/wallet';
 import { WalletContext, type WalletValue } from './walletContext';
@@ -13,24 +13,28 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [status, setStatus] = useState<WalletValue['status']>('loading');
   const [storedId, setStoredId] = useState(() => readCurrentWalletId(store));
-  const [attempt, setAttempt] = useState(0);
 
-  useEffect(() => {
-    let live = true;
-    fetchWallets()
-      .then((list) => {
-        if (!live) return;
+  const newest = useRef(0);
+  const load = useCallback((onFail: () => void) => {
+    const mine = ++newest.current;
+    return fetchWallets().then(
+      (list) => {
+        if (mine !== newest.current) return;
         setWallets(list);
         setStatus('ready');
-      })
-      .catch((err) => {
+      },
+      (err) => {
         console.error('Failed to load wallets:', err);
-        if (live) setStatus('error');
-      });
-    return () => {
-      live = false;
-    };
-  }, [attempt]);
+        if (mine === newest.current) onFail();
+      },
+    );
+  }, []);
+  const reload = useCallback(() => load(() => setStatus('error')), [load]);
+  const refresh = useCallback(() => load(() => {}), [load]);
+
+  useEffect(() => {
+    void reload();
+  }, [reload]);
 
   const switchWallet = useCallback(
     (id: string) => {
@@ -49,19 +53,6 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
     },
     [switchWallet],
   );
-
-  const reload = useCallback(() => {
-    setStatus('loading');
-    setAttempt((n) => n + 1);
-  }, []);
-
-  const refresh = useCallback(async () => {
-    try {
-      setWallets(await fetchWallets());
-    } catch (err) {
-      console.error('Failed to refresh the wallets:', err);
-    }
-  }, []);
 
   const value = useMemo<WalletValue>(
     () => ({

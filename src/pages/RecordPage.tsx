@@ -21,6 +21,7 @@ import {
   type RecordType,
 } from '../domain/recordForm';
 import ErrorSummary from '../components/ErrorSummary';
+import FormError from '../components/FormError';
 import CashCalculator from '../components/CashCalculator';
 import AccountChoices from '../components/record/AccountChoices';
 import BalancePreview from '../components/record/BalancePreview';
@@ -123,11 +124,7 @@ export default function RecordPage() {
       </div>
 
       {errors.length > 0 && <ErrorSummary ref={summaryRef} errors={errors} fieldIds={FIELD_IDS} />}
-      {saveError && (
-        <p className="field-error" role="alert">
-          {saveError}
-        </p>
-      )}
+      {saveError && <FormError>{saveError}</FormError>}
 
       <form onSubmit={submit} noValidate>
         <div className="type-group" role="radiogroup" aria-label="Type of entry">

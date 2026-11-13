@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Plus, UserPlus } from 'lucide-react';
+import FormError from '../components/FormError';
+import { couldnt } from '../utils/copy';
 import type { StaffMember } from '../domain/staff';
+import { useRetry } from '../hooks/useRetry';
 import { useStaffAdmin } from '../hooks/useStaffAdmin';
 import { useAuth } from '../auth/useAuth';
 import { useOptionalWallet } from '../wallet/useWallet';
@@ -25,10 +28,17 @@ export default function AdminPage() {
 
 type Sheet = { kind: 'add' } | { kind: 'pin'; member: StaffMember } | { kind: 'disable'; member: StaffMember };
 
+function staffSummary(count: number, unknown: boolean) {
+  if (unknown) return 'Couldn’t load staff';
+  return count === 0 ? 'No staff yet' : `${count} staff`;
+}
+
 function Dashboard() {
   const wallet = useOptionalWallet();
-  const { wallets, staff, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } = useStaffAdmin();
+  const { wallets, staff, staffUnknown, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } =
+    useStaffAdmin();
   const [sheet, setSheet] = useState<Sheet | null>(null);
+  const { retrying, retry } = useRetry(reload);
 
   if (!loaded) return <AdminSkeleton />;
 
@@ -47,9 +57,12 @@ function Dashboard() {
         Only owners see this page. Staff record and edit entries, and each belongs to one wallet.
       </p>
       {loadError && (
-        <p role="alert" className="form-error">
-          Couldn’t load everything. Check your connection and try again.
-        </p>
+        <FormError>
+          {couldnt('load everything')}{' '}
+          <button type="button" className="form-error__retry" disabled={retrying} onClick={() => void retry()}>
+            {retrying ? 'Retrying…' : 'Retry'}
+          </button>
+        </FormError>
       )}
       <section aria-label="Wallets">
         <h2 className="section-title">Wallets</h2>
@@ -67,7 +80,7 @@ function Dashboard() {
                   </span>
                   <span className="list-row__text">
                     <span className="list-row__name">{w.name}</span>
-                    <span className="list-row__sub">{count === 0 ? 'No staff yet' : `${count} staff`}</span>
+                    <span className="list-row__sub">{staffSummary(count, staffUnknown.has(w.id))}</span>
                   </span>
                 </div>
               </li>

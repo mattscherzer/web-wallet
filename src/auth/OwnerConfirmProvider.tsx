@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNod
 import { useUnlock } from './unlockContext';
 import { OWNER_CONFIRM_MS, OwnerConfirmContext, type Confirm } from './ownerConfirmContext';
 import { checkOwnerPassword } from '../db/ownerPassword';
+import { COULDNT_CHECK } from './authContext';
 import { useAuth } from './useAuth';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -54,12 +55,13 @@ export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
     if (busy || !email) return;
     setBusy(true);
     setError(null);
-    const ok = await checkOwnerPassword(email, password).catch(() => false);
+    const ok = await checkOwnerPassword(email, password).catch((err: unknown) => {
+      console.error('Failed to check the owner password:', err);
+      return null;
+    });
     setBusy(false);
-    if (!ok) {
-      setError('That password isn’t right');
-      return;
-    }
+    if (ok === null) return setError(COULDNT_CHECK);
+    if (!ok) return setError('That password isn’t right');
     confirmedUntil.current = Date.now() + OWNER_CONFIRM_MS;
     settle(true);
   };
