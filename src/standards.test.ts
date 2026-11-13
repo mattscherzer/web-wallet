@@ -54,4 +54,36 @@ describe('coding standards (docs/coding-standards.md)', () => {
       .filter((f) => !/rollback/i.test(read(f)));
     expect(bad, `rule 11.3: migration without a rollback comment: ${bad.join(', ')}`).toEqual([]);
   });
+
+  describe('comments earn their keep', () => {
+    // This file spells the patterns out, so it is the one file not scanned.
+    const sources = [...files('src', /\.tsx?$/), ...files('supabase/functions', /\.ts$/)].filter(
+      (f) => f !== 'src/standards.test.ts',
+    );
+    const linesWhere = (test: (line: string) => boolean) =>
+      sources.flatMap((f) =>
+        read(f)
+          .split('\n')
+          .flatMap((line, i) => (test(line) ? [`${f}:${i + 1}`] : [])),
+      );
+
+    it('rule 9.8: no section banners and no commented-out code', () => {
+      const bad = linesWhere(
+        (line) =>
+          /^\s*(\/\/|\/\*)\s*[─=-]{3,}/.test(line) ||
+          /^\s*\/\/\s*(const|let|var|import|export|return|await|function|if \(|for \()\b/.test(line),
+      );
+      expect(bad, `rule 9.8: banner or commented-out code at ${bad.join(', ')}`).toEqual([]);
+    });
+
+    it('rule 9.9: doc comments carry no @param, @returns or @type tags (the types already say it)', () => {
+      const bad = linesWhere((line) => /(^\s*\*?|\/\*\*)\s*@(param|returns?|type|typedef|description)\b/.test(line));
+      expect(bad, `rule 9.9: JSDoc type tag at ${bad.join(', ')}`).toEqual([]);
+    });
+
+    it('rule 9.10: every TODO, FIXME or HACK points at an issue, as TODO(#123)', () => {
+      const bad = linesWhere((line) => /\b(TODO|FIXME|HACK|XXX)\b(?!\(#\d+\))/.test(line));
+      expect(bad, `rule 9.10: marker without an issue number at ${bad.join(', ')}`).toEqual([]);
+    });
+  });
 });

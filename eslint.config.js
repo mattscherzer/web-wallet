@@ -83,6 +83,20 @@ export default defineConfig([
       complexity: ['error', 15],
       'max-depth': ['error', 3],
       'max-params': ['error', 4],
+      'no-param-reassign': ['error', { props: true }],
+      'no-else-return': 'error',
+      'no-lonely-if': 'error',
+      'no-unneeded-ternary': 'error',
+      'no-useless-return': 'error',
+      'object-shorthand': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'TSEnumDeclaration',
+          message: 'Use a union of string literals or an `as const` object, not an enum.',
+        },
+      ],
     },
   },
   {
@@ -98,6 +112,7 @@ export default defineConfig([
       complexity: 'off',
       'max-depth': 'off',
       'max-params': 'off',
+      'no-param-reassign': 'off',
       'no-console': 'off',
       'no-alert': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
