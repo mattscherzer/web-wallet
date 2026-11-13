@@ -13,6 +13,10 @@
   line-height: 20px;
 }
 
+.admin > .form-error {
+  margin: var(--space-md) 0;
+}
+
 .admin-actions {
   display: flex;
   gap: var(--space-sm);
