@@ -185,6 +185,21 @@ describe('the sign-in screens follow the design', () => {
     expect(screen.queryByRole('button', { name: /Not anna\?/ })).toBeNull();
   });
 
+  // between the server's answer and the app opening the screen keeps saying so: the keys do not flash back
+  it('keeps "Signing you in…" until the app opens after a right PIN', async () => {
+    const release = ref.fake.holdNext('profiles:select');
+    await toPinStep();
+    press('123456');
+    await waitFor(() => expect(ref.fake.invocations.some((c) => c.name === 'staff-login')).toBe(true));
+    await act(async () => {});
+    expect(screen.getByText('Signing you in…')).toBeTruthy();
+    expect(screen.getByText('Checking your PIN')).toBeTruthy();
+    expect(screen.queryByText('the books')).toBeNull();
+
+    release();
+    expect(await screen.findByText('the books')).toBeTruthy();
+  });
+
   // when the paused wait is over a button leads straight back to the PIN pad for the same person
   it('T68', async () => {
     ref.fake.answerFunction('staff-login', () => refused(429, { error: 'locked', retryAfter: 1 }));

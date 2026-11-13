@@ -41,10 +41,15 @@ export async function handleStaffLogin(req: Request, deps: StaffLoginDeps): Prom
     const pinOk = await deps.verifyPin(body.pin, state.pinHash);
     if (!pinOk || !state.userId || state.disabled) return reply(401, REFUSED);
 
-    await deps.resetAttempts(username);
+    const reset = deps.resetAttempts(username);
     // Unlocking an app that is already signed in only needs to know who the PIN belongs to: no new session.
-    if (body.verifyOnly === true) return reply(200, { userId: state.userId });
-    return reply(200, { session: await deps.mintSession(state.userId) });
+    if (body.verifyOnly === true) {
+      await reset;
+      return reply(200, { userId: state.userId });
+    }
+    // Run together so the person waits for the slower, not both; a failed reset still answers 500, leaving an unused session that expires.
+    const [, session] = await Promise.all([reset, deps.mintSession(state.userId)]);
+    return reply(200, { session });
   } catch (error) {
     console.error('staff-login failed', error);
     return reply(500, { error: 'Something went wrong. Try again.' });
