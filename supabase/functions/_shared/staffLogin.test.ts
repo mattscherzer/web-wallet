@@ -61,6 +61,25 @@ describe('staff login', () => {
     expect(s.minted).toEqual(['u-anna']);
   });
 
+  it('starts the session while the attempt counter is still being reset, not after it', async () => {
+    const order: string[] = [];
+    const s = setup({
+      resetAttempts: () =>
+        new Promise<void>((resolve) =>
+          setTimeout(() => {
+            order.push('reset done');
+            resolve();
+          }, 20),
+        ),
+      mintSession: async () => {
+        order.push('mint started');
+        return SESSION;
+      },
+    });
+    expect((await s.call({ username: 'anna', pin: '123456' })).status).toBe(200);
+    expect(order).toEqual(['mint started', 'reset done']);
+  });
+
   it('T7c keeps a leading zero in the PIN', async () => {
     const s = setup({
       beginAttempt: async () => ({ userId: 'u-1', pinHash: 'hash:012345', disabled: false, locked: false, retryAfter: 0 }),
