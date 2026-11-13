@@ -10,7 +10,7 @@ import {
   type FakeSupabase,
 } from '../test/fakeSupabase';
 import { transactionRows } from '../test/transactionsTestKit';
-import { findSheet, noSheet, pass, pressPin, rememberStaff, shell } from '../test/lockTestKit';
+import { findSheet, lockApp, noSheet, pass, pressPin, rememberStaff, shell } from '../test/lockTestKit';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -29,12 +29,6 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-const lock = async () => {
-  // The header lock comes first; More has its own Lock button further down the page.
-  fireEvent.click((await screen.findAllByRole('button', { name: 'Lock' }))[0]);
-  await screen.findByRole('button', { name: /Locked, view only/ });
-};
-
 describe('the Record button', () => {
   it('T19 unlocked it opens the Record menu; locked it says so and opens Unlock instead', async () => {
     ref.fake.signIn('u-anna');
@@ -43,7 +37,7 @@ describe('the Record button', () => {
     expect(screen.getByRole('menu', { name: 'Record' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Close record menu' }));
 
-    await lock();
+    await lockApp();
     fireEvent.click(screen.getByRole('button', { name: 'Record. Locked: unlock to record' }));
     await findSheet();
     expect(screen.queryByRole('menu', { name: 'Record' })).toBeNull();
@@ -54,9 +48,9 @@ describe('the header lock', () => {
   it('T20 open lock locks and then shows "View only"; the closed lock opens Unlock', async () => {
     ref.fake.signIn('u-anna');
     shell();
-    expect(await screen.findByRole('button', { name: 'Lock' })).toBeTruthy();
     expect(screen.queryByText('View only')).toBeNull();
-    await lock();
+    fireEvent.click(await screen.findByRole('button', { name: 'Lock' }));
+    await screen.findByRole('button', { name: /Locked, view only/ });
     const closed = screen.getByRole('button', { name: 'Locked, view only. Unlock to make changes' });
     expect(screen.getByText('View only')).toBeTruthy();
     expect(screen.getByText('the books')).toBeTruthy();
@@ -70,7 +64,7 @@ describe('changes while locked', () => {
     ref.fake.signIn('u-owner');
     shell(null, '/history/t1');
     await screen.findByRole('button', { name: 'Edit' });
-    await lock();
+    await lockApp();
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
     await findSheet();
     expect(screen.queryByRole('dialog', { name: 'Remove this entry?' })).toBeNull();
@@ -85,7 +79,7 @@ describe('changes while locked', () => {
     ref.fake.signIn('u-owner');
     shell(null, '/wallets/new');
     fireEvent.change(await screen.findByLabelText('Wallet name'), { target: { value: 'Sneaky' } });
-    await lock();
+    await lockApp();
     fireEvent.click(screen.getByRole('button', { name: /create wallet/i }));
     await findSheet();
     expect(screen.queryByRole('dialog', { name: 'Confirm your password' })).toBeNull();
@@ -96,7 +90,7 @@ describe('changes while locked', () => {
   it('T23 locked, the More page still shows its links and no unlock sheet pops up by itself', async () => {
     ref.fake.signIn('u-owner');
     shell(null, '/more');
-    await lock();
+    await lockApp();
     expect(screen.getByRole('link', { name: /Wallets and staff/ })).toBeTruthy();
     expect(noSheet()).toBeNull();
   });
@@ -115,7 +109,7 @@ describe('changes while unlocked', () => {
     ref.fake.answerFunction('staff-login', () => ({ data: { userId: 'u-anna' } }));
     ref.fake.signIn('u-anna');
     const view = shell(null, '/history/t1');
-    await lock();
+    await lockApp();
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
     await findSheet();
     pressPin('123456');
@@ -125,7 +119,7 @@ describe('changes while unlocked', () => {
     view.unmount();
 
     shell(null, '/history/t1');
-    expect(await screen.findByRole('button', { name: 'Lock' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Harness: lock' })).toBeTruthy();
   });
 });
 
@@ -163,7 +157,7 @@ describe('every other way to change something while locked', () => {
     shell(null, '/history/t1');
     fireEvent.click(await screen.findByRole('button', { name: 'Remove' }));
     const remove = within(await screen.findByRole('dialog', { name: /Remove this entry/ }));
-    await lock();
+    await lockApp();
     fireEvent.click(remove.getByRole('radio', { name: 'Duplicate' }));
     fireEvent.click(remove.getByRole('button', { name: 'Remove entry' }));
     await findSheet();
@@ -175,7 +169,7 @@ describe('every other way to change something while locked', () => {
     const before = ref.fake.tables.transactions.length;
     const { container } = shell(null, '/record?type=in');
     await screen.findByRole('heading', { level: 1 });
-    await lock();
+    await lockApp();
     fireEvent.submit(container.querySelector('form') as HTMLFormElement);
     await findSheet();
     expect(ref.fake.tables.transactions).toHaveLength(before);
@@ -185,7 +179,7 @@ describe('every other way to change something while locked', () => {
     ref.fake.signIn('u-owner');
     shell(null, '/recorded/t1');
     const undo = await screen.findByRole('button', { name: 'Undo this entry' });
-    await lock();
+    await lockApp();
     fireEvent.click(undo);
     await findSheet();
     expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
@@ -197,7 +191,7 @@ describe('every other way to change something while locked', () => {
     shell(null, '/history/t5');
     fireEvent.click(await screen.findByRole('button', { name: 'Restore' }));
     const ask = await screen.findByRole('dialog', { name: 'Confirm your password' });
-    await lock();
+    await lockApp();
     fireEvent.change(within(ask).getByLabelText('Password'), { target: { value: 'owner-pw' } });
     fireEvent.click(within(ask).getByRole('button', { name: 'Confirm' }));
     await findSheet();

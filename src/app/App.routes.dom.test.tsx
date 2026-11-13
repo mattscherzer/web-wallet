@@ -40,6 +40,16 @@ describe('App routes', () => {
     expect(await screen.findByText('Accounts')).toBeTruthy();
   });
 
+  it('shows the wallet switcher only on the Overview page', async () => {
+    appAt('/');
+    await screen.findByText('Accounts');
+    expect(screen.getByRole('button', { name: /Spring Convention 2027/ })).toBeTruthy();
+    cleanup();
+    appAt('/history');
+    await screen.findByRole('heading', { name: 'History' });
+    expect(screen.queryByRole('button', { name: /Spring Convention 2027/ })).toBeNull();
+  });
+
   it('shows the History page at /history', async () => {
     appAt('/history');
     expect(await screen.findByRole('heading', { name: 'History' })).toBeTruthy();

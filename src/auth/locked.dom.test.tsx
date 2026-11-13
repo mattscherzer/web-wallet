@@ -10,7 +10,7 @@ import {
   twoWalletRows,
   type FakeSupabase,
 } from '../test/fakeSupabase';
-import { findSheet, noSheet, pass, pressPin, refused, rememberStaff, shell, sheet } from '../test/lockTestKit';
+import { findSheet, lockApp, noSheet, pass, pressPin, refused, rememberStaff, shell, sheet } from '../test/lockTestKit';
 import { LAST_STAFF_KEY } from './lastStaff';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
@@ -170,13 +170,13 @@ describe('unlocking as owner', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
     await waitFor(() => expect(ref.fake.rpcCalls).toHaveLength(1));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Lock' }));
-    fireEvent.click(await screen.findByRole('button', { name: /Locked, view only/ }));
+    await lockApp();
+    fireEvent.click(screen.getByRole('link', { name: 'More' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Unlock' }));
     fireEvent.change(within(await findSheet()).getByLabelText('Password'), { target: { value: 'owner-pw' } });
     fireEvent.click(within(sheet()).getByRole('button', { name: 'Unlock' }));
     await waitFor(() => expect(noSheet()).toBeNull());
 
-    fireEvent.click(screen.getByRole('link', { name: 'More' }));
     fireEvent.click(await screen.findByRole('link', { name: /Wallets and staff/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Add staff' }));
     const add = await screen.findByRole('dialog', { name: 'Add staff' });

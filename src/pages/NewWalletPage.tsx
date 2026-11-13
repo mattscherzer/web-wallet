@@ -38,7 +38,7 @@ export default function NewWalletPage() {
 
   return (
     <div className="new-wallet">
-      <div className="page-header">
+      <div className="page-header page-header--back">
         <button type="button" className="icon-btn" aria-label="Cancel" onClick={() => navigate('/')}>
           <X size={24} aria-hidden="true" />
         </button>

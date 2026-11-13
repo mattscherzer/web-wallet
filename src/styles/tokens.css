@@ -65,6 +65,7 @@
   --font-weight-extrabold: 800;
 
   --line-height-base: 1.5;
+  --line-height-title: 28px;
 
   /* Spacing */
   --space-2xs: 2px;
@@ -100,6 +101,8 @@
 
   /* Layout */
   --bottom-nav-height: 64px;
+  --page-header-height: 64px;
+  --control-height: 40px;
   --rail-width: 96px;
   --rail-offset: calc(var(--rail-width) + env(safe-area-inset-left, 0px));
   --fab-size: 80px;

@@ -228,7 +228,7 @@
 
 .page-header__subtitle {
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
 }
 
 .form-error {
