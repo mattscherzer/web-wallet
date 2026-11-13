@@ -67,6 +67,7 @@ npm run dev        # uses .env.development -> http://127.0.0.1:54321
 
 | Command | What it does |
 |---|---|
+| `npm run dev:all` | Starts everything (DB, seed, staff edge functions, app) in one terminal |
 | `npm run db:start` / `db:stop` | Start / stop the local stack |
 | `npm run db:reset` | **Destructive.** Wipes the local DB, re-applies `supabase/migrations`, loads `supabase/seed.sql` |
 | `npm run db:seed` | Non-destructive: re-runs `supabase/seed.sql` (inserts are idempotent) |
