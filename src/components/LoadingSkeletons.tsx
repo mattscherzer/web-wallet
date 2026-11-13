@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { HISTORY_PATH, NAV_ITEMS } from './navItems';
+import { useHoldLockNotice } from '../auth/unlockContext';
 
 // One pulse lasts 8 steps, so later shapes wrap round instead of sitting still for seconds.
 const STAGGER_STEPS = 8;
@@ -59,6 +60,7 @@ function RowGroup({ rows, tall, next }: { rows: number; tall?: boolean; next: ()
 
 /** The Overview while its balances load. */
 export function OverviewSkeleton() {
+  useHoldLockNotice();
   const next = stagger();
   return (
     <div role="status" aria-busy="true" aria-label="Loading">
@@ -88,6 +90,7 @@ export function OverviewSkeleton() {
 
 /** History while its entries load. The page title is real, so only the data is drawn as shapes. */
 export function HistorySkeleton() {
+  useHoldLockNotice();
   const next = stagger();
   return (
     <div role="status" aria-busy="true" aria-label="Loading" className="skeleton-history">

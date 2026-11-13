@@ -124,7 +124,7 @@ describe('changes while unlocked', () => {
 });
 
 describe('the idle bar', () => {
-  it('T44 the bar appears once after an idle lock, is not repeated while locked, and goes away after unlocking', async () => {
+  it('T44 the bar appears once after an idle lock, dismisses itself and is not repeated while locked, and the lock button still unlocks', async () => {
     ref.fake.answerFunction('staff-login', () => ({ data: { userId: 'u-anna' } }));
     vi.useFakeTimers();
     try {
@@ -134,8 +134,8 @@ describe('the idle bar', () => {
       await pass(31 * 60_000);
       expect(screen.getAllByText('Locked after 30 minutes without use')).toHaveLength(1);
       await pass(65 * 60_000);
-      expect(screen.getAllByText('Locked after 30 minutes without use')).toHaveLength(1);
-      fireEvent.click(screen.getByRole('button', { name: 'Unlock' }));
+      expect(screen.queryByText('Locked after 30 minutes without use')).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: /Locked, view only/ }));
       pressPin('123456');
       await act(async () => {
         await vi.advanceTimersByTimeAsync(50);

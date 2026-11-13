@@ -45,6 +45,9 @@
   --color-count-surface: #ffdf9e;
   --color-on-count-surface: #261a00;
   --color-outline: #c4cad4;
+  --color-inverse-surface: #2e3340;
+  --color-inverse-on-surface: #f2f4f7;
+  --color-inverse-primary: #8ab4f8;
   --shadow-fab: 0 4px 12px rgba(11, 37, 69, 0.22);
 
   /* Typography: Geist, with emphasized weights */
@@ -152,6 +155,9 @@
     --color-count-surface: #5c4300;
     --color-on-count-surface: #ffdf9e;
     --color-outline: #4b5567;
+    --color-inverse-surface: #dfe3eb;
+    --color-inverse-on-surface: #101828;
+    --color-inverse-primary: #1f4e9e;
     --shadow-fab: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 }

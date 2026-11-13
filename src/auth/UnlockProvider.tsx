@@ -9,12 +9,17 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
   const { locked, lockedByIdle } = useAuth();
   const [open, setOpen] = useState(false);
   const openUnlock = useCallback(() => setOpen(true), []);
-  const api = useMemo<UnlockApi>(() => ({ openUnlock }), [openUnlock]);
+  const [holds, setHolds] = useState(0);
+  const holdNotice = useCallback(() => {
+    setHolds((n) => n + 1);
+    return () => setHolds((n) => n - 1);
+  }, []);
+  const api = useMemo<UnlockApi>(() => ({ openUnlock, holdNotice }), [openUnlock, holdNotice]);
   const asking = open && locked;
   return (
     <UnlockContext.Provider value={api}>
       {children}
-      {locked && lockedByIdle && !asking && (
+      {locked && lockedByIdle && !asking && holds === 0 && (
         <Snackbar message="Locked after 30 minutes without use" actionLabel="Unlock" onAction={openUnlock} />
       )}
       {asking && <UnlockSheet onClose={() => setOpen(false)} />}
