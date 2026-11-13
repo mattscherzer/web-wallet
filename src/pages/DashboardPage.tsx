@@ -5,6 +5,7 @@ import { OverviewSkeleton } from '../components/LoadingSkeletons';
 import NotLoaded from '../components/NotLoaded';
 import { useBalanceSummary } from '../hooks/useBalances';
 import { useRecentTransactions } from '../hooks/useHistory';
+import AppBar from '../components/AppBar';
 import Amount from '../components/Amount';
 import TransactionIcon from '../components/TransactionIcon';
 import { formatCurrency } from '../utils/formatCurrency';
@@ -45,20 +46,24 @@ export default function DashboardPage() {
   // Until the wallet has answered the balances are zeros: show the loading design, never €0.00.
   if (!balancesLoaded || !recentLoaded) {
     return (
-      <NotLoaded
-        failed={balancesFailed || recentFailed}
-        what="your balances"
-        onRetry={() => {
-          void refreshBalances();
-          void refreshRecent();
-        }}
-        skeleton={<OverviewSkeleton />}
-      />
+      <>
+        <AppBar />
+        <NotLoaded
+          failed={balancesFailed || recentFailed}
+          what="your balances"
+          onRetry={() => {
+            void refreshBalances();
+            void refreshRecent();
+          }}
+          skeleton={<OverviewSkeleton />}
+        />
+      </>
     );
   }
 
   return (
     <>
+      <AppBar />
       <div className="balance-hero" id="total-balance-card">
         <p className="balance-hero__label">Available to spend</p>
         <p className="balance-hero__amount">{formatCurrency(spendableTotal)}</p>

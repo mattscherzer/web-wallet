@@ -226,11 +226,6 @@
   text-align: center;
 }
 
-.page-header__subtitle {
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-semibold);
-}
-
 .form-error {
   margin: var(--space-sm) 0 var(--space-md);
   color: var(--color-error);

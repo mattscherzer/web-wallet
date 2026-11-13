@@ -7,6 +7,7 @@ import { AuthProvider } from '../auth/AuthProvider';
 import { AuthGate } from '../app/AuthGate';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
 import { LAST_STAFF_KEY } from '../auth/lastStaff';
+import AppBar from '../components/AppBar';
 import Layout from '../components/Layout';
 import NewWalletPage from '../pages/NewWalletPage';
 import AdminPage from '../pages/AdminPage';
@@ -14,7 +15,13 @@ import EntryPage from '../pages/EntryPage';
 import MorePage from '../pages/MorePage';
 import RecordedPage from '../pages/RecordedPage';
 import RecordPage from '../pages/RecordPage';
+import { HarnessLock } from './HarnessLock';
 import { walletApp } from './walletTestKit';
+
+export const lockApp = async () => {
+  fireEvent.click(await screen.findByRole('button', { name: 'Harness: lock' }));
+  await screen.findByRole('button', { name: 'Harness: locked' });
+};
 
 export function shell(extra: ReactNode = null, path = '/') {
   return render(
@@ -22,17 +29,28 @@ export function shell(extra: ReactNode = null, path = '/') {
       <AuthGate>
         <OwnerConfirmProvider>
           {walletApp(
-            <Routes>
-              <Route element={<Layout />}>
-                <Route index element={<p>the books</p>} />
-                <Route path="more" element={<MorePage />} />
-                <Route path="record" element={<RecordPage />} />
-                <Route path="recorded/:id" element={<RecordedPage />} />
-                <Route path="admin" element={<AdminPage />} />
-                <Route path="wallets/new" element={<NewWalletPage />} />
-                <Route path="history/:id" element={<EntryPage />} />
-              </Route>
-            </Routes>,
+            <>
+              <HarnessLock />
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route
+                    index
+                    element={
+                      <>
+                        <AppBar />
+                        <p>the books</p>
+                      </>
+                    }
+                  />
+                  <Route path="more" element={<MorePage />} />
+                  <Route path="record" element={<RecordPage />} />
+                  <Route path="recorded/:id" element={<RecordedPage />} />
+                  <Route path="admin" element={<AdminPage />} />
+                  <Route path="wallets/new" element={<NewWalletPage />} />
+                  <Route path="history/:id" element={<EntryPage />} />
+                </Route>
+              </Routes>
+            </>,
             { current: 'wa', path },
           )}
           {extra}

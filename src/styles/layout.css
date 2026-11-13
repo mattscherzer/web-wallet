@@ -35,19 +35,33 @@
 .page-header {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) 0 var(--space-md);
-  margin-bottom: var(--space-sm);
+  gap: var(--space-xs);
+  min-height: var(--page-header-height);
 }
 
-.page-header__icon {
-  color: var(--color-primary);
+/* Back and close buttons sit 4px from the screen edge, as in the designs. */
+.page-header--back {
+  margin-inline: calc(var(--space-xs) - var(--page-padding)) calc(var(--space-sm) - var(--page-padding));
 }
 
 .page-header__title {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-extrabold);
-  letter-spacing: -0.02em;
-  line-height: 36px;
+  flex-grow: 1;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-title);
   color: var(--color-text-primary);
+}
+
+.page-header__subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+.page-header__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: var(--control-height);
+  padding: 0 var(--space-md) 0 var(--space-sm);
+  font-size: var(--font-size-base);
 }
