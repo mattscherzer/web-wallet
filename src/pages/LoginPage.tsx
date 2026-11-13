@@ -7,6 +7,9 @@ import { PIN_LENGTH } from '../domain/pin';
 import { readLastStaff } from '../auth/lastStaff';
 import { useAuth } from '../auth/useAuth';
 
+// If the app has not taken over the screen by then, show the keys again rather than wait forever.
+const HANDOVER_MS = 10_000;
+
 export default function LoginPage() {
   const { signIn, signInStaff } = useAuth();
   const [mode, setMode] = useState<'staff' | 'owner'>('staff');
@@ -21,6 +24,8 @@ export default function LoginPage() {
   const [waited, setWaited] = useState(false);
   const [wrongPin, setWrongPin] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  const holdBusyForHandover = () => void setTimeout(() => setBusy(false), HANDOVER_MS);
 
   const switchMode = (next: 'staff' | 'owner') => {
     setMode(next);
@@ -42,8 +47,9 @@ export default function LoginPage() {
     setError(null);
     setWrongPin(false);
     const result = await signInStaff(name, digits);
+    // Stays busy once signed in: the app takes over this screen, and the keys must not flash back before it does.
+    if (result.ok) return holdBusyForHandover();
     setBusy(false);
-    if (result.ok) return;
     setPin('');
     if (result.kind === 'paused') {
       setWaited(false);
@@ -64,7 +70,8 @@ export default function LoginPage() {
     setError(null);
     setBusy(true);
     const problem = await signIn(email, password);
-    if (problem) setError(problem);
+    if (!problem) return holdBusyForHandover();
+    setError(problem);
     setBusy(false);
   };
 
