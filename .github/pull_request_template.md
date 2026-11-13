@@ -14,5 +14,6 @@
 - [ ] 5.4 Writes check the view-only lock; owner-only actions ask for confirmation
 - [ ] 7.2 / 7.3 Messages say what to do next; a failed write leaves no partial data
 - [ ] 8.3 / 8.5 / 8.6 Tests assert what users see, none weakened, bug fixes have a failing-first test
-- [ ] 9.4 / 9.7 Comments say why only; no new dependency without a reason here
+- [ ] 9.4 / 9.8 / 9.11 Every comment earns its keep (why, never what); no new dependency without a reason here (9.7)
+- [ ] 13 Design: one job per module, no mutation of inputs, narrow inputs, effects at the edges, no speculative abstraction
 - [ ] 11.1 / 11.2 / 11.4 Migrations are new files, safe to re-run, and say if a backup is needed

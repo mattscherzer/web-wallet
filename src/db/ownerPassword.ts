@@ -10,7 +10,7 @@ export async function checkOwnerPassword(email: string, password: string): Promi
   });
   const { error } = await checker.auth.signInWithPassword({ email, password });
   if (!error) {
-    // The check opened a real session on the server; end it so none is left behind.
+    // The check opened a real session on the server; end it. A failed end is harmless: this client stores nothing.
     await checker.auth.signOut({ scope: 'local' }).catch(() => {});
     return true;
   }

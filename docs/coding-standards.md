@@ -2,14 +2,14 @@
 
 The rules every change to this repo follows, for people and for coding agents. Each rule says what enforces it:
 
-| Tag | Enforced by | When it fails |
-|---|---|---|
-| `lint` | ESLint (`npm run lint`, `eslint.config.js`) | locally and in CI |
-| `types` | TypeScript strict mode (`npm run typecheck`) | locally and in CI |
-| `format` | Prettier (`npm run format:check`) | locally and in CI |
-| `test` | a test in `src/standards.test.ts` or next to the code | locally and in CI |
-| `CI` | a step in `.github/workflows/ci.yml` | on the pull request |
-| `review` | the PR checklist and the review bot's rubric | at review |
+| Tag      | Enforced by                                           | When it fails       |
+| -------- | ----------------------------------------------------- | ------------------- |
+| `lint`   | ESLint (`npm run lint`, `eslint.config.js`)           | locally and in CI   |
+| `types`  | TypeScript strict mode (`npm run typecheck`)          | locally and in CI   |
+| `format` | Prettier (`npm run format:check`)                     | locally and in CI   |
+| `test`   | a test in `src/standards.test.ts` or next to the code | locally and in CI   |
+| `CI`     | a step in `.github/workflows/ci.yml`                  | on the pull request |
+| `review` | the PR checklist and the person reviewing             | at review           |
 
 Prefer rules a machine checks. A rule tagged `review` is one nobody found a reliable check for yet; if you find one, add it and change the tag.
 
@@ -80,6 +80,7 @@ domain/  utils/           pure rules and helpers
 - **7.1** `console.error` for failures, `console.warn` for degraded behaviour (storage blocked). No `console.log` in committed code. `lint`
 - **7.2** Messages shown to people say what happened and what to do next ("Couldn't save the change. Nothing was changed."). They never show raw error text from the server. `review`
 - **7.3** A failed write never leaves partial data. Undo it (as `recordHistory` does) or make it one database transaction. `review`
+- **7.4** Never swallow an error. A `catch` either handles it (shows a message, retries, falls back on purpose and says why) or rethrows; an empty `catch` or one that only hides the failure is a bug. `review`
 
 ## 8. Tests
 
@@ -95,10 +96,14 @@ domain/  utils/           pure rules and helpers
 - **9.1** Formatting is Prettier's (`.prettierrc`). Don't hand-format. `format`
 - **9.2** Files stay under 300 lines (blank lines and comments excluded). `lint`
 - **9.3** Functions stay under complexity 15, nesting depth 3 and 4 parameters. Past that, split the function or pass one object. `lint`
-- **9.4** Comments say why, in one line, when the code can't. No comments that restate the code or narrate a change. `review`
+- **9.4** Every comment earns its keep: it says why, in one line, when the code can't. No comments that restate the code or narrate a change. `review`
 - **9.5** Names come from the product's words (entry, wallet, removed, owner, staff), the same words the UI uses. `review`
 - **9.6** Pages and components use a default export (pages need it for `React.lazy`). Everything else uses named exports. `review`
 - **9.7** No new runtime dependency without a sentence in the PR on why the platform or an installed package can't do it. `review`
+- **9.8** Delete comments that restate the code, narrate a change ("now uses X", "moved from Y") or are dead: section banners and commented-out code. Git keeps history. `test` (banners, commented-out code), `review` (the rest)
+- **9.9** Doc comments carry no `@param`, `@returns` or `@type` tags; the types already say it. `test`
+- **9.10** A TODO, FIXME or HACK points at an issue, as `TODO(#123)`. Without one, do it now or delete it. `test`
+- **9.11** A change that makes a comment wrong fixes or deletes the comment in the same commit. `review`
 
 ## 10. Edge functions (`supabase/functions`)
 
@@ -121,3 +126,21 @@ domain/  utils/           pure rules and helpers
 - **12.3** The PR description says what changed, any behaviour change, and how it was checked. `review`
 - **12.4** Architectural decisions (a new layer, a new dependency, a rule changing here) get a short record in `docs/decisions/`: context, decision, consequences. `review`
 - **12.5** The limits in 9.2 and 9.3 only go down. Raising one needs a decision record. `review`
+
+## 13. Design principles
+
+- **13.1** Single responsibility: a module, hook or component does one job you can name in a few words. `review`
+- **13.2** Extend by adding: a new case is a new entry in a table or a new module, not another branch in an existing one. `review`
+- **13.3** Composition over inheritance: build from small functions, hooks and components; no class hierarchies. `review`
+- **13.4** Narrow inputs: a function takes only what it uses (see 10.2), not a whole object for one field. `review`
+- **13.5** Inner layers define the shape: `domain/` owns the types, and outer layers adapt to them (see 2.4). `review`
+- **13.6** Pure core, effects at the edges: rules are plain functions; network and storage stay in `db/`, `platform/` and hooks. `lint` (layers), `review`
+- **13.7** No mutation of inputs or props; return new values. `lint` (`no-param-reassign` with `props`), `review`
+- **13.8** Data over flags: describe variants with data (a table, a discriminated union, see 6.3), not boolean parameters that switch behaviour. `review`
+- **13.9** Guard clauses: return early instead of nesting `else`. `lint` (`no-else-return`, `no-lonely-if`, `no-useless-return`, `no-unneeded-ternary`)
+- **13.10** Named constants for magic numbers and strings that carry meaning (`IDLE_LOCK_MS`, `PIN_LENGTH`). `review`
+- **13.11** No speculative abstraction: no option, wrapper or layer until a second real use needs it. `review`
+- **13.12** Parse at the boundary: untrusted input (request bodies, Supabase rows, storage) is checked once where it enters, and trusted after (see 3.6, 10.3). `review`
+- **13.13** No enums: use a union of string literals or an `as const` object. Type-only imports use `import type`. `lint` (`no-restricted-syntax`, `consistent-type-imports`)
+- **13.14** Idiomatic React: derive values during render instead of syncing them with effects, keep state as small as it can be, and use object shorthand. `lint` (`object-shorthand`, react-hooks), `review`
+- **13.15** Naming: names say what a thing is in the product's words (see 9.5); booleans read as questions (`loaded`, `isCurrent`). `review`

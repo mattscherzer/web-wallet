@@ -67,8 +67,8 @@ function withCount(state: CountState, index: number, value: number): CountState 
 
 const endTyping = (state: CountState): CountState => (state.typing == null ? state : { ...state, typing: null });
 
-export function countReducer(state: CountState, action: CountAction): CountState {
-  if (action.type !== 'set') state = endTyping(state);
+export function countReducer(previous: CountState, action: CountAction): CountState {
+  const state = action.type === 'set' ? previous : endTyping(previous);
   switch (action.type) {
     case 'add':
       return withCount(state, action.index, state.counts[action.index] + 1);
