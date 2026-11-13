@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { Plus, UserPlus } from 'lucide-react';
 import FormError from '../components/FormError';
+import { couldnt } from '../utils/copy';
 import type { StaffMember } from '../domain/staff';
 import { useStaffAdmin } from '../hooks/useStaffAdmin';
 import { useAuth } from '../auth/useAuth';
@@ -26,9 +27,15 @@ export default function AdminPage() {
 
 type Sheet = { kind: 'add' } | { kind: 'pin'; member: StaffMember } | { kind: 'disable'; member: StaffMember };
 
+function staffSummary(count: number, unknown: boolean) {
+  if (unknown) return 'Couldn’t load staff';
+  return count === 0 ? 'No staff yet' : `${count} staff`;
+}
+
 function Dashboard() {
   const wallet = useOptionalWallet();
-  const { wallets, staff, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } = useStaffAdmin();
+  const { wallets, staff, staffUnknown, loadError, loaded, reload, createStaff, resetStaffPin, setStaffDisabled } =
+    useStaffAdmin();
   const [sheet, setSheet] = useState<Sheet | null>(null);
 
   if (!loaded) return <AdminSkeleton />;
@@ -49,7 +56,7 @@ function Dashboard() {
       </p>
       {loadError && (
         <FormError>
-          Couldn’t load everything. Check your connection and try again.{' '}
+          {couldnt('load everything')}{' '}
           <button type="button" className="form-error__retry" onClick={() => void reload()}>
             Retry
           </button>
@@ -71,9 +78,7 @@ function Dashboard() {
                   </span>
                   <span className="list-row__text">
                     <span className="list-row__name">{w.name}</span>
-                    <span className="list-row__sub">
-                      {loadError ? '' : count === 0 ? 'No staff yet' : `${count} staff`}
-                    </span>
+                    <span className="list-row__sub">{staffSummary(count, staffUnknown.has(w.id))}</span>
                   </span>
                 </div>
               </li>

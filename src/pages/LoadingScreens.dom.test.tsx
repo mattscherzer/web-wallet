@@ -67,7 +67,7 @@ describe('loading screens follow the LoadingOverview and LoadingHistory designs'
   it('Overview says its first load failed and loads again on Try again', async () => {
     ref.fake.failNext('transactions:select', { message: 'network down' });
     show(<DashboardPage />);
-    expect((await screen.findByRole('alert')).textContent).toContain("Couldn't load your balances");
+    expect((await screen.findByRole('alert')).textContent).toContain('Couldn’t load your balances');
     expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
@@ -78,7 +78,7 @@ describe('loading screens follow the LoadingOverview and LoadingHistory designs'
   it('History says its first load failed and loads again on Try again', async () => {
     ref.fake.failNext('transactions:select', { message: 'network down' });
     show(<HistoryPage />);
-    expect((await screen.findByRole('alert')).textContent).toContain("Couldn't load the history");
+    expect((await screen.findByRole('alert')).textContent).toContain('Couldn’t load the history');
     expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));

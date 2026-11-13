@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { couldnt } from '../utils/copy';
 import type { Role } from '../domain/access';
 
 export interface AuthUser {
@@ -41,8 +42,5 @@ export interface AuthValue {
 
 export const AuthContext = createContext<AuthValue | null>(null);
 
-/** Shown when a password or PIN could not be checked, which is not the person's mistake. */
-export const COULDNT_CHECK = 'Couldn’t check. Check your connection and try again.';
-
-/** Shown when sign-in failed for a reason that is not the person's mistake. */
-export const COULD_NOT_SIGN_IN = 'Couldn’t sign in. Check your connection and try again.';
+export const COULDNT_CHECK = couldnt('check');
+export const COULD_NOT_SIGN_IN = couldnt('sign in');

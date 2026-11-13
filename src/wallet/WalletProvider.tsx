@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createWallet, fetchWallets } from '../db/wallets';
 import { type Wallet } from '../domain/wallet';
 import { WalletContext, type WalletValue } from './walletContext';
@@ -14,20 +14,21 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
   const [status, setStatus] = useState<WalletValue['status']>('loading');
   const [storedId, setStoredId] = useState(() => readCurrentWalletId(store));
 
-  const reload = useCallback(
-    () =>
-      fetchWallets().then(
-        (list) => {
-          setWallets(list);
-          setStatus('ready');
-        },
-        (err) => {
-          console.error('Failed to load wallets:', err);
-          setStatus('error');
-        },
-      ),
-    [],
-  );
+  const newest = useRef(0);
+  const reload = useCallback(() => {
+    const mine = ++newest.current;
+    return fetchWallets().then(
+      (list) => {
+        if (mine !== newest.current) return;
+        setWallets(list);
+        setStatus('ready');
+      },
+      (err) => {
+        console.error('Failed to load wallets:', err);
+        if (mine === newest.current) setStatus('error');
+      },
+    );
+  }, []);
 
   useEffect(() => {
     void reload();
@@ -52,8 +53,10 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
   );
 
   const refresh = useCallback(async () => {
+    const mine = ++newest.current;
     try {
-      setWallets(await fetchWallets());
+      const list = await fetchWallets();
+      if (mine === newest.current) setWallets(list);
     } catch (err) {
       console.error('Failed to refresh the wallets:', err);
     }

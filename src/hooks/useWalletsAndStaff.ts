@@ -8,25 +8,26 @@ import { type Wallet } from '../domain/wallet';
 export function useWalletsAndStaff() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [staffUnknown, setStaffUnknown] = useState<ReadonlySet<string>>(new Set());
   const [loadError, setLoadError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   const reload = useCallback(async () => {
     try {
       const w = await fetchWallets();
-      let partial = false;
-      const lists = await Promise.all(
+      const results = await Promise.all(
         w.map((wallet) =>
-          listStaff(wallet.id).catch(() => {
-            partial = true;
-            const none: StaffMember[] = [];
-            return none;
-          }),
+          listStaff(wallet.id).then(
+            (list) => ({ id: wallet.id, list }),
+            () => ({ id: wallet.id, list: null }),
+          ),
         ),
       );
+      const unknown = new Set(results.filter((r) => !r.list).map((r) => r.id));
       setWallets(w);
-      setStaff([...new Map(lists.flat().map((s) => [s.user_id, s])).values()]);
-      setLoadError(partial);
+      setStaff([...new Map(results.flatMap((r) => r.list ?? []).map((s) => [s.user_id, s])).values()]);
+      setStaffUnknown(unknown);
+      setLoadError(unknown.size > 0);
     } catch (err) {
       console.error('Failed to load wallets and staff:', err);
       setLoadError(true);
@@ -39,5 +40,5 @@ export function useWalletsAndStaff() {
     void reload();
   }, [reload]);
 
-  return { wallets, staff, loadError, loaded, reload };
+  return { wallets, staff, staffUnknown, loadError, loaded, reload };
 }
