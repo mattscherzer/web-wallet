@@ -46,15 +46,18 @@ export default function DashboardPage() {
   // Until the wallet has answered the balances are zeros: show the loading design, never €0.00.
   if (!balancesLoaded || !recentLoaded) {
     return (
-      <NotLoaded
-        failed={balancesFailed || recentFailed}
-        what="your balances"
-        onRetry={() => {
-          void refreshBalances();
-          void refreshRecent();
-        }}
-        skeleton={<OverviewSkeleton />}
-      />
+      <>
+        <AppBar />
+        <NotLoaded
+          failed={balancesFailed || recentFailed}
+          what="your balances"
+          onRetry={() => {
+            void refreshBalances();
+            void refreshRecent();
+          }}
+          skeleton={<OverviewSkeleton />}
+        />
+      </>
     );
   }
 

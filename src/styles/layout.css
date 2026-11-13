@@ -52,6 +52,11 @@
   color: var(--color-text-primary);
 }
 
+.page-header__subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
 .page-header__action {
   display: inline-flex;
   align-items: center;
