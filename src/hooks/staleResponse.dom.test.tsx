@@ -4,7 +4,7 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
 import { useWallet } from '../wallet/useWallet';
-import { useFilteredTransactions } from './useHistory';
+import { useFilteredTransactionsState } from './useHistory';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
@@ -25,9 +25,12 @@ describe('slow answer from the previous wallet', () => {
   it('does not wipe the data of the wallet you switched to', async () => {
     // The first wallet's list is still on its way when the user switches.
     const release = ref.fake.holdNext('transactions:select');
-    const { result } = renderHook(() => ({ wallet: useWallet(), txs: useFilteredTransactions('all', '') }), {
-      wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
-    });
+    const { result } = renderHook(
+      () => ({ wallet: useWallet(), txs: useFilteredTransactionsState('all', '').transactions }),
+      {
+        wrapper: ({ children }) => walletApp(children, { current: 'wa' }),
+      },
+    );
     await waitFor(() => expect(result.current.wallet.current?.id).toBe('wa'));
 
     act(() => result.current.wallet.switchWallet('wb'));
@@ -44,7 +47,7 @@ describe('slow answer from the previous wallet', () => {
     const { result, rerender } = renderHook(
       ({ filter }: { filter: 'all' | 'outflow' }) => ({
         wallet: useWallet(),
-        txs: useFilteredTransactions(filter, ''),
+        txs: useFilteredTransactionsState(filter, '').transactions,
       }),
       { wrapper: ({ children }) => walletApp(children, { current: 'wa' }), initialProps: { filter: 'all' } },
     );

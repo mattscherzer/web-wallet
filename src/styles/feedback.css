@@ -191,3 +191,83 @@
 .see-all-link a:hover {
   color: var(--color-link-hover);
 }
+
+/* =============================================
+   LOADING SCREENS (LoadingOverview, LoadingHistory)
+   ============================================= */
+.skeleton-bone {
+  flex: none;
+  max-width: 100%;
+}
+
+.skeleton-bone--on-hero {
+  background: var(--color-skeleton-on-hero);
+}
+
+.skeleton-bone--on-surface {
+  background: var(--color-card);
+}
+
+.skeleton-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 164px;
+  background: var(--color-primary-container);
+}
+
+.skeleton-hero::after {
+  display: none;
+}
+
+.skeleton-title {
+  margin: var(--space-lg) var(--space-xs) var(--space-sm);
+}
+
+.skeleton-title--section {
+  margin-top: var(--space-lg);
+}
+
+.skeleton-row {
+  min-height: 56px;
+}
+
+.skeleton-row--tall {
+  min-height: 72px;
+  padding: 12px var(--space-md);
+}
+
+.skeleton-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.skeleton-row__gap {
+  flex: 1;
+}
+
+.skeleton-reserve {
+  gap: var(--space-md);
+}
+
+.skeleton-history {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-pills {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.skeleton-app-bar {
+  gap: 10px;
+  padding: 10px 0 14px;
+}
+
+.skeleton-app-bar .skeleton-row__text {
+  gap: 6px;
+}

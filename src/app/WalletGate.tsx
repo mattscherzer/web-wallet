@@ -2,16 +2,14 @@ import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import WelcomePage from '../pages/WelcomePage';
 import { useWallet } from '../wallet/useWallet';
-import RouteFallback from '../components/RouteFallback';
+import { AppShellSkeleton } from '../components/LoadingSkeletons';
 
 /** Shows the app once a wallet is open; Welcome when there is none; an error with Retry if wallets could not be loaded. */
 export default function WalletGate({ children }: { children: ReactNode }) {
   const { status, wallets, reload } = useWallet();
   const { pathname } = useLocation();
 
-  if (status === 'loading') {
-    return <RouteFallback />;
-  }
+  if (status === 'loading') return <AppShellSkeleton />;
 
   if (status === 'error') {
     return (

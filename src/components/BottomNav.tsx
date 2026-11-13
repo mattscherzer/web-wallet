@@ -1,12 +1,5 @@
 import { NavLink } from 'react-router';
-import { House, List, FileText, Ellipsis } from 'lucide-react';
-
-const NAV_ITEMS = [
-  { to: '/', icon: House, label: 'Overview' },
-  { to: '/history', icon: List, label: 'History' },
-  { to: '/reports', icon: FileText, label: 'Reports' },
-  { to: '/more', icon: Ellipsis, label: 'More' },
-];
+import { NAV_ITEMS } from './navItems';
 
 export default function BottomNav() {
   return (

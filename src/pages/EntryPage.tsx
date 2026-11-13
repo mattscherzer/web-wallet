@@ -9,6 +9,8 @@ import EntryActions from '../components/entry/EntryActions';
 import EntryDetails from '../components/entry/EntryDetails';
 import EntrySummary from '../components/entry/EntrySummary';
 import HistoryEvent from '../components/entry/HistoryEvent';
+import LoadFailed from '../components/LoadFailed';
+import PageLoading from '../components/PageLoading';
 import ReasonSheet from '../components/ReasonSheet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
@@ -30,24 +32,8 @@ export default function EntryPage() {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [problem, setProblem] = useState<string | null>(null);
 
-  if (status === 'loading')
-    return (
-      <p role="status" className="empty-state__text">
-        Loading…
-      </p>
-    );
-  if (status === 'error') {
-    return (
-      <div className="empty-state">
-        <p role="alert" className="empty-state__text">
-          Couldn't load this entry. Check your connection and try again.
-        </p>
-        <button type="button" className="btn btn--outline" onClick={() => void refresh()}>
-          Try again
-        </button>
-      </div>
-    );
-  }
+  if (status === 'loading') return <PageLoading />;
+  if (status === 'error') return <LoadFailed what="this entry" onRetry={() => void refresh()} />;
   if (status === 'missing' || !tx) {
     return (
       <div className="empty-state">
