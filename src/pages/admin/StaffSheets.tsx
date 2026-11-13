@@ -5,7 +5,8 @@ import type { Wallet } from '../../domain/wallet';
 import { PIN_LENGTH, isPin } from '../../domain/pin';
 import { useOwnerAction } from '../../auth/useOwnerAction';
 import BottomSheet from '../../components/BottomSheet';
-import { Field, InlineError, PinInput } from '../../components/FilledField';
+import FormError from '../../components/FormError';
+import { Field, PinInput } from '../../components/FilledField';
 import type { StaffAdmin } from '../../hooks/useStaffAdmin';
 
 const PIN_PROBLEM = `The PIN must be exactly ${PIN_LENGTH} digits`;
@@ -80,7 +81,7 @@ export function AddStaffSheet({
             <ChevronDown className="filled-field__chevron" size={20} aria-hidden="true" />
           </span>
         </Field>
-        <InlineError message={error} />
+        {error && <FormError>{error}</FormError>}
         <button type="submit" className="btn btn--primary" disabled={busy || !walletId}>
           <UserPlus size={20} aria-hidden="true" />
           Add staff
@@ -121,7 +122,7 @@ export function ResetPinSheet({
         <Field id={`pin-${member.user_id}`} label="New PIN" hint={PIN_HINT}>
           <PinInput id={`pin-${member.user_id}`} value={pin} onChange={setPin} />
         </Field>
-        <InlineError message={error} />
+        {error && <FormError>{error}</FormError>}
         <button type="submit" className="btn btn--primary" disabled={busy}>
           <KeyRound size={20} aria-hidden="true" />
           Save PIN
@@ -149,7 +150,7 @@ export function DisableSheet({
       onClose={onClose}
     >
       <div className="bottom-sheet__form">
-        <InlineError message={error} />
+        {error && <FormError>{error}</FormError>}
         <button type="button" className="btn btn--danger" disabled={busy} onClick={() => void go()}>
           <UserX size={20} aria-hidden="true" />
           {`Disable ${name}`}

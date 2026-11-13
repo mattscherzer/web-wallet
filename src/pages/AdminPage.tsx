@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Plus, UserPlus } from 'lucide-react';
+import FormError from '../components/FormError';
 import type { StaffMember } from '../domain/staff';
 import { useStaffAdmin } from '../hooks/useStaffAdmin';
 import { useAuth } from '../auth/useAuth';
@@ -47,9 +48,12 @@ function Dashboard() {
         Only owners see this page. Staff record and edit entries, and each belongs to one wallet.
       </p>
       {loadError && (
-        <p role="alert" className="form-error">
-          Couldn’t load everything. Check your connection and try again.
-        </p>
+        <FormError>
+          Couldn’t load everything. Check your connection and try again.{' '}
+          <button type="button" className="form-error__retry" onClick={() => void reload()}>
+            Retry
+          </button>
+        </FormError>
       )}
       <section aria-label="Wallets">
         <h2 className="section-title">Wallets</h2>
@@ -67,7 +71,9 @@ function Dashboard() {
                   </span>
                   <span className="list-row__text">
                     <span className="list-row__name">{w.name}</span>
-                    <span className="list-row__sub">{count === 0 ? 'No staff yet' : `${count} staff`}</span>
+                    <span className="list-row__sub">
+                      {loadError ? '' : count === 0 ? 'No staff yet' : `${count} staff`}
+                    </span>
                   </span>
                 </div>
               </li>

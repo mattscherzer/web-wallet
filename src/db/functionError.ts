@@ -14,6 +14,5 @@ export async function functionErrorMessage(error: unknown, fallback: string): Pr
     }
     return fallback;
   }
-  const message = (error as { message?: string } | null)?.message;
-  return message || fallback;
+  return fallback;
 }

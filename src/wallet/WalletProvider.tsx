@@ -13,24 +13,25 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [status, setStatus] = useState<WalletValue['status']>('loading');
   const [storedId, setStoredId] = useState(() => readCurrentWalletId(store));
-  const [attempt, setAttempt] = useState(0);
+
+  const reload = useCallback(
+    () =>
+      fetchWallets().then(
+        (list) => {
+          setWallets(list);
+          setStatus('ready');
+        },
+        (err) => {
+          console.error('Failed to load wallets:', err);
+          setStatus('error');
+        },
+      ),
+    [],
+  );
 
   useEffect(() => {
-    let live = true;
-    fetchWallets()
-      .then((list) => {
-        if (!live) return;
-        setWallets(list);
-        setStatus('ready');
-      })
-      .catch((err) => {
-        console.error('Failed to load wallets:', err);
-        if (live) setStatus('error');
-      });
-    return () => {
-      live = false;
-    };
-  }, [attempt]);
+    void reload();
+  }, [reload]);
 
   const switchWallet = useCallback(
     (id: string) => {
@@ -49,11 +50,6 @@ export function WalletProvider({ children, storage }: { children: ReactNode; sto
     },
     [switchWallet],
   );
-
-  const reload = useCallback(() => {
-    setStatus('loading');
-    setAttempt((n) => n + 1);
-  }, []);
 
   const refresh = useCallback(async () => {
     try {

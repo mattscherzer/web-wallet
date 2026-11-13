@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { ArrowLeft, Lock, TriangleAlert } from 'lucide-react';
 import Countdown from '../components/Countdown';
+import FormError from '../components/FormError';
 import PinPad from '../components/PinPad';
 import TextField from '../components/TextField';
 import { PIN_LENGTH } from '../domain/pin';
 import { readLastStaff } from '../auth/lastStaff';
+import { COULD_NOT_SIGN_IN } from '../auth/authContext';
 import { useAuth } from '../auth/useAuth';
 
 // If the app has not taken over the screen by then, show the keys again rather than wait forever.
@@ -56,7 +58,7 @@ export default function LoginPage() {
       setPaused(result.retryAfter);
     } else {
       setWrongPin(result.kind === 'wrong');
-      setError(result.kind === 'wrong' ? 'Wrong username or PIN' : 'Could not sign in. Try again.');
+      setError(result.kind === 'wrong' ? 'Wrong username or PIN' : COULD_NOT_SIGN_IN);
     }
   };
   const onPin = (next: string) => {
@@ -130,12 +132,7 @@ export default function LoginPage() {
     </div>
   );
 
-  const alert = error && (
-    <p role="alert" className="login-error">
-      <TriangleAlert size={20} aria-hidden="true" />
-      {error}
-    </p>
-  );
+  const alert = error && <FormError>{error}</FormError>;
 
   if (mode === 'staff' && paused !== null) {
     return (

@@ -186,8 +186,17 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
         return { data: { subscription: { unsubscribe: () => void authListeners.delete(cb) } } };
       },
       signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
+        const down = failures.get('auth:signIn');
+        if (down) {
+          failures.delete('auth:signIn');
+          return { data: { session: null }, error: down };
+        }
         const user = users.find((u) => u.email === email && u.password === password);
-        if (!user) return { data: { session: null }, error: { message: 'Invalid login credentials' } };
+        if (!user)
+          return {
+            data: { session: null },
+            error: { message: 'Invalid login credentials', status: 400, code: 'invalid_credentials' },
+          };
         session = { user: { id: user.id, email: user.email } };
         notify('SIGNED_IN');
         return { data: { session }, error: null };

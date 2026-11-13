@@ -128,6 +128,32 @@ describe('Wallets and staff page', () => {
     expect((await screen.findByRole('alert')).textContent).toMatch(/couldn.t load/i);
   });
 
+  it('clears the load error when Retry succeeds', async () => {
+    const answer = (body: unknown) => ({ data: { staff: [], body } });
+    ref.fake.answerFunction('staff-admin', () => ({ error: { message: 'boom' } }));
+    open('u-owner');
+    const retry = await within(await screen.findByRole('alert')).findByRole('button', { name: 'Retry' });
+    ref.fake.answerFunction('staff-admin', answer);
+    fireEvent.click(retry);
+    await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+  });
+
+  it('shows a friendly message, not the raw error, when an owner action cannot reach the server', async () => {
+    open('u-owner');
+    await screen.findByText('Anna');
+    fireEvent.click(screen.getByRole('button', { name: 'Add staff' }));
+    ref.fake.answerFunction('staff-admin', () => ({
+      error: { message: 'Failed to send a request to the Edge Function' },
+    }));
+    type('Username', 'mia');
+    type('Name shown in the history', 'Mia');
+    type('PIN', '246810');
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add staff' }));
+    await confirmPassword();
+    const alert = await screen.findByText(/couldn.t do that/i);
+    expect(alert.textContent).not.toMatch(/edge function/i);
+  });
+
   it('keeps all six digits when a PIN is pasted with spaces', async () => {
     open('u-owner');
     fireEvent.click(await screen.findByRole('button', { name: 'Add staff' }));

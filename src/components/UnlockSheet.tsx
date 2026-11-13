@@ -1,17 +1,16 @@
 import { useState, type FormEvent } from 'react';
 import { Lock, X } from 'lucide-react';
 import BottomSheet from './BottomSheet';
+import FormError from './FormError';
 import Countdown from './Countdown';
 import PinPad from './PinPad';
 import TextField from './TextField';
-import type { AccessResult } from '../auth/authContext';
+import { COULDNT_CHECK, type AccessResult } from '../auth/authContext';
 import { PIN_LENGTH } from '../domain/pin';
 import { readLastStaff } from '../auth/lastStaff';
 import { useAuth } from '../auth/useAuth';
 
 type Problem = Exclude<AccessResult, { ok: true }> | null;
-
-const COULDNT_CHECK = 'Couldn’t check. Check your connection and try again.';
 
 /** Asks whoever holds the phone to prove who they are again: staff by PIN, owners by password. */
 export default function UnlockSheet({ onClose }: { onClose: () => void }) {
@@ -94,9 +93,7 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
         {isOwner ? `Hi, ${name}. Enter your password.` : `Hi, ${name}. Enter your ${PIN_LENGTH}-digit PIN.`}
       </p>
       {problem && (
-        <p role="alert" className="form-error">
-          {problem.kind === 'wrong' ? (isOwner ? 'Wrong password' : 'Wrong PIN') : COULDNT_CHECK}
-        </p>
+        <FormError>{problem.kind === 'wrong' ? (isOwner ? 'Wrong password' : 'Wrong PIN') : COULDNT_CHECK}</FormError>
       )}
       {isOwner ? (
         <form className="unlock-sheet__form" onSubmit={submitPassword} noValidate>

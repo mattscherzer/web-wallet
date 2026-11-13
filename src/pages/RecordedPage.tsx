@@ -4,6 +4,7 @@ import { Check } from 'lucide-react';
 import { getAccountLabel, fromAccountLabel } from '../domain/accounts';
 import { useEntry } from '../hooks/useEntry';
 import { useTransactionCommands } from '../hooks/useTransactionCommands';
+import FormError from '../components/FormError';
 import Amount from '../components/Amount';
 import LoadFailed from '../components/LoadFailed';
 import PageLoading from '../components/PageLoading';
@@ -80,11 +81,7 @@ export default function RecordedPage() {
         </dl>
       </div>
 
-      {problem && (
-        <p className="field-error" role="alert">
-          {problem}
-        </p>
-      )}
+      {problem && <FormError>{problem}</FormError>}
       <div className="recorded__actions">
         <Link className="btn btn--primary" to={`/record?type=${typeParam(tx.type)}`}>
           Record another

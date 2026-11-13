@@ -77,6 +77,15 @@ describe('owner password confirmation', () => {
     expect(document.activeElement).toBe(opener);
   });
 
+  it('says it could not check, not "wrong password", when the check fails to reach the server', async () => {
+    open('u-owner');
+    fireEvent.click(screen.getByRole('button', { name: 'Do owner thing' }));
+    check.mockRejectedValueOnce(new Error('Failed to fetch'));
+    await enterPassword('owner-pw');
+    expect((await screen.findByRole('alert')).textContent).toBe('Couldn’t check. Check your connection and try again.');
+    expect(done()).toBe('0');
+  });
+
   it('lets the owner show and hide what they typed', async () => {
     open('u-owner');
     fireEvent.click(screen.getByRole('button', { name: 'Do owner thing' }));

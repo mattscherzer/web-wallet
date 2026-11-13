@@ -6,6 +6,7 @@ import { useAuth } from '../auth/useAuth';
 import { walletInitials } from '../domain/wallet';
 import { formatCurrency } from '../utils/formatCurrency';
 import BottomSheet from './BottomSheet';
+import FormError from './FormError';
 
 export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
   const { wallets, current, switchWallet } = useWallet();
@@ -57,12 +58,12 @@ export default function WalletSwitcher({ onClose }: { onClose: () => void }) {
       </ul>
 
       {failed && (
-        <p role="alert" className="form-error">
+        <FormError>
           Couldn’t load the balances.{' '}
-          <button type="button" className="wallet-sheet__retry" onClick={retry}>
+          <button type="button" className="form-error__retry" onClick={retry}>
             Retry
           </button>
-        </p>
+        </FormError>
       )}
 
       {canCreate && (

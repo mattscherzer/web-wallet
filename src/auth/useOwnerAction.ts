@@ -16,7 +16,7 @@ export function useOwnerAction(run: () => Promise<void>, onDone: () => Promise<v
         await onDone();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Couldn’t do that. Check your connection and try again.');
     }
     setBusy(false);
   };

@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { Download, Search } from 'lucide-react';
 import { HistorySkeleton } from '../components/LoadingSkeletons';
 import NotLoaded from '../components/NotLoaded';
+import FormError from '../components/FormError';
 import { useFilteredTransactionsState } from '../hooks/useHistory';
 import { getAccountLabel } from '../domain/accounts';
 import { entryTitle, historyTotals, type Transaction } from '../domain/transaction';
@@ -60,11 +61,7 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {exportFailed && (
-        <p role="alert" className="form-error">
-          Couldn't export the history. Check your connection and try again.
-        </p>
-      )}
+      {exportFailed && <FormError>Couldn't export the history. Check your connection and try again.</FormError>}
 
       {!loaded && (
         <NotLoaded failed={failed} what="the history" onRetry={() => void refresh()} skeleton={<HistorySkeleton />} />
