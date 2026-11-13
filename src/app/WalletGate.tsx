@@ -15,7 +15,7 @@ function WalletsFailed({ reload }: { reload: () => Promise<void> }) {
   };
   return (
     <div className="wallet-error">
-      <span className="wallet-error__mark" aria-hidden="true">
+      <span className={`wallet-error__mark${retrying ? ' wallet-error__mark--busy' : ''}`} aria-hidden="true">
         {retrying ? <LoadingIndicator size={96} /> : <WifiOff size={40} />}
       </span>
       <h1 className="title-lg">Couldn’t load your wallets</h1>
