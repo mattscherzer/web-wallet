@@ -32,7 +32,6 @@ const september = () => [
   row({ type: 'transfer', amount: 50, account_id: 'prudent_reserve', from_account_id: 'bank', date: '2026-09-12' }),
 ];
 
-/** The design's example wallet, with "today" at 24 September 2026. */
 export const reportRows = (opts: { september?: boolean; removed?: boolean } = {}) => ({
   ...twoWalletRows(),
   transactions: [
