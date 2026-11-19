@@ -86,13 +86,11 @@ describe('RecordFabView', () => {
 
 describe('record menu state', () => {
   it('opens on toggle and closes on toggle, escape, scrim, item pick and route change', () => {
-    const { nextMenuOpen, menuEventForKey } = menuLib();
+    const { nextMenuOpen } = menuLib();
     expect(nextMenuOpen(false, 'toggle')).toBe(true);
     expect(nextMenuOpen(true, 'toggle')).toBe(false);
     for (const e of ['escape', 'scrim', 'itemPick', 'routeChange'] as const)
       expect(nextMenuOpen(true, e), e).toBe(false);
     expect(nextMenuOpen(false, 'escape')).toBe(false);
-    expect(menuEventForKey('Escape')).toBe('escape');
-    expect(menuEventForKey('Enter')).toBeNull();
   });
 });

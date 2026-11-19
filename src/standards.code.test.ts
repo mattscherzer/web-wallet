@@ -7,6 +7,7 @@ import { files, isTest, lineHits, read, sourceFiles, must } from './test/repoFil
 const src = () => sourceFiles().filter((f) => f.startsWith('src/'));
 const inLayer = (f: string, ...layers: string[]) => layers.some((l) => f.startsWith(`src/${l}/`));
 
+// TODO(#78): remove this exception list.
 const NAMED_UI = [
   'components/CashCountView',
   'components/FilledField',

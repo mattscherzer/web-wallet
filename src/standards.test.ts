@@ -79,8 +79,8 @@ describe('coding standards (docs/coding-standards.md)', () => {
       expect(bad, `rule 9.9: JSDoc type tag at ${bad.join(', ')}`).toEqual([]);
     });
 
-    it('rule 9.10: every TODO, FIXME or HACK points at an issue, as TODO(#123)', () => {
-      const bad = linesWhere((line) => /\b(TODO|FIXME|HACK|XXX)\b(?!\(#\d+\))/.test(line));
+    it('rule 9.10: every TODO, FIXME, HACK or SEE points at an issue, as TODO(#123)', () => {
+      const bad = linesWhere((line) => /\b(TODO|FIXME|HACK|XXX|SEE)\b(?!\(#\d+\))/.test(line));
       expect(bad, `rule 9.10: marker without an issue number at ${bad.join(', ')}`).toEqual([]);
     });
   });

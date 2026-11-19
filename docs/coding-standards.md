@@ -103,7 +103,7 @@ domain/  utils/           pure rules and helpers
 - **9.7** No new runtime dependency without a sentence in the PR on why the platform or an installed package can't do it. `test`
 - **9.8** Delete comments that restate the code, narrate a change ("now uses X", "moved from Y") or are dead: section banners and commented-out code. Git keeps history. `test` (banners, commented-out code), `review` (the rest)
 - **9.9** Doc comments carry no `@param`, `@returns` or `@type` tags; the types already say it. `test`
-- **9.10** A TODO, FIXME or HACK points at an issue, as `TODO(#123)`. Without one, do it now or delete it. `test`
+- **9.10** A TODO, FIXME, HACK or SEE points at an issue, as `TODO(#123)` or `SEE(#123)`. Without one, do it now or delete it. `test`
 - **9.11** A change that makes a comment wrong fixes or deletes the comment in the same commit. `review`
 
 ## 10. Edge functions (`supabase/functions`)

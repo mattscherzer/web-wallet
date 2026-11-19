@@ -11,10 +11,11 @@ interface CashCalculatorProps {
 
 function CountOverlay({ onClose, onApply }: Omit<CashCalculatorProps, 'isOpen'>) {
   const [state, dispatch] = useReducer(countReducer, undefined, initialCountState);
-  useCountScreenKeys(onClose);
+  const screenRef = useCountScreenKeys(onClose);
 
   return (
     <CashCountView
+      screenRef={screenRef}
       state={state}
       dispatch={dispatch}
       onClose={onClose}

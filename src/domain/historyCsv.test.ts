@@ -91,7 +91,7 @@ describe('buildHistoryCsvRows', () => {
   });
 
   it('keeps a transfer with a null source as a row without moving any balance', () => {
-    // Current behaviour, pinned so any change is deliberate (see #12).
+    // SEE(#12): current behaviour, pinned so any change is deliberate.
     const rows = buildHistoryCsvRows([
       tx({ type: 'inflow', amount: 50, account_id: 'cash' }),
       tx({ type: 'transfer', amount: 25, account_id: 'cash', from_account_id: null, notes: 'Legacy' }),

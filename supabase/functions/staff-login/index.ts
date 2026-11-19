@@ -14,6 +14,7 @@ const serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
 const anonKey = env('SUPABASE_ANON_KEY');
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
+// Unknown usernames still run a bcrypt compare, so response time doesn't reveal which usernames exist.
 const DUMMY_HASH = bcrypt.hashSync('000000', 10);
 
 const sessionClient: StaffSessionClient = {

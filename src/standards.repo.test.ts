@@ -71,6 +71,7 @@ describe('coding standards: repository', () => {
   });
 
   describe('rule 11.2: new migrations can run twice', () => {
+    // TODO(#78): remove this exception list.
     const LEGACY = [
       '20260101000000_initial_schema.sql',
       '20261006120000_wallets.sql',

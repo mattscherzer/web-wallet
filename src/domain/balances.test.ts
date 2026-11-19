@@ -101,7 +101,7 @@ describe('computeAccountBalances', () => {
   });
 
   it('credits only the destination when a transfer has a null source', () => {
-    // Current behaviour, pinned so any change is deliberate (see #12).
+    // SEE(#12): current behaviour, pinned so any change is deliberate.
     const balances = computeAccountBalances([transfer(null, 'cash', 40), transfer(undefined, 'prudent_reserve', 10)]);
 
     expect(balances).toEqual({ cash: 40, paypal: 0, bank: 0, prudent_reserve: 10 });

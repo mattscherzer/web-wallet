@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { trapTab } from './trapTab';
 
-export function useCountScreenKeys(onClose: () => void) {
+export function useCountScreenKeys<T extends HTMLElement = HTMLDivElement>(onClose: () => void) {
+  const screenRef = useRef<T>(null);
   const closeRef = useRef(onClose);
+  // The overlay is also rendered on the server in tests, where there is no document.
   const [opener] = useState(() =>
     typeof document !== 'undefined' && document.activeElement instanceof HTMLElement ? document.activeElement : null,
   );
@@ -11,7 +14,8 @@ export function useCountScreenKeys(onClose: () => void) {
   }, [onClose]);
 
   useEffect(() => {
-    document.querySelector<HTMLElement>('.count-screen .count-icon-btn')?.focus();
+    const screen = screenRef.current;
+    screen?.querySelector<HTMLElement>('.count-icon-btn')?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (e.isComposing) return;
@@ -21,24 +25,10 @@ export function useCountScreenKeys(onClose: () => void) {
         return;
       }
       if (e.key !== 'Tab') return;
-      const focusable = Array.from(
-        document.querySelectorAll<HTMLElement>('.count-screen button:not(:disabled), .count-screen input'),
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      const inside = active !== null && focusable.includes(active);
-      if (!inside) {
-        e.preventDefault();
-        (e.shiftKey ? last : first).focus();
-      } else if (e.shiftKey && active === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (!screen) return;
+      const focusable = Array.from(screen.querySelectorAll<HTMLElement>('button:not(:disabled), input'));
+      const { activeElement } = document;
+      trapTab(e, focusable, !(activeElement instanceof HTMLElement && focusable.includes(activeElement)));
     };
     document.addEventListener('keydown', onKey);
     return () => {
@@ -46,4 +36,6 @@ export function useCountScreenKeys(onClose: () => void) {
       opener?.focus?.();
     };
   }, [opener]);
+
+  return screenRef;
 }

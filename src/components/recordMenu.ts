@@ -28,7 +28,3 @@ export type MenuEvent = 'toggle' | 'escape' | 'scrim' | 'itemPick' | 'routeChang
 export function nextMenuOpen(open: boolean, event: MenuEvent): boolean {
   return event === 'toggle' ? !open : false;
 }
-
-export function menuEventForKey(key: string): MenuEvent | null {
-  return key === 'Escape' ? 'escape' : null;
-}

@@ -33,11 +33,13 @@
 }
 
 .transaction-item__info {
+  display: block;
   flex: 1;
   min-width: 0;
 }
 
 .transaction-item__name {
+  display: block;
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);

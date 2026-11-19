@@ -18,6 +18,7 @@ import { AddStaffSheet, DisableSheet, ResetPinSheet } from './admin/StaffSheets'
 export default function AdminPage() {
   const { status, profile } = useAuth();
   if (status === 'loading') return <AdminSkeleton />;
+  // Only hides the page; the database refuses staff admin calls from non-owners regardless.
   if (profile?.kind !== 'owner') return <OwnersOnly />;
   return <Dashboard />;
 }

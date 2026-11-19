@@ -1,28 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { trapTab } from './trapTab';
 
 const open: HTMLElement[] = [];
 
-function trapTab(e: KeyboardEvent, dialog: HTMLElement, focusLost: boolean) {
-  const items = Array.from(
-    dialog.querySelectorAll<HTMLElement>('button, input, select, textarea, [href], [tabindex]:not([tabindex="-1"])'),
-  ).filter((el) => !el.matches(':disabled'));
-  if (items.length === 0) return;
-  const first = items[0];
-  const last = items[items.length - 1];
-  if (focusLost) {
-    e.preventDefault();
-    (e.shiftKey ? last : first).focus();
-  } else if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
-    e.preventDefault();
-    last.focus();
-  } else if (!e.shiftKey && document.activeElement === last) {
-    e.preventDefault();
-    first.focus();
-  }
-}
-
 export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(onClose: () => void) {
   const dialogRef = useRef<T>(null);
+  // An autofocused field inside the dialog takes focus before effects run, so the opener is read during render.
   const [opener] = useState(() => (document.activeElement instanceof HTMLElement ? document.activeElement : null));
   const onCloseRef = useRef(onClose);
   useEffect(() => {
@@ -41,7 +24,12 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(onClose: 
         return;
       }
       if (e.key !== 'Tab') return;
-      trapTab(e, dialog, focusLost);
+      const items = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button, input, select, textarea, [href], [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.matches(':disabled'));
+      trapTab(e, items, focusLost, dialog);
     };
     document.addEventListener('keydown', onKey);
     return () => {

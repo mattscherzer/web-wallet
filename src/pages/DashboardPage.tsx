@@ -138,9 +138,9 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
         onClick={() => setExpanded(!expanded)}
       >
         <TransactionIcon type={tx.type} coins />
-        <div className="transaction-item__info">
-          <p className="transaction-item__name">{entryTitle(tx, tx.notes || 'Transaction')}</p>
-        </div>
+        <span className="transaction-item__info">
+          <span className="transaction-item__name">{entryTitle(tx, tx.notes || 'Transaction')}</span>
+        </span>
         <span className="transaction-item__amount">
           <Amount type={tx.type} amount={tx.amount} />
         </span>

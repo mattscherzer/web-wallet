@@ -1,4 +1,4 @@
-import type { ChangeEvent, Dispatch, KeyboardEvent } from 'react';
+import type { ChangeEvent, Dispatch, KeyboardEvent, Ref } from 'react';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import {
   DENOMINATIONS,
@@ -17,6 +17,7 @@ interface CashCountViewProps {
   onApply: (total: number) => void;
   onClose: () => void;
   locale?: string;
+  screenRef?: Ref<HTMLDivElement>;
 }
 
 const MODES: { id: Mode; label: string }[] = [
@@ -31,7 +32,7 @@ const HINTS: Record<Mode, string> = {
   type: 'Type how many of each you counted.',
 };
 
-export function CashCountView({ state, dispatch, onApply, onClose, locale }: CashCountViewProps) {
+export function CashCountView({ state, dispatch, onApply, onClose, locale, screenRef }: CashCountViewProps) {
   const { counts, history, mode } = state;
   const cents = totalCents(counts);
   const money = (amountCents: number) => formatCurrency(amountCents / 100, locale);
@@ -111,7 +112,7 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
   };
 
   return (
-    <div className="count-screen" role="dialog" aria-modal="true" aria-labelledby="count-title">
+    <div ref={screenRef} className="count-screen" role="dialog" aria-modal="true" aria-labelledby="count-title">
       <header className="count-header">
         <button type="button" className="count-icon-btn" aria-label="Back to the form" onClick={onClose}>
           <ArrowLeft size={24} aria-hidden="true" />

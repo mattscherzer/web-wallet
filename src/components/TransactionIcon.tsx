@@ -7,8 +7,8 @@ const COINS = { inflow: HandCoins, outflow: ReceiptEuro, transfer: ArrowLeftRigh
 export default function TransactionIcon({ type, coins = false }: { type: TransactionType; coins?: boolean }) {
   const Glyph = (coins ? COINS : ARROWS)[type];
   return (
-    <div className={`transaction-item__icon transaction-item__icon--${type}`} aria-hidden="true">
+    <span className={`transaction-item__icon transaction-item__icon--${type}`} aria-hidden="true">
       <Glyph size={20} />
-    </div>
+    </span>
   );
 }
