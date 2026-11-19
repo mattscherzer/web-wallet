@@ -154,7 +154,7 @@ describe('owner sign-in when the server cannot be reached', () => {
 });
 
 describe('the sign-in screens follow the design', () => {
-  it('T61', async () => {
+  it('T61 the username step has the Treasury mark, a Sign in heading, the helper lines and the footer note', async () => {
     open();
     await screen.findByLabelText('Username');
     expect(screen.getByRole('heading', { name: 'Sign in' })).toBeTruthy();
@@ -166,7 +166,7 @@ describe('the sign-in screens follow the design', () => {
     expect(screen.getByLabelText('Username').getAttribute('aria-describedby')).toBeTruthy();
   });
 
-  it('T62', async () => {
+  it('T62 the PIN step has a back arrow, the initial in a circle, and Not anna? Use another username', async () => {
     await toPinStep();
     expect(screen.getByText('A')).toBeTruthy();
     expect(screen.getByText('Enter your 6-digit PIN')).toBeTruthy();
@@ -175,13 +175,13 @@ describe('the sign-in screens follow the design', () => {
     expect(await screen.findByLabelText('Username')).toBeTruthy();
   });
 
-  it('T63', async () => {
+  it('T63 the owner step says Owners sign in with email and password', async () => {
     open();
     fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
     expect(screen.getByText('Owners sign in with email and password.')).toBeTruthy();
   });
 
-  it('T64', async () => {
+  it('T64 while the PIN is checked the loading indicator and Signing you in show, and the Not anna link is gone', async () => {
     ref.fake.client.functions.invoke = (() =>
       new Promise(() => {})) as unknown as typeof ref.fake.client.functions.invoke;
     await toPinStep();
@@ -209,7 +209,7 @@ describe('the sign-in screens follow the design', () => {
     expect(await screen.findByText('the books')).toBeTruthy();
   });
 
-  it('T68', async () => {
+  it('T68 when the paused wait is over a button leads straight back to the PIN pad for the same person', async () => {
     ref.fake.answerFunction('staff-login', () => refused(429, { error: 'locked', retryAfter: 1 }));
     await toPinStep();
     press('000000');

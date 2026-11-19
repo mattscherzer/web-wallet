@@ -36,6 +36,8 @@ const FIX: Record<string, string> = {
   '5.2': 'Render all three states: loading, failed with a retry (LoadFailed / refresh) and loaded.',
   '5.4': 'Call requireUnlocked() before the write, and ask the owner to confirm owner-only actions (useOwnerAction).',
   '8.1': 'vi.mock the Supabase client with src/test/fakeSupabase.ts; unit tests never reach a live database.',
+  '8.4':
+    "Name the test by the behaviour it checks, e.g. it('T66 staff who forgot the username get a way out'); an id alone says nothing.",
   '9.4': 'Delete the comment, or cut it to one line that says why the code cannot.',
   '9.4/9.8': 'Delete the comment, or rewrite it to say why, not what changed.',
   '9.6': 'Pages and components use `export default`; anything else uses a named export.',

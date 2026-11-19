@@ -184,7 +184,7 @@ describe('every other way to change something while locked', () => {
     expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
   });
 
-  it('T65', async () => {
+  it('T65 an owner restore that waited at the password box while the app locked does not go through', async () => {
     ref.fake.signIn('u-owner');
     shell(null, '/history/t5');
     fireEvent.click(await screen.findByRole('button', { name: 'Restore' }));

@@ -88,7 +88,7 @@ domain/  utils/           pure rules and helpers
 - **8.1** Run with `test`
 - **8.2** SQL (policies, triggers, migrations) is tested on real Postgres with PGlite, not with mocks. `review`
 - **8.3** Assert on what the user sees or what the database holds, not on which mock was called. `review`
-- **8.4** Name tests by behaviour: "refuses to remove an entry without a reason", not "test removeTransaction". `lint` (titles starting with "test")
+- **8.4** Name tests by behaviour: "refuses to remove an entry without a reason", not "test removeTransaction". `lint` (titles starting with "test"), `test` (a name that is only an id)
 - **8.5** A change never weakens or deletes an assertion to make a test pass. If behaviour changes on purpose, update the assertion and say so in the PR. `CI`
 - **8.6** A bug fix comes with a test that fails without the fix. `CI`
 

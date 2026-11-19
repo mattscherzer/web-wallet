@@ -14,7 +14,7 @@ beforeEach(() => {
 });
 
 describe('checking the owner password', () => {
-  it('T70', async () => {
+  it('T70 the throwaway session the check opens is ended again, and the owners real session stays', async () => {
     auth.signInWithPassword.mockResolvedValue({ error: null });
     expect(await checkOwnerPassword('olga@x.org', 'pw')).toBe(true);
     expect(auth.signOut).toHaveBeenCalledTimes(1);

@@ -218,7 +218,7 @@ describe('the idle lock banner', () => {
 });
 
 describe('unlock sheet edge cases', () => {
-  it('T66', async () => {
+  it('T66 staff whose phone forgot the username get a way out instead of a pad that never works', async () => {
     rememberStaff();
     ref.fake.signIn('u-anna');
     shell();
@@ -232,7 +232,7 @@ describe('unlock sheet edge cases', () => {
     await waitFor(() => expect(ref.fake.signOutScopes).toEqual(['local']));
   });
 
-  it('T67', async () => {
+  it('T67 Tab inside the open sheet stays inside it', async () => {
     await lockedAsStaff();
     const buttons = within(sheet())
       .getAllByRole('button')

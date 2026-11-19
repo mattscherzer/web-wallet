@@ -153,6 +153,13 @@ describe('coding standards: source code', () => {
     must('8.1', 'test uses the real Supabase client', bad);
   });
 
+  it('rule 8.4: a test name says what it checks, not only an id', () => {
+    const bad = files('src', /\.test\.tsx?$/)
+      .concat(files('supabase', /\.test\.ts$/))
+      .filter((f) => /\b(it|test)\(\s*['"`]T?\d+[a-z]?['"`]/.test(read(f)));
+    must('8.4', 'test named only by an id', bad);
+  });
+
   it('rule 12.5: size limits only go down', () => {
     const config = read('eslint.config.js');
     const limit = (re: RegExp) => Number(config.match(re)?.[1]);
