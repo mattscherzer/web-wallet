@@ -96,7 +96,6 @@ export const daysLabel = (days: number) => `${days} ${days === 1 ? 'day' : 'days
 
 const monthName = (d: Date) => MONTHS[d.getUTCMonth()] ?? '';
 
-/** "1–24 September 2026", "1 August – 24 September 2026", "1 December 2025 – 24 January 2026". */
 export function periodLabel(period: Period): string {
   const start = requireDate(period.start);
   const end = requireDate(period.end);
@@ -108,13 +107,11 @@ export function periodLabel(period: Period): string {
   return `${sd} ${monthName(start)} ${sy} – ${ed} ${monthName(end)} ${ey}`;
 }
 
-/** "2026-09" when the period sits inside one calendar month, otherwise "start_end". */
 export function periodKey(period: Period): string {
   if (period.start.slice(0, 7) === period.end.slice(0, 7)) return period.start.slice(0, 7);
   return `${period.start}_${period.end}`;
 }
 
-/** The whole calendar month before the one the period starts in. */
 export function previousMonth(period: Period): Period {
   const start = requireDate(period.start);
   const first = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() - 1, 1));
@@ -126,7 +123,6 @@ export const monthYearLabel = (period: Period) => {
   return `${monthName(start)} ${start.getUTCFullYear()}`;
 };
 
-/** "1 Sep". */
 export function shortDate(date: string): string {
   const d = requireDate(date);
   return `${d.getUTCDate()} ${monthName(d).slice(0, 3)}`;
@@ -144,7 +140,6 @@ export interface EntryEffect {
   reserveChange: number;
   moneyIn: number;
   moneyOut: number;
-  /** Net sent from Available to the reserve; negative when it comes back. */
   movedToReserve: number;
 }
 
@@ -173,7 +168,6 @@ export interface ReportEntry {
   entry: Transaction;
   title: string;
   removed: boolean;
-  /** Position in the chronological order of the period, removed entries included. */
   order: number;
   availableChange: number;
   reserveChange: number;
@@ -192,7 +186,6 @@ export interface Report {
   moneyOut: number;
   movedToReserve: number;
   entryCount: number;
-  /** Chronological, live entries only. */
   entries: ReportEntry[];
   removedEntries: ReportEntry[];
 }
