@@ -1,6 +1,3 @@
-/* =============================================
-   LOGIN: brand, heading, Staff/Owner toggle, PIN screen
-   ============================================= */
 .login-page {
   display: flex;
   flex-direction: column;
@@ -86,7 +83,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Staff / Owner toggle */
 .login-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -118,7 +114,6 @@
   outline-offset: 2px;
 }
 
-/* PIN screen: dots on top, number pad pinned to the bottom */
 .login-page--pin {
   padding: 0 0 var(--space-md);
   gap: 14px;
@@ -169,7 +164,6 @@
   cursor: pointer;
 }
 
-/* Paused */
 .login-paused {
   display: flex;
   align-items: flex-start;

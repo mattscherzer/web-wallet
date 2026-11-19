@@ -4,7 +4,6 @@ interface AccountChoicesProps {
   name: string;
   value: AccountId;
   onPick: (id: AccountId) => void;
-  /** Id for the selected option, so an error summary can link to it. */
   invalidId?: string;
 }
 

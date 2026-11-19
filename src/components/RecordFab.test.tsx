@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 
-// Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./RecordFab').catch(() => undefined);
 const menu = await import('./recordMenu').catch(() => undefined);
 
@@ -87,13 +86,11 @@ describe('RecordFabView', () => {
 
 describe('record menu state', () => {
   it('opens on toggle and closes on toggle, escape, scrim, item pick and route change', () => {
-    const { nextMenuOpen, menuEventForKey } = menuLib();
+    const { nextMenuOpen } = menuLib();
     expect(nextMenuOpen(false, 'toggle')).toBe(true);
     expect(nextMenuOpen(true, 'toggle')).toBe(false);
     for (const e of ['escape', 'scrim', 'itemPick', 'routeChange'] as const)
       expect(nextMenuOpen(true, e), e).toBe(false);
     expect(nextMenuOpen(false, 'escape')).toBe(false);
-    expect(menuEventForKey('Escape')).toBe('escape');
-    expect(menuEventForKey('Enter')).toBeNull();
   });
 });

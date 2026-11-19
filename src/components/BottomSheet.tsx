@@ -1,9 +1,8 @@
 import { useId, type ReactNode } from 'react';
 import { X } from 'lucide-react';
-import { useDialogFocus } from './useDialogFocus';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 
 interface BottomSheetProps {
-  /** Heading shown in the sheet and naming the dialog. Without it, `label` names a sheet that draws its own head. */
   title?: string;
   label?: string;
   className?: string;
@@ -25,7 +24,8 @@ export default function BottomSheet({
   const titleId = useId();
   const dialogRef = useDialogFocus(onClose);
   return (
-    <div className="modal-overlay modal-overlay--bottom" onClick={onClose}>
+    <div className="modal-overlay modal-overlay--bottom">
+      <button type="button" className="modal-scrim" tabIndex={-1} aria-hidden="true" onClick={onClose} />
       <div
         ref={dialogRef}
         tabIndex={-1}
@@ -34,7 +34,6 @@ export default function BottomSheet({
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         aria-label={title ? undefined : label}
-        onClick={(e) => e.stopPropagation()}
       >
         <span className="bottom-sheet__handle" aria-hidden="true" />
         {title && (

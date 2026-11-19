@@ -1,6 +1,3 @@
-/* =============================================
-   TRANSACTION ITEM
-   ============================================= */
 .transaction-item {
   background: var(--color-card);
   overflow: hidden;
@@ -12,6 +9,8 @@
   gap: var(--space-md);
   min-height: 72px;
   padding: 12px var(--space-md);
+  width: 100%;
+  text-align: left;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -34,11 +33,13 @@
 }
 
 .transaction-item__info {
+  display: block;
   flex: 1;
   min-width: 0;
 }
 
 .transaction-item__name {
+  display: block;
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
@@ -58,7 +59,6 @@
   flex-shrink: 0;
 }
 
-/* Amount: sign + figure + word tag + screen-reader text */
 .amount {
   display: flex;
   flex-direction: column;
@@ -82,7 +82,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Segmented lists: 2px gaps, large outer corners, small inner corners */
 .segmented-list {
   display: flex;
   flex-direction: column;
@@ -182,9 +181,6 @@
   color: var(--color-text-primary);
 }
 
-/* =============================================
-   DATE GROUP
-   ============================================= */
 .date-group {
   margin-bottom: var(--space-md);
 }

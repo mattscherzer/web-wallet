@@ -5,7 +5,6 @@ import { useAuth } from '../auth/useAuth';
 
 type Updates = Parameters<typeof updateTransaction>[1];
 
-/** The write commands for the open wallet, signed with the name of whoever is logged in. Each rejects when no wallet is open. */
 export function useTransactionCommands() {
   const { current } = useWallet();
   const actor = useAuth().profile?.displayName;

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AccountId } from './accounts';
 
-// Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./recordForm').catch(() => undefined);
 
 function lib() {
@@ -70,7 +69,6 @@ describe('record preview and action', () => {
     expect(recordActionLabel(inflow, 'en')).toBe('Record +€145.50 into Cash Balance');
     expect(recordPreview(inflow, BALANCES).availableAfter).toBeCloseTo(1048);
 
-    // Operating -> reserve lowers Available; operating -> operating leaves it unchanged.
     const toReserve = base({ type: 'transfer', amount: '50', fromAccountId: 'bank', accountId: 'prudent_reserve' });
     expect(recordActionLabel(toReserve, 'en')).toBe('Record €50.00 from Bank Account to Prudent Reserve');
     const r = recordPreview(toReserve, BALANCES);

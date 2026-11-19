@@ -3,20 +3,17 @@ import { safeStorage } from '../platform/storage';
 
 export const IDLE_LOCK_MS = 30 * 60_000;
 
-/** When the app was last used, kept so a closed or reloaded app still locks after 30 minutes. */
 export const LAST_ACTIVITY_KEY = 'treasury.lastActivity';
 
 export function rememberActivity(now = Date.now()) {
   safeStorage.setItem(LAST_ACTIVITY_KEY, String(now));
 }
 
-/** True when the app was last used more than 30 minutes ago (never used before counts as not expired). */
 export function idleExpired(now = Date.now()): boolean {
   const last = Number(safeStorage.getItem(LAST_ACTIVITY_KEY));
   return last > 0 && now - last >= IDLE_LOCK_MS;
 }
 
-/** Kept in storage so a reload or reopened app is still locked. */
 const LOCKED_KEY = 'treasury.locked';
 export type LockReason = 'manual' | 'idle';
 
@@ -32,10 +29,6 @@ export function writeLock(reason: LockReason | null) {
 
 const ACTIVITY_EVENTS = ['pointerdown', 'keydown', 'touchstart', 'scroll'] as const;
 
-/**
- * Calls `onLock` once the person has not used the app for IDLE_LOCK_MS. A phone that sleeps pauses timers, so the
- * time is also checked against the clock whenever the app becomes visible again.
- */
 export function useIdleLock(active: boolean, onLock: () => void) {
   const lastActivity = useRef(0);
   const lastWrite = useRef(0);
@@ -63,7 +56,6 @@ export function useIdleLock(active: boolean, onLock: () => void) {
 
     const touch = () => {
       const now = Date.now();
-      // Written at most every few seconds: storage writes on every scroll or key press would be wasteful.
       if (now - lastWrite.current > 5_000) {
         rememberActivity(now);
         lastWrite.current = now;

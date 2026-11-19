@@ -3,7 +3,6 @@ import { emptyBalances } from '../../domain/balances';
 import { recordPreview, type RecordForm } from '../../domain/recordForm';
 import { formatCurrency } from '../../utils/formatCurrency';
 
-/** Balances as they will be after saving; `balances` is null until they have really been fetched. */
 export default function BalancePreview({
   form,
   balances,

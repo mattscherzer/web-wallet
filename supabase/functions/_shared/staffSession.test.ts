@@ -24,7 +24,6 @@ function fakeAdmin(overrides: Partial<StaffSessionClient & StaffUserCreator> = {
 }
 
 describe('staff sessions', () => {
-  // The client has no signInWithPassword, so a password sign-in is impossible by type.
   it('T7e a staff session comes from a one-time link checked on the server, never from a stored or derived password', async () => {
     const { client, calls } = fakeAdmin();
     const session = await mintStaffSession(client, 'new-id');

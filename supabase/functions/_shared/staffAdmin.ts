@@ -1,4 +1,3 @@
-// Logic of the staff-admin edge function (owners manage staff), free of Deno/Supabase imports so it can be unit-tested.
 import { CORS_HEADERS, isPin, reply } from './http.ts';
 
 export interface StaffListEntry {
@@ -10,22 +9,16 @@ export interface StaffListEntry {
 }
 
 export interface StaffAdminDeps {
-  /** Resolve a bearer token to the logged-in user, or null when it is missing, invalid or expired. */
   getCaller(token: string): Promise<{ id: string } | null>;
-  /** The caller's role in that wallet, or null when they are not a member. */
   roleIn(userId: string, walletId: string): Promise<'owner' | 'staff' | null>;
-  /** The membership of a user (any wallet), or null for an unknown user. */
   getMember(userId: string): Promise<{ userId: string; walletId: string; role: 'owner' | 'staff' } | null>;
   usernameTaken(username: string): Promise<boolean>;
   hashPin(pin: string): Promise<string>;
-  /** Creates the login (random password nobody keeps, no personal data) and returns its id. */
   createAuthUser(displayName: string): Promise<string>;
-  /** Adds the membership and the PIN row for a freshly created login. */
   addStaff(input: { userId: string; walletId: string; username: string; pinHash: string }): Promise<void>;
   deleteAuthUser(userId: string): Promise<void>;
   setPinHash(userId: string, pinHash: string): Promise<void>;
   setDisabled(userId: string, disabled: boolean): Promise<void>;
-  /** Blocks (or unblocks) the login itself, so refresh tokens stop working too. */
   setBanned(userId: string, banned: boolean): Promise<void>;
   listStaff(walletId: string): Promise<StaffListEntry[]>;
 }
@@ -66,7 +59,6 @@ const create: ActionHandler = async (body, callerId, deps) => {
   return reply(200, { id: userId });
 };
 
-/** Shared by the actions on one staff member: only staff of a wallet the caller owns, never another wallet's, never an owner. */
 function onStaffMember(act: (targetId: string, body: Record<string, unknown>, deps: StaffAdminDeps) => Promise<void>, needsPin = false): ActionHandler {
   return async (body, callerId, deps) => {
     const targetId = text(body.user_id);
@@ -87,13 +79,11 @@ const setDisabledAndBanned = (disabled: boolean) => async (userId: string, _body
   try {
     await deps.setBanned(userId, disabled);
   } catch (error) {
-    // Half done is worse than failed: put the flag back so the owner sees the real state.
     await deps.setDisabled(userId, !disabled).catch((cleanup) => console.error('staff-admin: could not undo', cleanup));
     throw error;
   }
 };
 
-// A new action is one more entry here; the handler below does not change.
 const ACTIONS: Record<string, ActionHandler> = {
   list,
   create,

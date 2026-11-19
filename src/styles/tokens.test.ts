@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const css = readCss();
 
-/** Split the stylesheet into top-level blocks: [header, body]. */
 function topLevelBlocks(source: string): Array<[string, string]> {
   const blocks: Array<[string, string]> = [];
   let depth = 0;
@@ -57,7 +56,6 @@ function contrast(a: string, b: string): number {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 }
 
-// [foreground token, background token, minimum ratio]
 const PAIRS: Array<[string, string, number]> = [
   ['color-text-primary', 'color-bg', 4.5],
   ['color-text-primary', 'color-card', 4.5],

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CountAction, CountState } from './cashCount';
 
-// Loaded dynamically so a missing module fails the assertion below instead of crashing the file.
 const loaded = await import('./cashCount').catch(() => undefined);
 
 function api() {
@@ -174,7 +173,6 @@ describe('no-op changes', () => {
 describe('totalCents', () => {
   it('is exact in integer cents', () => {
     const { MAX_COUNT, totalCents } = api();
-    // 3 x 10c + 1 x 5c + 2 x 1c = 37c, the case float math drifts on
     const counts = new Array(12).fill(0);
     counts[8] = 3;
     counts[9] = 1;
@@ -246,7 +244,6 @@ describe('typing bursts', () => {
     const s = run([type(0, 5), type(0, 0)]);
     expect(s.counts[0]).toBe(0);
     expect(s.history).toHaveLength(0);
-    // The next entry in that field is its own step again.
     const again = run([type(0, 5), type(0, 0), type(0, 7)]);
     expect(again.history).toHaveLength(1);
     expect(run([{ type: 'undo' }], again).counts[0]).toBe(0);

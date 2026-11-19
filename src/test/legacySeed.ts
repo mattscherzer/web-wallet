@@ -1,4 +1,3 @@
-// Pre-login seed (old schema, global PIN): legacy data for the migration tests that start from the baseline schema.
 export const LEGACY_SEED_SQL = `-- Local development data. Safe to re-run: every insert is ON CONFLICT DO NOTHING.
 -- Applied by \`npm run db:reset\` (automatically) and \`npm run db:seed\` (re-run only).
 

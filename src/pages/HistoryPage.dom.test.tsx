@@ -28,7 +28,6 @@ describe('History page', () => {
     expect(screen.getByText(/a2/)).toBeTruthy();
     expect(screen.queryByText(/a5 dup/)).toBeNull();
 
-    // Each row opens its entry.
     expect(screen.getByText(/a1/).closest('a')?.getAttribute('href')).toBe('/history/t1');
 
     fireEvent.click(screen.getByRole('button', { name: 'Money out' }));

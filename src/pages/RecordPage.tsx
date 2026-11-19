@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { useFocusOnRound } from '../hooks/useFocusOnRound';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { Calculator, X } from 'lucide-react';
 import { getAccountLabel } from '../domain/accounts';
@@ -42,13 +43,11 @@ const FIELD_IDS: Record<FieldError['field'], string> = {
 
 const SAVE_FAILED = "Couldn't record this entry. Nothing was saved. Try again.";
 
-/** One screen for money in, money out and transfers. The type comes from the address (?type=in|out|transfer). */
 export default function RecordPage() {
   const navigate = useNavigate();
   const { create } = useTransactionCommands();
   const { requireUnlocked } = useUnlock();
   const [params] = useSearchParams();
-  // null until the balances have really been fetched, so nothing is previewed or warned from zeros.
   const loadedBalances = useLoadedAccountBalances();
 
   const [form, setForm] = useState<RecordForm>(() =>
@@ -61,10 +60,7 @@ export default function RecordPage() {
   const [saving, setSaving] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
 
-  // Focus moves to the summary each time a submit finds problems.
-  useEffect(() => {
-    if (errorRound > 0) summaryRef.current?.focus();
-  }, [errorRound]);
+  useFocusOnRound(summaryRef, errorRound);
 
   const set = (patch: Partial<RecordForm>) => setForm((f) => ({ ...f, ...patch }));
   const setType = (type: RecordType) => {

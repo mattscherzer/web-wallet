@@ -2,10 +2,8 @@ import type { CSSProperties } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { HISTORY_PATH, NAV_ITEMS } from './navItems';
 
-// One pulse lasts 8 steps, so later shapes wrap round instead of sitting still for seconds.
 const STAGGER_STEPS = 8;
 
-/** Hands out 0, 1, 2…: each shape starts its pulse one step after the one drawn before it. */
 const stagger = () => {
   let count = 0;
   return () => count++ % STAGGER_STEPS;
@@ -32,7 +30,6 @@ function Bone({
   );
 }
 
-/** Rows grouped like the loaded lists: round outer corners, small inner ones. */
 function RowGroup({ rows, tall, next }: { rows: number; tall?: boolean; next: () => number }) {
   return (
     <div className="segmented-list" aria-hidden="true">
@@ -57,7 +54,6 @@ function RowGroup({ rows, tall, next }: { rows: number; tall?: boolean; next: ()
   );
 }
 
-/** The Overview while its balances load. */
 export function OverviewSkeleton() {
   const next = stagger();
   return (
@@ -86,7 +82,6 @@ export function OverviewSkeleton() {
   );
 }
 
-/** History while its entries load. The page title is real, so only the data is drawn as shapes. */
 export function HistorySkeleton() {
   const next = stagger();
   return (
@@ -107,13 +102,11 @@ export function HistorySkeleton() {
   );
 }
 
-/** Whatever page the address will open, while its code loads. */
 export function RouteSkeleton() {
   const { pathname } = useLocation();
   return matchPath(HISTORY_PATH, pathname) ? <HistorySkeleton /> : <OverviewSkeleton />;
 }
 
-/** The whole screen before the wallet is known: top bar, Overview and navigation bar as shapes. */
 export function AppShellSkeleton() {
   const next = stagger();
   return (

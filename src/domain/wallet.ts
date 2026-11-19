@@ -7,10 +7,8 @@ export interface Wallet {
   created_at: string;
 }
 
-/** A problem with the name the user typed, safe to show as is. */
 export class WalletNameError extends Error {}
 
-/** The trimmed name, or a WalletNameError saying what is wrong with it. */
 export function validateWalletName(raw: string): string {
   const name = raw.trim();
   if (!name) throw new WalletNameError('Enter a wallet name');
@@ -20,7 +18,6 @@ export function validateWalletName(raw: string): string {
   return name;
 }
 
-/** The remembered wallet if it still exists, otherwise the first one, otherwise none. */
 export function pickCurrentWallet(wallets: Wallet[], storedId: string | null): Wallet | null {
   return wallets.find((w) => w.id === storedId) ?? wallets[0] ?? null;
 }

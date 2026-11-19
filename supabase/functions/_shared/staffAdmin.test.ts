@@ -109,7 +109,6 @@ describe('staff admin', () => {
     expect((await s.call(OWNER, { action: 'reset_pin', user_id: 'u-anna', pin: '135790'  })).status).toBe(200);
     expect((await s.call(OWNER, { action: 'disable', user_id: 'u-anna'  })).status).toBe(200);
     expect((await s.call(OWNER, { action: 'enable', user_id: 'u-anna'  })).status).toBe(200);
-    // Disabling also bans the login (so refresh tokens stop working); enabling lifts the ban.
     expect(s.log).toEqual(['pin:u-anna:hash:135790', 'disable:u-anna', 'ban:u-anna', 'enable:u-anna', 'unban:u-anna']);
 
     const bad = setup();

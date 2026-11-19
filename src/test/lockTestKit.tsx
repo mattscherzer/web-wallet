@@ -1,4 +1,3 @@
-// Shared setup for tests of the locked (view-only) state: the real shell, wrapped like src/App.tsx.
 import { type ReactNode } from 'react';
 import { vi } from 'vitest';
 import { Route, Routes } from 'react-router';
@@ -60,7 +59,6 @@ export function shell(extra: ReactNode = null, path = '/') {
   );
 }
 
-/** A staff member who signed in earlier on this device: the phone remembers the username. */
 export function rememberStaff(username = 'anna') {
   localStorage.setItem(LAST_STAFF_KEY, username);
 }
@@ -79,7 +77,6 @@ export const pass = (ms: number) =>
     await vi.advanceTimersByTimeAsync(ms);
   });
 
-/** An edge-function answer the way supabase-js reports a refused call: an error whose `context` is the response. */
 export function refused(status: number, body: unknown, message = 'Edge Function returned a non-2xx status code') {
   return { error: { message, context: new Response(JSON.stringify(body), { status }) } as { message: string } };
 }

@@ -1,4 +1,3 @@
-/** localStorage that never throws (private mode, blocked site data): reads find nothing, writes are dropped. */
 export const safeStorage = {
   getItem(key: string): string | null {
     try {
@@ -11,14 +10,14 @@ export const safeStorage = {
     try {
       window.localStorage.setItem(key, value);
     } catch {
-      // Dropped: nothing is remembered.
+      // Private mode or blocked site data: the write is dropped.
     }
   },
   removeItem(key: string): void {
     try {
       window.localStorage.removeItem(key);
     } catch {
-      // Dropped: nothing was remembered anyway.
+      // Private mode or blocked site data: nothing to remove.
     }
   },
 };

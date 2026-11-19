@@ -29,12 +29,10 @@ function transferEffect(tx: Transaction): MoneyEffect | null {
   if (isReserveSrc && isMainDest) {
     return { ...NO_EFFECT, displayIn: shown, mainDelta: tx.amount, reserveDelta: -tx.amount };
   }
-  // Internal transfers don't change the totals, so the export leaves them out.
   if ((isMainSrc && isMainDest) || (isReserveSrc && isReserveDest)) return null;
   return NO_EFFECT;
 }
 
-/** Which column the amount goes in and how it moves the balances; null for transfers within main or within reserve. */
 function moneyEffect(tx: Transaction): MoneyEffect | null {
   if (tx.type === 'transfer') return transferEffect(tx);
   if (tx.type !== 'inflow' && tx.type !== 'outflow') return NO_EFFECT;
@@ -71,10 +69,7 @@ function shortDate(date: string): string {
 
 const quoted = (text: string) => `"${text.replace(/"/g, '""')}"`;
 
-/**
- * Rows for the treasury report, header first. Expects transactions in
- * chronological order; running balances are split into main vs. reserve.
- */
+/** Expects transactions in chronological order. */
 export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
   let mainBalance = 0;
   let reserveBalance = 0;
@@ -103,7 +98,6 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
   return rows;
 }
 
-/** With a wallet name, the file opens with a `Wallet,"<name>"` line above the column header. */
 export function buildHistoryCsv(transactions: Transaction[], walletName?: string): string {
   const lines = buildHistoryCsvRows(transactions).map((e) => e.join(','));
   if (walletName) lines.unshift(`Wallet,"${walletName.replace(/"/g, '""')}"`);

@@ -10,7 +10,6 @@ const files = (dir: string, ext: RegExp): string[] =>
     e.isDirectory() ? files(`${dir}/${e.name}`, ext) : ext.test(e.name) ? [`${dir}/${e.name}`] : [],
   );
 
-// Rule 11.3: these predate the rollback convention.
 const ROLLBACK_EXCEPTIONS = ['20260101000000_initial_schema.sql', '20261007000000_soft_remove.sql'];
 
 describe('coding standards (docs/coding-standards.md)', () => {
@@ -56,7 +55,6 @@ describe('coding standards (docs/coding-standards.md)', () => {
   });
 
   describe('comments earn their keep', () => {
-    // This file spells the patterns out, so it is the one file not scanned.
     const sources = [...files('src', /\.tsx?$/), ...files('supabase/functions', /\.ts$/)].filter(
       (f) => f !== 'src/standards.test.ts',
     );
@@ -81,8 +79,8 @@ describe('coding standards (docs/coding-standards.md)', () => {
       expect(bad, `rule 9.9: JSDoc type tag at ${bad.join(', ')}`).toEqual([]);
     });
 
-    it('rule 9.10: every TODO, FIXME or HACK points at an issue, as TODO(#123)', () => {
-      const bad = linesWhere((line) => /\b(TODO|FIXME|HACK|XXX)\b(?!\(#\d+\))/.test(line));
+    it('rule 9.10: every TODO, FIXME, HACK or SEE points at an issue, as TODO(#123)', () => {
+      const bad = linesWhere((line) => /\b(TODO|FIXME|HACK|XXX|SEE)\b(?!\(#\d+\))/.test(line));
       expect(bad, `rule 9.10: marker without an issue number at ${bad.join(', ')}`).toEqual([]);
     });
   });

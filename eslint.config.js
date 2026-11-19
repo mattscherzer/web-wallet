@@ -24,6 +24,73 @@ const restrict = (files, message, ...groups) => ({
 const tests = ['**/*.test.{ts,tsx}', 'src/test/**'];
 const source = ['src/**/*.{ts,tsx}', 'supabase/functions/**/*.ts'];
 
+// A later no-restricted-syntax block replaces an earlier one, so every block spreads from these.
+const syntax = (selector, message) => ({
+  selector,
+  message: `${message} Fix the code; do not add an eslint-disable or loosen this rule.`,
+});
+const noEnums = syntax(
+  'TSEnumDeclaration',
+  'Use a union of string literals or an `as const` object, not an enum (13.13).',
+);
+const skippedTests = [
+  syntax(
+    'MemberExpression[object.name=/^(it|test|describe)$/][property.name=/^(skip|only|todo|fails)$/]',
+    'Skipped, focused or todo tests hide failures (8.5). Fix the test or delete it.',
+  ),
+  syntax('CallExpression[callee.name=/^(xit|xtest|xdescribe|fit|fdescribe)$/]', 'Skipped or focused test (8.5).'),
+  syntax(
+    'CallExpression[callee.name="expect"][arguments.0.value=true]',
+    'An assertion that cannot fail proves nothing (8.5).',
+  ),
+  syntax(
+    'CallExpression[callee.name=/^(it|test)$/] > Literal:first-child[value=/^test\\b/i]',
+    'Name tests by behaviour, not "test <function>" (8.4).',
+  ),
+];
+const noSwallowing = [
+  syntax(
+    'CallExpression[callee.property.name="catch"] > ArrowFunctionExpression[body.type="BlockStatement"][body.body.length=0]',
+    'An empty .catch swallows the error (7.4).',
+  ),
+  syntax(
+    'CallExpression[callee.property.name="catch"] > ArrowFunctionExpression[body.type="Identifier"][body.name="undefined"]',
+    '.catch(() => undefined) swallows the error (7.4).',
+  ),
+];
+const noClasses = syntax(
+  'ClassDeclaration:not([superClass.name=/Error$/])',
+  'Compose from functions, hooks and components; no class hierarchies (13.3).',
+);
+const noSecretsInLogs = syntax(
+  'CallExpression[callee.object.name="console"] Identifier[name=/^(pin|password|secret|token|apiKey)$/i]',
+  'Secrets, PINs and passwords are never logged (4.6).',
+);
+const noUnguardedEffects = syntax(
+  'CallExpression[callee.name="useEffect"]:has(:matches(AwaitExpression, CallExpression[callee.property.name="then"])):not(:has(Identifier[name=/^(live|cancelled|canceled|ignore|stale|alive)$/]))',
+  'Async work in an effect needs a `live` flag so a late result cannot overwrite newer state (5.3).',
+);
+const noClock = [
+  syntax(
+    'NewExpression[callee.name="Date"][arguments.length=0]',
+    'Domain does not read the clock; pass `now` in (2.1).',
+  ),
+  syntax(
+    'CallExpression[callee.object.name="Date"][callee.property.name="now"]',
+    'Domain does not read the clock; pass `now` in (2.1).',
+  ),
+];
+const noClickableDivs = syntax(
+  'JSXOpeningElement[name.name=/^(div|span|li|p|section)$/]:has(JSXAttribute[name.name="onClick"])',
+  'Interactive elements are real buttons, links or inputs (5.6).',
+);
+const noEffectsInUI = syntax(
+  'CallExpression[callee.name=/^(useEffect|useLayoutEffect)$/], CallExpression[callee.property.name=/^(useEffect|useLayoutEffect)$/]',
+  'Pages and components hold no effects. Move it into a hook in hooks/ named for what it does (5.8).',
+);
+const noDefaultExport = syntax('ExportDefaultDeclaration', 'Only pages and components use a default export (9.6).');
+const everywhere = [noEnums, ...skippedTests, ...noSwallowing, noClasses, noSecretsInLogs, noUnguardedEffects];
+
 export default defineConfig([
   globalIgnores(['dist']),
   { linterOptions: { reportUnusedDisableDirectives: 'error' } },
@@ -90,17 +157,27 @@ export default defineConfig([
       'no-useless-return': 'error',
       'object-shorthand': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      'no-restricted-syntax': [
+      'no-restricted-syntax': ['error', ...everywhere],
+      '@typescript-eslint/ban-ts-comment': [
         'error',
-        {
-          selector: 'TSEnumDeclaration',
-          message: 'Use a union of string literals or an `as const` object, not an enum.',
-        },
+        { 'ts-expect-error': true, 'ts-ignore': true, 'ts-nocheck': true, 'ts-check': false },
       ],
     },
   },
   {
-    files: ['src/domain/**', 'src/utils/**', 'src/hooks/**'],
+    files: ['src/{app,auth,wallet,hooks,db,platform,domain,utils}/**'],
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport] },
+  },
+  {
+    files: ['src/domain/**'],
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport, ...noClock] },
+  },
+  {
+    files: ['src/components/**', 'src/pages/**'],
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noClickableDivs, noEffectsInUI] },
+  },
+  {
+    files: ['src/{app,auth,wallet,hooks,platform,domain,utils,pages}/**'],
     rules: { '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }] },
   },
   {
@@ -114,6 +191,7 @@ export default defineConfig([
       'max-params': 'off',
       'no-param-reassign': 'off',
       'no-console': 'off',
+      'no-restricted-syntax': ['error', noEnums, ...skippedTests],
       'no-alert': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/consistent-type-assertions': 'off',

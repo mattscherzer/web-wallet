@@ -70,7 +70,6 @@ const pass = (ms: number) =>
     await vi.advanceTimersByTimeAsync(ms);
   });
 const state = () => screen.getByTestId('state').textContent;
-/** Locked = still signed in (the books are shown), but marked locked. Never the login form. */
 const signedInAndLocked = () =>
   state() === 'locked' && screen.queryByText('the books') !== null && screen.queryByLabelText('Username') === null;
 
@@ -160,7 +159,7 @@ describe('the lock across a closed app', () => {
     await openApp();
     fireEvent.click(screen.getByRole('button', { name: 'Lock' }));
     await pass(10);
-    ref.fake.signIn('u-anna'); // sets the session again and emits SIGNED_IN
+    ref.fake.signIn('u-anna');
     await pass(50);
     expect(signedInAndLocked()).toBe(true);
   });

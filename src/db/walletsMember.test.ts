@@ -18,7 +18,6 @@ describe('createWallet', () => {
     expect(ref.fake.rpcCalls).toEqual([{ name: 'create_wallet', args: { name: 'Autumn Retreat' } }]);
     expect(wallet.name).toBe('Autumn Retreat');
     expect(ref.fake.tables.wallet_members).toEqual([{ user_id: 'u-owner', wallet_id: wallet.id, role: 'owner' }]);
-    // No separate client-side inserts that could fail halfway.
     expect(ref.fake.queries.filter((q) => q.op === 'insert')).toEqual([]);
   });
 });

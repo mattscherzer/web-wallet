@@ -43,13 +43,12 @@ const entry = (
 
 describe('what each role is offered', () => {
   it('T20 staff see no New wallet, Restore, Export or staff page; the owner sees all of them', async () => {
-    // Staff
     show('u-anna', <WalletSwitcher onClose={() => {}} />);
     await screen.findByText('Thursday SLAA Meeting');
     await waitFor(() => expect(screen.queryByRole('button', { name: /New wallet/ })).toBeNull());
     cleanup();
 
-    show('u-anna', entry, '/history/t5'); // t5 is a removed entry
+    show('u-anna', entry, '/history/t5');
     await screen.findByText('Removed', { selector: '[data-status="removed"]' });
     expect(screen.queryByRole('button', { name: 'Restore' })).toBeNull();
     cleanup();
@@ -66,7 +65,6 @@ describe('what each role is offered', () => {
     expect(screen.queryByRole('link', { name: /Wallets and staff/ })).toBeNull();
     cleanup();
 
-    // Owner
     show('u-owner', <WalletSwitcher onClose={() => {}} />);
     expect(await screen.findByRole('button', { name: /New wallet/ })).toBeTruthy();
     cleanup();

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { createFakeSupabase, twoWalletRows, type FakeSupabase } from '../test/fakeSupabase';
 import { walletApp } from '../test/walletTestKit';
-import WalletGate from './WalletGate';
+import { WalletGate } from './WalletGate';
 
 const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({

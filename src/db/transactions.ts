@@ -1,7 +1,6 @@
 import { supabase } from './supabase';
 import { isRemoveReason, type AuditAction, type Transaction } from '../domain/transaction';
 
-// The history row is written after the change; if it fails the change is undone, so nothing is changed without a trace.
 async function recordHistory(
   row: Record<string, unknown>,
   undo: () => PromiseLike<{ error: unknown }>,
@@ -39,7 +38,6 @@ export async function createTransaction(
 
   const id = inserted.id;
 
-  // An entry without a history row must not be left behind.
   await recordHistory(
     {
       wallet_id: data.wallet_id,
@@ -83,7 +81,6 @@ export async function updateTransaction(
   if (error) throw new Error(`Failed to update transaction: ${error.message}`);
   if (!updated || updated.length === 0) throw new Error('Entry not found or removed');
 
-  // An edit is never kept without its history: put the old values back.
   const original = Object.fromEntries(Object.entries(previous).filter(([key]) => key in updateData));
   await recordHistory(
     {
@@ -102,7 +99,6 @@ export async function updateTransaction(
   );
 }
 
-// A removed entry stays in the books, marked removed, and stops counting in balances.
 export async function removeTransaction(
   id: string,
   { walletId, reason, note, actor }: { walletId: string; reason: string; note?: string; actor?: string },
@@ -160,7 +156,6 @@ export async function restoreTransaction(
     .eq('deleted', true)
     .single();
 
-  // Without this snapshot a failed history write could not put the removal back as it was.
   if (lookupError) throw new Error(`Failed to restore transaction: ${lookupError.message}`);
   if (!removed) throw new Error('Entry not found or not removed');
 

@@ -77,7 +77,6 @@ describe('Wallets and staff page', () => {
     expect(await screen.findByText('Anna')).toBeTruthy();
     const sheet = () => within(screen.getByRole('dialog'));
 
-    // Add staff: the PIN must be exactly 6 digits; the password is asked once.
     fireEvent.click(screen.getByRole('button', { name: 'Add staff' }));
     type('Username', 'mia');
     type('Name shown in the history', 'Mia');
@@ -98,7 +97,6 @@ describe('Wallets and staff page', () => {
     });
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
 
-    // Reset a PIN.
     fireEvent.click(screen.getByRole('button', { name: 'Reset PIN for Anna' }));
     expect(screen.getByRole('heading', { name: 'New PIN for Anna' })).toBeTruthy();
     type('New PIN', '135790');
@@ -106,7 +104,6 @@ describe('Wallets and staff page', () => {
     await waitFor(() => expect(calls()).toHaveLength(2));
     expect(calls()[1]).toEqual({ action: 'reset_pin', user_id: 'u-anna', pin: '135790' });
 
-    // Disable asks first; "Keep" leaves things as they are.
     fireEvent.click(screen.getByRole('button', { name: 'Disable Anna' }));
     fireEvent.click(sheet().getByRole('button', { name: 'Keep Anna' }));
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -116,7 +113,6 @@ describe('Wallets and staff page', () => {
     await waitFor(() => expect(calls()).toHaveLength(3));
     expect(calls()[2]).toEqual({ action: 'disable', user_id: 'u-anna' });
 
-    // Enabling again needs no extra question.
     fireEvent.click(await screen.findByRole('button', { name: 'Enable Anna' }));
     await waitFor(() => expect(calls()).toHaveLength(4));
     expect(calls()[3]).toEqual({ action: 'enable', user_id: 'u-anna' });

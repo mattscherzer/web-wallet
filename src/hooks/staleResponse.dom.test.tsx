@@ -23,7 +23,6 @@ afterEach(cleanup);
 
 describe('slow answer from the previous wallet', () => {
   it('does not wipe the data of the wallet you switched to', async () => {
-    // The first wallet's list is still on its way when the user switches.
     const release = ref.fake.holdNext('transactions:select');
     const { result } = renderHook(
       () => ({ wallet: useWallet(), txs: useFilteredTransactionsState('all', '').transactions }),

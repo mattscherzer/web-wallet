@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const css = readCss().replace(/\/\*[\s\S]*?\*\//g, '');
 
-/** Top-level blocks as [header, body], by balanced braces. */
 function blocks(text: string): Array<[string, string]> {
   const out: Array<[string, string]> = [];
   let depth = 0;

@@ -7,7 +7,6 @@ const strip = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 const entry = strip(readFileSync(new URL('../index.css', import.meta.url), 'utf8'));
 const fileUrl = (p: string) => new URL(p, new URL('../index.css', import.meta.url));
 
-/** Top-level blocks as [header, body] by balanced braces. */
 function blocks(text: string): Array<[string, string]> {
   const out: Array<[string, string]> = [];
   let depth = 0;

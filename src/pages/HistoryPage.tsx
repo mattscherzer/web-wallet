@@ -19,14 +19,13 @@ import { useWallet } from '../wallet/useWallet';
 import { useAuth } from '../auth/useAuth';
 import { useOwnerConfirm } from '../auth/OwnerConfirm';
 
-type FilterType = 'all' | 'inflow' | 'outflow' | 'transfer';
-
-const FILTER_LABELS: Record<FilterType, string> = {
-  all: 'All',
-  inflow: 'Money in',
-  outflow: 'Money out',
-  transfer: 'Transfer',
-};
+const FILTERS = [
+  { id: 'all', label: 'All' },
+  { id: 'inflow', label: 'Money in' },
+  { id: 'outflow', label: 'Money out' },
+  { id: 'transfer', label: 'Transfer' },
+] as const;
+type FilterType = (typeof FILTERS)[number]['id'];
 
 export default function HistoryPage() {
   const { current: wallet } = useWallet();
@@ -83,7 +82,7 @@ export default function HistoryPage() {
           </div>
 
           <div className="filter-pills">
-            {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
+            {FILTERS.map(({ id: f, label }) => (
               <button
                 key={f}
                 type="button"
@@ -92,7 +91,7 @@ export default function HistoryPage() {
                 onClick={() => setFilter(f)}
                 id={`filter-${f}`}
               >
-                {FILTER_LABELS[f]}
+                {label}
               </button>
             ))}
             <button

@@ -1,6 +1,3 @@
-/* =============================================
-   RESPONSIVE
-   ============================================= */
 @media (min-width: 481px) {
   body {
     background: var(--color-container);
@@ -12,7 +9,6 @@
 }
 
 @media (min-width: 600px) {
-  /* Navigation rail */
   .bottom-nav {
     top: 0;
     bottom: 0;

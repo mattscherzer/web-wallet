@@ -29,9 +29,7 @@ describe('wallet switcher when balances cannot be loaded', () => {
     render(walletApp(<AppBar />, { current: 'wa' }));
     fireEvent.click(await screen.findByRole('button', { name: /Thursday SLAA Meeting/ }));
     const dialog = await screen.findByRole('dialog', { name: 'Wallets' });
-    // The wallet list is already loaded; only the balances request fails.
     ref.fake.failNext('transactions:select', { message: 'offline' });
-    // Re-open so the failing request is the one the sheet makes.
     fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
     fireEvent.click(await screen.findByRole('button', { name: /Thursday SLAA Meeting/ }));
     const again = await screen.findByRole('dialog', { name: 'Wallets' });

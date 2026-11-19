@@ -11,7 +11,6 @@ function nav(path = '/') {
   );
 }
 
-/** Labels of the links whose tag carries aria-current="page". */
 function currentLabels(html: string): string[] {
   const links = html.match(/<a [^>]*>.*?<\/a>/g) ?? [];
   return links.filter((a) => a.includes('aria-current="page"')).map((a) => a.replace(/<[^>]+>/g, ''));

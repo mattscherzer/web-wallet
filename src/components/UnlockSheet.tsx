@@ -12,7 +12,6 @@ import { useAuth } from '../auth/useAuth';
 
 type Problem = Exclude<AccessResult, { ok: true }> | null;
 
-/** Asks whoever holds the phone to prove who they are again: staff by PIN, owners by password. */
 export default function UnlockSheet({ onClose }: { onClose: () => void }) {
   const { profile, unlock, signOut } = useAuth();
   const isOwner = profile?.kind === 'owner';
@@ -46,7 +45,6 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
   };
 
   if (!isOwner && !name) {
-    // The phone forgot who this is, so a PIN cannot be checked: a way out instead of a pad that never works.
     return (
       <BottomSheet label="Unlock to make changes" onClose={onClose} className="unlock-sheet">
         <h2 className="unlock-sheet__title">Unlock to make changes</h2>

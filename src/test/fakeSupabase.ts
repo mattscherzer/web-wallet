@@ -1,8 +1,3 @@
-// In-memory stand-in for the Supabase client, for unit tests.
-//
-// It only applies the filters the code under test actually asked for: if the
-// code forgets `.eq('wallet_id', id)`, rows of every wallet come back.
-
 export type Row = Record<string, unknown>;
 type Result = { data: unknown; error: { message: string; code?: string } | null };
 type Failure = { message: string; code?: string };
@@ -42,12 +37,10 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
   const holds = new Map<string, Promise<void>>();
   let nextId = 1;
 
-  /** Make the next operation on `table` (e.g. 'wallets:insert') fail. */
   function failNext(key: string, error: Failure) {
     failures.set(key, error);
   }
 
-  /** Make the next `key` (e.g. 'transactions:select') answer only once the returned function is called. */
   function holdNext(key: string): () => void {
     let release!: () => void;
     holds.set(key, new Promise<void>((resolve) => (release = resolve)));
@@ -201,7 +194,6 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
         notify('SIGNED_IN');
         return { data: { session }, error: null };
       },
-      // The staff login function hands back tokens named `at-<user id>`; the fake knows which user that is.
       setSession: async ({ access_token }: { access_token: string; refresh_token: string }) => {
         const user = users.find((u) => `at-${u.id}` === access_token);
         if (!user) return { data: { session: null }, error: { message: 'Invalid session' } };
@@ -227,7 +219,6 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
         return { data: { id: 'new-user' }, error: null };
       },
     },
-    // `create_wallet` mirrors the database function: the wallet and the caller's owner membership in one step.
     rpc: async (name: string, args: Record<string, unknown>) => {
       rpcCalls.push({ name, args });
       if (name === 'create_wallet') {
@@ -282,17 +273,14 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
     invocations,
     signOutScopes,
     rpcCalls,
-    /** Make a function answer with `{ data }` or `{ error }` instead of the default. */
     answerFunction(name: string, answer: (body: unknown) => { data?: unknown; error?: { message: string } | null }) {
       functionAnswers.set(name, answer);
     },
-    /** Start with this user already logged in. */
     signIn(userId: string) {
       const u = users.find((x) => x.id === userId);
       if (!u) throw new Error(`unknown fake user ${userId}`);
       session = { user: { id: u.id, email: u.email } };
     },
-    /** Fire the realtime callbacks of live channels on `table`. */
     emit(table: string) {
       channels.filter((c) => c.table === table && !c.removed).forEach((c) => c.callback());
     },
@@ -301,7 +289,6 @@ export function createFakeSupabase(initial: Record<string, Row[]> = {}, opts: { 
 
 export type FakeSupabase = ReturnType<typeof createFakeSupabase>;
 
-/** Two wallets: A has money, B is empty. Wallet A holds the "legacy" data. */
 export function twoWalletRows() {
   return {
     wallets: [
@@ -381,7 +368,6 @@ export const FAKE_MEMBERS: Row[] = [
   { user_id: 'u-owner', wallet_id: 'wa', role: 'owner' },
   { user_id: 'u-anna', wallet_id: 'wa', role: 'staff' },
 ];
-/** The same rows the migration seeds into `role_permissions`. */
 export const FAKE_PERMISSIONS: Row[] = [
   ...['view', 'add_entry', 'edit_entry', 'remove_own_entry', 'create_category'].map((action) => ({
     role: 'staff',

@@ -1,12 +1,10 @@
 import { Lock, LockOpen } from 'lucide-react';
 
 interface LockPillProps {
-  /** Who is unlocked. Omit for view-only. */
   name?: string;
   minutesLeft?: number;
 }
 
-/** Lock state mark: "View only" or "Anna · 58 min". Not interactive. */
 export default function LockPill({ name, minutesLeft }: LockPillProps) {
   const unlocked = name !== undefined && minutesLeft !== undefined;
   return (

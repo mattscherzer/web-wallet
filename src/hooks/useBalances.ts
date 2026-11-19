@@ -11,12 +11,10 @@ export function useAccountBalances() {
   return useAccountBalancesQuery().data;
 }
 
-/** Like useAccountBalances, but `null` until balances have actually been fetched. */
 export function useLoadedAccountBalances() {
   return useWalletData<Record<AccountId, number> | null>(fetchAccountBalances, [], null, 'transactions');
 }
 
-/** `loaded` is false until the open wallet has answered: the balances are zeros until then. */
 export function useBalanceSummary() {
   const { data, loaded, failed, refresh } = useAccountBalancesQuery();
   return { ...summarizeBalances(data), loaded, failed, refresh };

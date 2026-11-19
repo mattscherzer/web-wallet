@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { useDialogFocus } from './useDialogFocus';
+import { useDialogFocus } from '../hooks/useDialogFocus';
 import { Field } from './FilledField';
 
 interface ConfirmDialogProps {
@@ -12,7 +12,6 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-/** The "Confirm your password" dialog: markup and local state only; checking the password is the provider's job. */
 export default function ConfirmDialog({ password, onPassword, error, busy, onSubmit, onCancel }: ConfirmDialogProps) {
   const [shown, setShown] = useState(false);
   const dialogRef = useDialogFocus<HTMLFormElement>(onCancel);

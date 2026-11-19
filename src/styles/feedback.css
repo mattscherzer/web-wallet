@@ -1,6 +1,3 @@
-/* =============================================
-   SECTION TITLES
-   ============================================= */
 .section-header {
   display: flex;
   align-items: center;
@@ -15,9 +12,6 @@
   margin: var(--space-lg) var(--space-xs) var(--space-sm);
 }
 
-/* =============================================
-   SKELETON LOADER
-   ============================================= */
 .skeleton {
   display: block;
   background: var(--color-bg-secondary);
@@ -35,9 +29,6 @@
   }
 }
 
-/* =============================================
-   EMPTY STATE
-   ============================================= */
 .empty-state {
   text-align: center;
   padding: var(--space-2xl);
@@ -59,9 +50,6 @@
   font-size: var(--font-size-base);
 }
 
-/* =============================================
-   AUDIT LOG
-   ============================================= */
 .audit-log {
   margin-top: var(--space-sm);
   border-left: 2px solid var(--color-rule);
@@ -118,9 +106,6 @@
   padding: var(--space-2xs) 0;
 }
 
-/* =============================================
-   DISABLED BUTTON STATE
-   ============================================= */
 .btn--primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -128,9 +113,6 @@
   box-shadow: none;
 }
 
-/* =============================================
-   TRANSFER DIRECTION VISUAL
-   ============================================= */
 .transfer-direction {
   display: flex;
   align-items: center;
@@ -166,18 +148,12 @@
   color: var(--color-text-primary);
 }
 
-/* =============================================
-   DISABLED PAYMENT CARD
-   ============================================= */
 .payment-card--disabled {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-/* =============================================
-   SEE ALL LINK
-   ============================================= */
 .see-all-link a {
   display: inline-flex;
   align-items: center;
@@ -192,9 +168,6 @@
   color: var(--color-link-hover);
 }
 
-/* =============================================
-   LOADING SCREENS (LoadingOverview, LoadingHistory)
-   ============================================= */
 .skeleton-bone {
   flex: none;
   max-width: 100%;

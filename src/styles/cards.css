@@ -1,6 +1,3 @@
-/* =============================================
-   BALANCE HERO CARD
-   ============================================= */
 .balance-hero {
   position: relative;
   overflow: hidden;
@@ -11,7 +8,6 @@
   margin-bottom: var(--space-lg);
 }
 
-/* Decorative 12-sided cookie, clipped by the card. It ends above the balance figure: never under an amount. */
 .balance-hero::after {
   content: '';
   position: absolute;
@@ -57,9 +53,6 @@
   margin-bottom: var(--space-md);
 }
 
-/* =============================================
-   ACCOUNT CARD
-   ============================================= */
 .account-card {
   display: flex;
   align-items: center;

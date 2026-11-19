@@ -6,7 +6,6 @@ import { type Wallet } from '../domain/wallet';
 
 const NONE: ReadonlySet<string> = new Set();
 
-/** Every wallet the owner can see and the staff of all of them. `loaded` flips once the first attempt has finished. */
 export function useWalletsAndStaff() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);

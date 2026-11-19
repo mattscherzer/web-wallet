@@ -15,13 +15,10 @@ import OwnersOnly from './admin/OwnersOnly';
 import StaffRow from './admin/StaffRow';
 import { AddStaffSheet, DisableSheet, ResetPinSheet } from './admin/StaffSheets';
 
-/**
- * Wallets and staff, for owners. The page check below is a convenience only: what protects the data are the
- * database policies and the owner check inside the staff-admin function.
- */
 export default function AdminPage() {
   const { status, profile } = useAuth();
   if (status === 'loading') return <AdminSkeleton />;
+  // Only hides the page; the database refuses staff admin calls from non-owners regardless.
   if (profile?.kind !== 'owner') return <OwnersOnly />;
   return <Dashboard />;
 }
