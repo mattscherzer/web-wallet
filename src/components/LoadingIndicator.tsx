@@ -5,7 +5,6 @@ const reducedMotion = () =>
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
     : false;
 
-/** The design's loading indicator: a navy shape that morphs and turns slowly on a light disc. */
 export default function LoadingIndicator({ size = 72 }: { size?: number }) {
   const still = reducedMotion();
   return (

@@ -1,19 +1,15 @@
-// Logic of the staff-login edge function, free of Deno/Supabase imports so it can be unit-tested.
 import { CORS_HEADERS, isPin, reply } from './http.ts';
 
 export interface AttemptState {
   userId: string | null;
   pinHash: string | null;
   disabled: boolean;
-  /** This try is refused outright because a wait is still running (nothing was counted). */
   locked: boolean;
   retryAfter: number;
 }
 
 export interface StaffLoginDeps {
-  /** Counts this try atomically and returns what is known about the username (unknown names are counted too). */
   beginAttempt(username: string): Promise<AttemptState>;
-  /** Compares the PIN with the hash. With no hash it must still do the same work (no timing tell), then answer false. */
   verifyPin(pin: string, hash: string | null): Promise<boolean>;
   resetAttempts(username: string): Promise<void>;
   mintSession(userId: string): Promise<Record<string, unknown>>;
@@ -42,12 +38,10 @@ export async function handleStaffLogin(req: Request, deps: StaffLoginDeps): Prom
     if (!pinOk || !state.userId || state.disabled) return reply(401, REFUSED);
 
     const reset = deps.resetAttempts(username);
-    // Unlocking an app that is already signed in only needs to know who the PIN belongs to: no new session.
     if (body.verifyOnly === true) {
       await reset;
       return reply(200, { userId: state.userId });
     }
-    // Run together so the person waits for the slower, not both; a failed reset still answers 500, leaving an unused session that expires.
     const [, session] = await Promise.all([reset, deps.mintSession(state.userId)]);
     return reply(200, { session });
   } catch (error) {

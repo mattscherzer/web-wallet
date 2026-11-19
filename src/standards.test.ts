@@ -10,7 +10,6 @@ const files = (dir: string, ext: RegExp): string[] =>
     e.isDirectory() ? files(`${dir}/${e.name}`, ext) : ext.test(e.name) ? [`${dir}/${e.name}`] : [],
   );
 
-// Rule 11.3: these predate the rollback convention.
 const ROLLBACK_EXCEPTIONS = ['20260101000000_initial_schema.sql', '20261007000000_soft_remove.sql'];
 
 describe('coding standards (docs/coding-standards.md)', () => {
@@ -56,7 +55,6 @@ describe('coding standards (docs/coding-standards.md)', () => {
   });
 
   describe('comments earn their keep', () => {
-    // This file spells the patterns out, so it is the one file not scanned.
     const sources = [...files('src', /\.tsx?$/), ...files('supabase/functions', /\.ts$/)].filter(
       (f) => f !== 'src/standards.test.ts',
     );

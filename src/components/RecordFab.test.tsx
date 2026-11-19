@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 
-// Loaded dynamically so a missing module fails the assertion instead of crashing the file.
 const mod = await import('./RecordFab').catch(() => undefined);
 const menu = await import('./recordMenu').catch(() => undefined);
 

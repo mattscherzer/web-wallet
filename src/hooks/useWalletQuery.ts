@@ -4,9 +4,7 @@ import { useOptionalWallet } from '../wallet/useWallet';
 
 interface QueryState<T> {
   data: T;
-  /** True once the open wallet has answered at least once; a later failed refresh keeps the data on screen. */
   loaded: boolean;
-  /** True only while the open wallet has never answered and its request failed. */
   failed: boolean;
   refresh: () => Promise<void>;
 }
@@ -30,13 +28,11 @@ export function useWalletQuery<T>(
     failed: false,
   });
 
-  // An answer for a wallet we have since left must not replace the current wallet's data.
   const openWalletId = useRef(walletId);
   useEffect(() => {
     openWalletId.current = walletId;
   }, [walletId]);
 
-  // Only the newest request may answer: an older one for the same wallet (other filter, earlier refresh) is dropped.
   const newest = useRef(0);
 
   const refresh = useCallback(async () => {
@@ -55,7 +51,6 @@ export function useWalletQuery<T>(
     } catch (err) {
       console.error('Supabase query error:', err);
       if (!isCurrent()) return;
-      // Keep this wallet's data if it has some; never carry over another wallet's.
       setState((prev) =>
         prev.walletId === walletId
           ? { ...prev, failed: true }

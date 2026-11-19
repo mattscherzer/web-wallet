@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useCallback, useRef, useState, type RefObject } from 'react';
+import { useMenuDismiss } from '../hooks/useMenuDismiss';
 import { Link, useLocation } from 'react-router';
 import { Lock, Plus, X } from 'lucide-react';
+import { indexStyle } from './indexStyle';
 import { useUnlock } from '../auth/unlockContext';
-import { RECORD_ACTIONS, menuEventForKey, nextMenuOpen, showFabAt, type MenuEvent } from './recordMenu';
+import { RECORD_ACTIONS, nextMenuOpen, showFabAt, type MenuEvent } from './recordMenu';
 
 interface RecordFabViewProps {
   open: boolean;
@@ -12,7 +14,6 @@ interface RecordFabViewProps {
   fabRef?: RefObject<HTMLButtonElement | null>;
   firstItemRef?: RefObject<HTMLAnchorElement | null>;
   menuRef?: RefObject<HTMLDivElement | null>;
-  /** View only: the button says so and opens Unlock instead of the menu. */
   locked?: boolean;
 }
 
@@ -45,7 +46,7 @@ export function RecordFabView({
   }
   return (
     <>
-      {open && <div className="record-scrim" aria-hidden="true" onClick={onScrim} />}
+      {open && <button type="button" className="record-scrim" tabIndex={-1} aria-hidden="true" onClick={onScrim} />}
       {open && (
         <div ref={menuRef} className="record-menu" role="menu" aria-label="Record" id="record-menu">
           {RECORD_ACTIONS.map(({ to, label, icon: Icon }, i) => (
@@ -54,7 +55,7 @@ export function RecordFabView({
               to={to}
               role="menuitem"
               className="record-menu__item"
-              style={{ '--i': i } as CSSProperties}
+              style={indexStyle(i)}
               ref={i === 0 ? firstItemRef : undefined}
               onClick={onPick}
             >
@@ -84,10 +85,8 @@ export function RecordFabView({
 export function RecordFab() {
   const { pathname } = useLocation();
   const { locked, openUnlock } = useUnlock();
-  // The menu is open for the page it was opened on, so navigating closes it.
   const [openFor, setOpenFor] = useState<string | null>(null);
   const open = openFor === pathname;
-  // Leaving the page closes the menu, so coming back later never finds it open.
   const [lastPath, setLastPath] = useState(pathname);
   if (lastPath !== pathname) {
     setLastPath(pathname);
@@ -102,28 +101,8 @@ export function RecordFab() {
     if (event === 'escape' || event === 'scrim' || (event === 'toggle' && open)) fabRef.current?.focus();
   };
 
-  useEffect(() => {
-    if (!open) return;
-    firstItemRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (menuEventForKey(e.key) === 'escape') {
-        setOpenFor(null);
-        fabRef.current?.focus();
-      }
-    };
-    // Tabbing out of the open menu closes it instead of leaving it open behind the scrim.
-    const onFocusIn = (e: FocusEvent) => {
-      const target = e.target as Node;
-      if (fabRef.current?.contains(target) || menuRef.current?.contains(target)) return;
-      setOpenFor(null);
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('focusin', onFocusIn);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('focusin', onFocusIn);
-    };
-  }, [open]);
+  const close = useCallback(() => setOpenFor(null), []);
+  useMenuDismiss(open, close, { trigger: fabRef, menu: menuRef, firstItem: firstItemRef });
 
   if (!showFabAt(pathname)) return null;
 

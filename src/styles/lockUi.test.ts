@@ -26,7 +26,6 @@ const lum = (hex: string) => {
 };
 const ratio = (a: string, b: string) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05);
 
-// The classes the lock, unlock and sign-in screens are built from.
 const SELECTORS = [
   '.pin-pad__key',
   '.pin-dots',
@@ -43,7 +42,6 @@ describe('lock and sign-in styles', () => {
     expect(body).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i);
   });
 
-  // Selectors that must set both a text and a background colour themselves (modifiers fall back to their base rule).
   const BASE: Record<string, string> = { '.app-bar__lock--locked': '.app-bar__lock' };
   const MUST_PAIR = ['.pin-pad__key', '.snackbar', '.app-bar__lock', '.app-bar__lock--locked'];
 
@@ -72,7 +70,6 @@ describe('lock and sign-in styles', () => {
   });
 });
 
-// Everything in access.css, not just the classes above.
 const ACCESS = ['access.css', 'login.css', 'admin.css']
   .map((f) => readFileSync(new URL(`./${f}`, import.meta.url), 'utf8'))
   .join('\n')

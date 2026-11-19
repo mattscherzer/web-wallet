@@ -20,7 +20,6 @@ export async function fetchAllRows<T>(
 
 export interface TransactionQuery {
   type?: TransactionType;
-  /** Removed entries are left out by default; they never count in balances. */
   removed?: 'exclude' | 'include';
   limit?: number;
   ascending?: boolean;
@@ -31,7 +30,6 @@ export async function fetchTransactions(
   { type, removed = 'exclude', limit, ascending = false }: TransactionQuery = {},
 ): Promise<Transaction[]> {
   const build = () => {
-    // `id` last: pages are only stable when the order has no ties.
     let query = supabase
       .from('transactions')
       .select('*')
@@ -50,7 +48,6 @@ export async function fetchTransactions(
   return (data ?? []) as Transaction[];
 }
 
-/** One entry of this wallet, removed or not; null when there is none. */
 export async function fetchTransaction(walletId: string, id: string): Promise<Transaction | null> {
   const { data, error } = await supabase
     .from('transactions')

@@ -9,7 +9,7 @@ import AppBar from '../components/AppBar';
 import Amount from '../components/Amount';
 import TransactionIcon from '../components/TransactionIcon';
 import { formatCurrency } from '../utils/formatCurrency';
-import { getAccountLabel, type AccountId } from '../domain/accounts';
+import { getAccountLabel } from '../domain/accounts';
 import { entryTitle, type Transaction } from '../domain/transaction';
 
 const ACCOUNT_ICONS: Record<string, ReactNode> = {
@@ -43,7 +43,6 @@ export default function DashboardPage() {
     refresh: refreshRecent,
   } = useRecentTransactions(5);
 
-  // Until the wallet has answered the balances are zeros: show the loading design, never €0.00.
   if (!balancesLoaded || !recentLoaded) {
     return (
       <>
@@ -132,7 +131,12 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
 
   return (
     <div className="transaction-item">
-      <div className="transaction-item__header" onClick={() => setExpanded(!expanded)}>
+      <button
+        type="button"
+        className="transaction-item__header"
+        aria-expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
+      >
         <TransactionIcon type={tx.type} coins />
         <div className="transaction-item__info">
           <p className="transaction-item__name">{entryTitle(tx, tx.notes || 'Transaction')}</p>
@@ -143,7 +147,7 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
         <span className={`transaction-item__chevron${expanded ? ' transaction-item__chevron--open' : ''}`}>
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </span>
-      </div>
+      </button>
 
       {expanded && (
         <div className="transaction-item__details">
@@ -156,7 +160,7 @@ function DashboardTransactionItem({ transaction: tx }: { transaction: Transactio
           {isTransfer && tx.from_account_id && (
             <div className="transaction-item__detail-row">
               <p className="transaction-item__detail-label">Source</p>
-              <p className="transaction-item__detail-value">{getAccountLabel(tx.from_account_id as AccountId)}</p>
+              <p className="transaction-item__detail-value">{getAccountLabel(tx.from_account_id)}</p>
             </div>
           )}
           {tx.notes && (

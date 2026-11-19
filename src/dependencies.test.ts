@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import packageJsonRaw from '../package.json?raw';
 import lockfileRaw from '../package-lock.json?raw';
 
-// Built at runtime so this file never matches its own search.
 const SHIM = 'react-router' + '-dom';
 
 type Manifest = { dependencies?: Record<string, string> };

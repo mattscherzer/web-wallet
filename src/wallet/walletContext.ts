@@ -3,15 +3,11 @@ import type { Wallet } from '../domain/wallet';
 
 export interface WalletValue {
   wallets: Wallet[];
-  /** The open wallet; `null` while loading, after a failed load, or when there is none. */
   current: Wallet | null;
   status: 'loading' | 'ready' | 'error';
   switchWallet: (id: string) => void;
-  /** Creates a wallet and opens it. Rejects with the reason if it could not be created. */
   addWallet: (name: string) => Promise<Wallet>;
-  /** Fetches the wallets again; stays on the current screen until it settles, and never rejects. */
   reload: () => Promise<void>;
-  /** Fetches the wallets again without showing the loading screen (e.g. after an owner created one elsewhere). */
   refresh: () => Promise<void>;
 }
 

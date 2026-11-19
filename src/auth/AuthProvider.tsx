@@ -16,7 +16,6 @@ const forgetWallet = () => safeStorage.removeItem(CURRENT_WALLET_KEY);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>({ ...SIGNED_OUT, status: 'loading' });
-  // Apart from `state`: signing in again (a repeated SIGNED_IN event) must not unlock a locked app.
   const [lockReason, setLockReason] = useState<LockReason | null>(readLock);
   const applyLock = useCallback((reason: LockReason | null) => {
     writeLock(reason);
@@ -38,7 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     getSession().then(
       async ({ data }) => {
-        // The app was closed or reloaded after the idle limit: it comes back locked, still signed in.
         if (data.session && idleExpired() && !readLock()) applyLock('idle');
         return enter(data.session);
       },
@@ -95,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     forgetWallet();
-    forgetStaff(); // handing the phone over: the next person types their own username
+    forgetStaff();
     applyLock(null);
     const { error } = await signOutLocal();
     if (error) console.error('Failed to sign out:', error);
@@ -104,7 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const lock = useCallback(async () => applyLock('manual'), [applyLock]);
 
-  // Re-checks who holds the phone. The session stays as it is: unlocking only lifts the app-level lock.
   const user = state.user;
   const kind = state.profile?.kind;
   const unlock = useCallback(
@@ -123,7 +120,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!username) return { ok: false, kind: 'error' };
         const result = await checkStaffPin(username, secret);
         if (!result.ok) return result;
-        // The PIN has to belong to the person signed in on this phone, not just to some staff member.
         if (result.userId !== user.id) return { ok: false, kind: 'wrong' };
       }
       rememberActivity();

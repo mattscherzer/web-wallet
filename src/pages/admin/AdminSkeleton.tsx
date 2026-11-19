@@ -1,11 +1,11 @@
-import type { CSSProperties } from 'react';
+import { indexStyle } from '../../components/indexStyle';
 import AdminHeader from './AdminHeader';
 
 function SkeletonRows({ count, actions }: { count: number; actions?: boolean }) {
   return (
     <ul className="card-list">
       {Array.from({ length: count }, (_, i) => (
-        <li key={i} style={{ '--i': i } as CSSProperties}>
+        <li key={i} style={indexStyle(i)}>
           <div className="list-row">
             <span className="skeleton admin-skeleton__avatar" />
             <span className="list-row__text">
@@ -24,7 +24,6 @@ function SkeletonRows({ count, actions }: { count: number; actions?: boolean }) 
   );
 }
 
-/** Same shapes as the loaded page, so nothing jumps when the data arrives. */
 export default function AdminSkeleton() {
   return (
     <div className="admin" role="status" aria-busy="true" aria-label="Loading wallets and staff">

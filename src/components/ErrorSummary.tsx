@@ -3,12 +3,10 @@ import type { FieldError } from '../domain/recordForm';
 
 interface ErrorSummaryProps {
   errors: FieldError[];
-  /** Id of the input for each field, so a link can take you to it. */
   fieldIds: Record<FieldError['field'], string>;
   ref?: Ref<HTMLDivElement>;
 }
 
-/** Lists every problem at the top of a form, each linking to its field. Takes focus when it appears. */
 export default function ErrorSummary({ errors, fieldIds, ref }: ErrorSummaryProps) {
   const focusField = (id: string) => {
     const el = document.getElementById(id);

@@ -7,7 +7,6 @@ export function useWallet(): WalletValue {
   return value;
 }
 
-/** For shared chrome that should simply draw nothing outside a provider. */
 export function useOptionalWallet(): WalletValue | null {
   return useContext(WalletContext);
 }

@@ -12,12 +12,12 @@ Before #57 there was one shared 4-digit PIN in `app_config`, publicly readable w
 
 Two fixed roles, modelled on a point-of-sale system: one owner with full access, staff who record transactions.
 
-| | Owner | Staff |
-|---|---|---|
-| Identity | Email and password (Supabase Auth) | Username and 6-digit PIN, created by the owner |
-| Has an account | Yes, created in the Supabase dashboard | A real auth user with a random password nobody keeps, no email, no personal data |
-| Belongs to | Every wallet they create | One wallet |
-| Extra proof | Password again before owner-only actions | None beyond the PIN |
+|                | Owner                                    | Staff                                                                            |
+| -------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
+| Identity       | Email and password (Supabase Auth)       | Username and 6-digit PIN, created by the owner                                   |
+| Has an account | Yes, created in the Supabase dashboard   | A real auth user with a random password nobody keeps, no email, no personal data |
+| Belongs to     | Every wallet they create                 | One wallet                                                                       |
+| Extra proof    | Password again before owner-only actions | None beyond the PIN                                                              |
 
 Names: **Owner** and **Staff** ("Manager" was rejected because it implies more power than the role has).
 
@@ -27,33 +27,33 @@ Precedent: Square's POS has an owner passcode and a personal passcode per staff 
 
 **Sign-in is the first screen.** `AuthGate` wraps the whole app. Until someone is signed in it shows `LoginPage` and loads no data at all. `LoginPage` is one card: a Staff / Owner switch (Staff is the default), then username and PIN, or email and password. The last staff username used on the device is remembered, so staff only type the PIN.
 
-| Area | What shipped | Proposal it replaces |
-|---|---|---|
-| Lock | **Lock means signing out on this device.** After 30 minutes without use, or when the app is reopened after that, the session is cleared and the login screen shows. Also a Lock button on More. Applies to both roles. | 15 minutes |
-| Owner re-confirmation | A "Confirm your password" dialog before owner-only actions, then **15 minutes** without asking again. Checked on a separate client so the session is untouched. | 5 minutes |
-| PIN | **6 digits**, hashed, verified only in the `staff-login` edge function. | 4 or 6 undecided |
-| PIN guessing | Per username, server-side: 5 wrong tries, then waits of 30 s doubling, up to 1 hour. Unknown usernames are counted too. The login says only "Wrong username or PIN" (and "locked" with a wait time). | 5 tries, 15 minutes |
-| Staff session | `staff-login` mints a real Supabase session, so row-level security works with normal JWTs. A disabled staff member is banned at the auth level, so refresh tokens stop working. | Spike: RLS with custom claim or function-only |
-| Attribution | Entries store `created_by` and an author label; history CSV includes the author. Entries from before the change show "Unknown / N/A". | Same |
-| Wallet access | `wallet_members(user_id, wallet_id, role)` and `profiles(kind)`. People only see wallets they belong to. | `wallets.owner_id` |
-| Staff management | **More → Wallets and staff** (`/admin`, owners only): create wallet, add staff (username, display name, 6-digit PIN, wallet), reset PIN, disable and enable. "Hand the PIN over in person." | Same, plus a one-time credential screen |
-| No wallet yet | Owner: Welcome with Create a wallet. Staff: "You aren't a member of any wallet yet. Ask the owner to add you." with Sign out. | Same idea |
-| Public access | Anon policies are gone. `enable_signup = false`, no anonymous sign-ins. | Same |
+| Area                  | What shipped                                                                                                                                                                                                           | Proposal it replaces                          |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Lock                  | **Lock means signing out on this device.** After 30 minutes without use, or when the app is reopened after that, the session is cleared and the login screen shows. Also a Lock button on More. Applies to both roles. | 15 minutes                                    |
+| Owner re-confirmation | A "Confirm your password" dialog before owner-only actions, then **15 minutes** without asking again. Checked on a separate client so the session is untouched.                                                        | 5 minutes                                     |
+| PIN                   | **6 digits**, hashed, verified only in the `staff-login` edge function.                                                                                                                                                | 4 or 6 undecided                              |
+| PIN guessing          | Per username, server-side: 5 wrong tries, then waits of 30 s doubling, up to 1 hour. Unknown usernames are counted too. The login says only "Wrong username or PIN" (and "locked" with a wait time).                   | 5 tries, 15 minutes                           |
+| Staff session         | `staff-login` mints a real Supabase session, so row-level security works with normal JWTs. A disabled staff member is banned at the auth level, so refresh tokens stop working.                                        | Spike: RLS with custom claim or function-only |
+| Attribution           | Entries store `created_by` and an author label; history CSV includes the author. Entries from before the change show "Unknown / N/A".                                                                                  | Same                                          |
+| Wallet access         | `wallet_members(user_id, wallet_id, role)` and `profiles(kind)`. People only see wallets they belong to.                                                                                                               | `wallets.owner_id`                            |
+| Staff management      | **More → Wallets and staff** (`/admin`, owners only): create wallet, add staff (username, display name, 6-digit PIN, wallet), reset PIN, disable and enable. "Hand the PIN over in person."                            | Same, plus a one-time credential screen       |
+| No wallet yet         | Owner: Welcome with Create a wallet. Staff: "You aren't a member of any wallet yet. Ask the owner to add you." with Sign out.                                                                                          | Same idea                                     |
+| Public access         | Anon policies are gone. `enable_signup = false`, no anonymous sign-ins.                                                                                                                                                | Same                                          |
 
 ### Permissions (`role_permissions`, read by the app and by the database policies)
 
-| Action | Owner | Staff |
-|---|---|---|
-| View | yes | yes |
-| Add entry | yes | yes |
-| Edit entry | yes | yes |
-| Remove own entry | yes | yes |
-| Remove any entry | yes | **no** |
-| Restore removed entry | yes | no |
-| Create category | yes | yes |
-| Manage wallet | yes | no |
-| Manage staff | yes | no |
-| Export | yes | no |
+| Action                | Owner | Staff  |
+| --------------------- | ----- | ------ |
+| View                  | yes   | yes    |
+| Add entry             | yes   | yes    |
+| Edit entry            | yes   | yes    |
+| Remove own entry      | yes   | yes    |
+| Remove any entry      | yes   | **no** |
+| Restore removed entry | yes   | no     |
+| Create category       | yes   | yes    |
+| Manage wallet         | yes   | no     |
+| Manage staff          | yes   | no     |
+| Export                | yes   | no     |
 
 `can(wallet, action)` is the single check; the policies call it, and the app reads the same table.
 
@@ -88,13 +88,13 @@ The boards in `docs/design/` were redrawn after #57 to match the shipped model, 
 
 Why: signing out after 30 minutes forces a full login every time someone only wants to look. The design keeps them signed in until they choose to sign out, and a locked phone still shows balances, history and reports. Changing anything asks to unlock.
 
-| | Shipped in #57 | Design (decided) |
-|---|---|---|
-| First screen on a new phone | Sign in | Sign in (same) |
-| After 30 minutes without use, or Lock | Signed out, back to Sign in | **Locked**: still signed in, view only |
-| To change something | Sign in again from scratch | Unlock: staff enter their PIN, owners their password (identity already known) |
-| Leaving a phone | Lock = sign out | Separate **Sign out** on More |
-| Header lock button | none | Open lock (unlocked, tap to lock) or closed lock (view only, tap to unlock) |
+|                                       | Shipped in #57              | Design (decided)                                                              |
+| ------------------------------------- | --------------------------- | ----------------------------------------------------------------------------- |
+| First screen on a new phone           | Sign in                     | Sign in (same)                                                                |
+| After 30 minutes without use, or Lock | Signed out, back to Sign in | **Locked**: still signed in, view only                                        |
+| To change something                   | Sign in again from scratch  | Unlock: staff enter their PIN, owners their password (identity already known) |
+| Leaving a phone                       | Lock = sign out             | Separate **Sign out** on More                                                 |
+| Header lock button                    | none                        | Open lock (unlocked, tap to lock) or closed lock (view only, tap to unlock)   |
 
 Consequences to know before building it:
 

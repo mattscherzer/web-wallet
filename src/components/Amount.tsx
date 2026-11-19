@@ -11,14 +11,9 @@ const WORDS: Record<AmountType, { sr: string; tag: string }> = {
 interface AmountProps {
   type: AmountType;
   amount: number;
-  /** Defaults to the device language. */
   locale?: string;
 }
 
-/**
- * A transaction amount that never relies on colour alone:
- * sign + figure, a word tag, and the same word for screen readers before the figure.
- */
 export default function Amount({ type, amount, locale }: AmountProps) {
   const { sr, tag } = WORDS[type];
   return (

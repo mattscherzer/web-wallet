@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { AuthProvider } from '../auth/AuthProvider';
 import { OwnerConfirmProvider } from '../auth/OwnerConfirm';
-import WalletGate from '../app/WalletGate';
+import { WalletGate } from '../app/WalletGate';
 import {
   createFakeSupabase,
   FAKE_MEMBERS,

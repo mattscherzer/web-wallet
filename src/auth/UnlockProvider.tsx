@@ -4,7 +4,6 @@ import UnlockSheet from '../components/UnlockSheet';
 import { UnlockContext, type UnlockApi } from './unlockContext';
 import { useAuth } from './useAuth';
 
-/** Owns the Unlock sheet and the "locked after 30 minutes" notice, for everything below it. */
 export function UnlockProvider({ children }: { children: ReactNode }) {
   const { locked, lockedByIdle } = useAuth();
   const [open, setOpen] = useState(false);

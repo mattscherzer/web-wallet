@@ -6,7 +6,6 @@ export const RECORD_ACTIONS = [
   { to: '/record?type=transfer', label: 'Transfer', icon: ArrowLeftRight },
 ];
 
-/** The three old form addresses and where they go now. */
 const LEGACY_REDIRECTS: Record<string, string> = {
   '/add': '/record?type=in',
   '/withdraw': '/record?type=out',
@@ -19,7 +18,6 @@ export function legacyRedirect(pathname: string): string | null {
 
 const FAB_PATHS = ['/', '/history'];
 
-/** The Record button is shown on Overview and History only. */
 export function showFabAt(pathname: string): boolean {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
   return FAB_PATHS.includes(path);

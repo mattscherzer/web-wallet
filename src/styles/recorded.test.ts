@@ -10,7 +10,6 @@ describe('Recorded screen motion', () => {
     expect(at, 'the burst animation must exist').toBeGreaterThan(-1);
     const lastMedia = css.slice(0, at).lastIndexOf('@media');
     expect(css.slice(lastMedia, lastMedia + 60)).toContain('prefers-reduced-motion: no-preference');
-    // Outside that media query the burst has no animation at all.
     expect(css.replace(/@media \(prefers-reduced-motion: no-preference\) \{[\s\S]*?\n\}\n/g, '')).not.toContain(
       'recorded-burst',
     );

@@ -154,7 +154,6 @@ describe('owner sign-in when the server cannot be reached', () => {
 });
 
 describe('the sign-in screens follow the design', () => {
-  // the username step has the Treasury mark, a "Sign in" heading, the helper lines and the footer note
   it('T61', async () => {
     open();
     await screen.findByLabelText('Username');
@@ -167,7 +166,6 @@ describe('the sign-in screens follow the design', () => {
     expect(screen.getByLabelText('Username').getAttribute('aria-describedby')).toBeTruthy();
   });
 
-  // the PIN step has a back arrow, the initial in a circle, and "Not anna? Use another username"
   it('T62', async () => {
     await toPinStep();
     expect(screen.getByText('A')).toBeTruthy();
@@ -177,14 +175,12 @@ describe('the sign-in screens follow the design', () => {
     expect(await screen.findByLabelText('Username')).toBeTruthy();
   });
 
-  // the owner step says "Owners sign in with email and password."
   it('T63', async () => {
     open();
     fireEvent.click(await screen.findByRole('button', { name: 'Owner' }));
     expect(screen.getByText('Owners sign in with email and password.')).toBeTruthy();
   });
 
-  // while the PIN is checked the design's loading indicator and "Signing you in…" show, and the Not-anna link is gone
   it('T64', async () => {
     ref.fake.client.functions.invoke = (() =>
       new Promise(() => {})) as unknown as typeof ref.fake.client.functions.invoke;
@@ -199,7 +195,6 @@ describe('the sign-in screens follow the design', () => {
     expect(screen.queryByRole('button', { name: /Not anna\?/ })).toBeNull();
   });
 
-  // between the server's answer and the app opening the screen keeps saying so: the keys do not flash back
   it('keeps "Signing you in…" until the app opens after a right PIN', async () => {
     const release = ref.fake.holdNext('profiles:select');
     await toPinStep();
@@ -214,7 +209,6 @@ describe('the sign-in screens follow the design', () => {
     expect(await screen.findByText('the books')).toBeTruthy();
   });
 
-  // when the paused wait is over a button leads straight back to the PIN pad for the same person
   it('T68', async () => {
     ref.fake.answerFunction('staff-login', () => refused(429, { error: 'locked', retryAfter: 1 }));
     await toPinStep();

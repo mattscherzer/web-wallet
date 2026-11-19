@@ -7,9 +7,7 @@ interface ReasonSheetProps {
   reasons: readonly string[];
   reasonLabel: string;
   confirmLabel: string;
-  /** Extra fields shown above the reasons, e.g. the new amount. */
   children?: ReactNode;
-  /** Return a message to stop before the reason is checked. */
   validate?: () => string | null;
   onConfirm: (reason: string, note: string) => void;
   onCancel: () => void;

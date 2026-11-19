@@ -1,4 +1,3 @@
-/* Stylesheet entry. Order is the cascade order: do not reorder without checking the screens. */
 @import './styles/tokens.css';
 @import './styles/base.css';
 @import './styles/layout.css';

@@ -14,7 +14,6 @@ const scripts = (): Record<string, string> => JSON.parse(read('package.json')).s
 const PROD_URL = 'https://abcdefgh.supabase.co';
 const PROD_KEY = 'prod-anon-key-should-never-load-in-dev';
 
-/** A scratch project dir holding a production-flavoured `.env` plus the repo's committed env files. */
 function scratchEnvDir(extra: Record<string, string> = {}) {
   // vitest copies the repo's own .env into process.env, and loadEnv lets process.env win; isolate from that.
   delete process.env.VITE_SUPABASE_URL;
@@ -70,7 +69,6 @@ describe('local Supabase dev environment', () => {
     const auditIds = auditPart.match(uuid) ?? [];
     expect(txIds.size).toBeGreaterThan(0);
     expect(auditIds.length).toBeGreaterThan(0);
-    // every uuid in the audit block is either a seeded transaction or an audit row id (no dangling reference)
     expect(auditIds.some((id) => txIds.has(id))).toBe(true);
   });
 
@@ -122,7 +120,6 @@ describe('local Supabase dev environment', () => {
     const db = new PGlite();
     // PGlite has no Supabase realtime publication; create it so the migration runs unchanged.
     await db.exec('CREATE PUBLICATION supabase_realtime;');
-    // Stand-ins for what Supabase provides: the auth schema (with the columns the seed fills) and its roles.
     await db.exec(`
       CREATE SCHEMA auth;
       CREATE TABLE auth.users (instance_id uuid, id uuid PRIMARY KEY, aud text, role text, email text, encrypted_password text,
@@ -137,7 +134,7 @@ describe('local Supabase dev environment', () => {
     await db.exec(migrationsSql());
     const seed = read('supabase/seed.sql');
     await db.exec(seed);
-    await db.exec(seed); // re-running must be harmless (db:seed)
+    await db.exec(seed);
     const count = async (t: string) =>
       Number(((await db.query(`SELECT count(*) AS n FROM ${t}`)).rows[0] as { n: number }).n);
     expect(await count('transactions')).toBeGreaterThan(0);

@@ -18,7 +18,6 @@ interface FieldProps {
   label: string;
   hint?: string;
   error?: string | null;
-  /** The input (and anything drawn on it); give it the `filled-field__input` class. */
   children: ReactNode;
 }
 
@@ -39,7 +38,6 @@ export function Field({ id, label, hint, error = null, children }: FieldProps) {
   );
 }
 
-/** One real input (so typing, paste and screen readers just work) drawn as PIN_LENGTH boxes. */
 export function PinInput({ id, value, onChange }: { id: string; value: string; onChange: (v: string) => void }) {
   return (
     <span className="pin-field">

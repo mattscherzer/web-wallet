@@ -3,9 +3,6 @@ import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { describe, expect, it } from 'vitest';
 
-// Runs the real migrations on PGlite with a stand-in for Supabase's `auth` schema and roles,
-// and acts as different users through `SET ROLE` so row level security is really enforced.
-
 const read = (file: string) => readFileSync(join(process.cwd(), 'supabase', file), 'utf8');
 const MIGRATIONS = [
   'migrations/20260101000000_initial_schema.sql',
@@ -17,14 +14,14 @@ const DEFAULT_WALLET = '00000000-0000-0000-0000-000000000001';
 
 const W1 = '10000000-0000-0000-0000-000000000001';
 const W2 = '10000000-0000-0000-0000-000000000002';
-const OWNER_A = 'a0000000-0000-0000-0000-00000000000a'; // owner of W1
-const STAFF_A1 = 'a1000000-0000-0000-0000-0000000000a1'; // staff of W1
-const STAFF_A2 = 'a2000000-0000-0000-0000-0000000000a2'; // staff of W1
-const OWNER_B = 'b0000000-0000-0000-0000-00000000000b'; // owner of W2
-const STAFF_B = 'b1000000-0000-0000-0000-0000000000b1'; // staff of W2
-const E1 = 'e0000000-0000-0000-0000-000000000001'; // W1, made by STAFF_A1
-const E2 = 'e0000000-0000-0000-0000-000000000002'; // W1, made by STAFF_A2
-const E3 = 'e0000000-0000-0000-0000-000000000003'; // W2, made by OWNER_B
+const OWNER_A = 'a0000000-0000-0000-0000-00000000000a';
+const STAFF_A1 = 'a1000000-0000-0000-0000-0000000000a1';
+const STAFF_A2 = 'a2000000-0000-0000-0000-0000000000a2';
+const OWNER_B = 'b0000000-0000-0000-0000-00000000000b';
+const STAFF_B = 'b1000000-0000-0000-0000-0000000000b1';
+const E1 = 'e0000000-0000-0000-0000-000000000001';
+const E2 = 'e0000000-0000-0000-0000-000000000002';
+const E3 = 'e0000000-0000-0000-0000-000000000003';
 
 const AUTH_STUB = `
   CREATE SCHEMA auth;
@@ -44,7 +41,6 @@ async function baseDb() {
   return db;
 }
 
-/** Runs the migration on a database whose tables are handed to anon/authenticated like Supabase does. */
 async function applyAuthMigration(db: PGlite) {
   await db.exec(read(AUTH_MIGRATION));
 }
@@ -78,7 +74,6 @@ async function migratedDb() {
   return db;
 }
 
-/** Run one statement as a logged-in user (or as the anon key when `user` is null). */
 async function as(db: PGlite, user: string | null, text: string) {
   await db.exec(
     `SET ROLE ${user ? 'authenticated' : 'anon'}; SELECT set_config('request.jwt.claim.sub', '${user ?? ''}', false);`,
@@ -90,7 +85,6 @@ async function as(db: PGlite, user: string | null, text: string) {
   }
 }
 
-/** True when the statement is refused: it throws, or it touches no rows. */
 async function refused(db: PGlite, user: string | null, text: string) {
   try {
     const res = await as(db, user, text);
@@ -155,7 +149,6 @@ describe('auth migration: one person in two wallets', () => {
     const db = await migratedDb();
     await db.exec(`DROP INDEX one_owner_per_wallet`);
     await db.exec(`INSERT INTO wallet_members (user_id, wallet_id, role) VALUES ('${OWNER_B}', '${W1}', 'owner')`);
-    // OWNER_B now owns W2 and W1, so both policies would allow the update; the database must still refuse.
     await expect(as(db, OWNER_B, `UPDATE transactions SET wallet_id = '${W2}' WHERE id = '${E1}'`)).rejects.toThrow();
     const row = await db.query(`SELECT wallet_id FROM transactions WHERE id = '${E1}'`);
     expect(row.rows).toEqual([{ wallet_id: W1 }]);
@@ -174,7 +167,6 @@ describe('auth migration: authorship', () => {
     );
     expect(seenByOwner.rows).toEqual([{ created_by: STAFF_A1, created_by_role: 'staff', created_by_name: 'Anna' }]);
 
-    // Forging the author, or the stored role/name, does not work.
     await expect(as(db, STAFF_A2, NEW_TX(W1, ', created_by', `, '${STAFF_A1}'`))).rejects.toThrow(
       /row-level security/i,
     );
@@ -198,7 +190,6 @@ describe('auth migration: authorship', () => {
     );
     expect(log.rows).toEqual([{ created_by: STAFF_A2, created_by_role: 'staff', created_by_name: 'Carl' }]);
 
-    // The staff account is removed later: the history still says who made the entries.
     await db.exec(`DELETE FROM auth.users WHERE id = '${STAFF_A1}'`);
     const after = await as(
       db,
@@ -213,7 +204,6 @@ describe('auth migration: authorship', () => {
 describe('auth migration: roles and the permission table', () => {
   it('T3 staff add, edit and remove their own entries; only the owner restores, creates wallets and manages staff', async () => {
     const db = await migratedDb();
-    // staff: allowed
     await as(db, STAFF_A1, NEW_TX(W1));
     await as(db, STAFF_A1, `UPDATE transactions SET notes = 'edited' WHERE id = '${E2}'`);
     expect(one<{ notes: string }>(await db.query(`SELECT notes FROM transactions WHERE id = '${E2}'`)).notes).toBe(
@@ -224,7 +214,6 @@ describe('auth migration: roles and the permission table', () => {
       one<{ deleted: boolean }>(await db.query(`SELECT deleted FROM transactions WHERE id = '${E1}'`)).deleted,
     ).toBe(true);
 
-    // staff: refused
     expect(await refused(db, STAFF_A1, REMOVE(E2))).toBe(true);
     expect(await refused(db, STAFF_A1, RESTORE(E1))).toBe(true);
     await expect(as(db, STAFF_A1, `SELECT create_wallet('Mine')`)).rejects.toThrow();
@@ -239,7 +228,6 @@ describe('auth migration: roles and the permission table', () => {
       one<{ deleted: boolean }>(await db.query(`SELECT deleted FROM transactions WHERE id = '${E2}'`)).deleted,
     ).toBe(false);
 
-    // owner: allowed
     await as(db, OWNER_A, REMOVE(E2));
     await as(db, OWNER_A, RESTORE(E1));
     expect(
@@ -265,7 +253,6 @@ describe('auth migration: roles and the permission table', () => {
     expect(
       one<{ deleted: boolean }>(await db.query(`SELECT deleted FROM transactions WHERE id = '${E1}'`)).deleted,
     ).toBe(false);
-    // Everybody who is logged in can read the table (the app uses the same one) but nobody can change it.
     const rows = await as(
       db,
       STAFF_A1,
@@ -300,7 +287,6 @@ describe('auth migration: roles and the permission table', () => {
     expect(one<{ kind: string }>(await db.query(`SELECT kind FROM profiles WHERE id = '${STAFF_A1}'`)).kind).toBe(
       'staff',
     );
-    // A staff account can never hold an owner membership, nor an owner account a staff one.
     await expect(
       db.exec(`INSERT INTO wallet_members (user_id, wallet_id, role) VALUES ('${STAFF_B}', '${W2}', 'owner')`),
     ).rejects.toThrow();
@@ -312,7 +298,6 @@ describe('auth migration: roles and the permission table', () => {
 
   it('T3d the remove/restore rules hold column by column, and the database writes who removed an entry', async () => {
     const db = await migratedDb();
-    // Staff remove their own entry: removed_by is set by the database, not by the client.
     await as(
       db,
       STAFF_A1,
@@ -321,12 +306,10 @@ describe('auth migration: roles and the permission table', () => {
     expect(
       one<{ removed_by: string }>(await db.query(`SELECT removed_by FROM transactions WHERE id = '${E1}'`)).removed_by,
     ).toBe('Anna');
-    // Un-removing through a plain-looking edit is still a restore.
     expect(
       await refused(db, STAFF_A1, `UPDATE transactions SET removed_at = NULL, notes = 'sneaky' WHERE id = '${E1}'`),
     ).toBe(true);
     expect(await refused(db, STAFF_A1, `UPDATE transactions SET deleted = false WHERE id = '${E1}'`)).toBe(true);
-    // Another staff member cannot touch removal data of someone else's removed entry.
     expect(await refused(db, STAFF_A2, `UPDATE transactions SET removed_reason = 'other' WHERE id = '${E1}'`)).toBe(
       true,
     );
@@ -347,7 +330,6 @@ describe('auth migration: roles and the permission table', () => {
       VALUES ('e0000000-0000-0000-0000-0000000000f1', '${W1}', 'inflow', 9, '2026-03-05', 'cash')`);
     const LEGACY = 'e0000000-0000-0000-0000-0000000000f1';
     expect(await refused(db, STAFF_A1, REMOVE(LEGACY))).toBe(true);
-    // The author's account is deleted later: their entry is nobody's own any more.
     await db.exec(`DELETE FROM auth.users WHERE id = '${STAFF_A2}'`);
     expect(await refused(db, STAFF_A1, REMOVE(E2))).toBe(true);
     expect(
@@ -355,7 +337,6 @@ describe('auth migration: roles and the permission table', () => {
         await db.query(`SELECT count(*)::int AS n FROM transactions WHERE deleted AND id IN ('${LEGACY}', '${E2}')`),
       ).n,
     ).toBe(0);
-    // The owner still can.
     await as(db, OWNER_A, REMOVE(LEGACY));
     await db.close();
   });
@@ -375,7 +356,6 @@ describe('auth migration: roles and the permission table', () => {
     expect(limit.rows).toHaveLength(1);
     await db.exec(`DROP INDEX ${(limit.rows[0] as { indexname: string }).indexname}`);
     await db.exec(`INSERT INTO wallet_members (user_id, wallet_id, role) VALUES ('${OWNER_B}', '${W1}', 'owner')`);
-    // The second owner really has owner rights in W1 (and nothing else changed).
     await as(db, OWNER_B, REMOVE(E2));
     await as(db, OWNER_B, RESTORE(E2));
     expect(await refused(db, OWNER_B, `UPDATE transactions SET notes = 'x' WHERE id = '${E3}'`)).toBe(false);
@@ -420,7 +400,6 @@ describe('auth migration: logged-out visitors and secrets', () => {
     expect(one<{ n: number }>(await as(db, STAFF_A1, `SELECT count(*)::int AS n FROM transactions`)).n).toBe(0);
     await expect(as(db, STAFF_A1, NEW_TX(W1))).rejects.toThrow(/row-level security/i);
     expect(await refused(db, STAFF_A1, `UPDATE transactions SET notes = 'x' WHERE id = '${E2}'`)).toBe(true);
-    // Enabling again brings access back; the other staff member was never affected.
     await db.exec(`UPDATE staff_credentials SET disabled_at = NULL WHERE user_id = '${STAFF_A1}'`);
     expect(one<{ n: number }>(await as(db, STAFF_A1, `SELECT count(*)::int AS n FROM transactions`)).n).toBe(2);
     await db.close();
@@ -454,7 +433,6 @@ describe('auth migration: rollout of existing data', () => {
       { user_id: STAFF_A1, role: 'staff' },
     ]);
 
-    // No lockout: the owner sees every legacy entry right after the migration; legacy rows have no author.
     const seen = await as(
       db,
       OWNER_A,
@@ -473,7 +451,6 @@ describe('auth migration: rollout of existing data', () => {
     expect(text).toMatch(/owner account/i);
     expect(text).toMatch(/rollback/i);
     expect(read(AUTH_MIGRATION)).toMatch(/rollback/i);
-    // Owner/staff rollout: staff PINs are new and 6 digits, the owner sets them, and a local database must be reset.
     expect(text).toMatch(/6[- ]digit/i);
     expect(text).toMatch(/staff/i);
     expect(text).toMatch(/db:reset|db reset/i);
@@ -495,14 +472,12 @@ describe('auth migration: staff PIN attempts (server only)', () => {
     expect(sixth.locked).toBe(true);
     expect(sixth.retry_after).toBeGreaterThan(0);
 
-    // After the first wait one more try is allowed; failing it locks for longer than before.
     const firstWait = sixth.retry_after;
     expect((await begin(db, 'anna', at(firstWait + 5))).locked).toBe(false);
     const again = await begin(db, 'anna', at(firstWait + 6));
     expect(again.locked).toBe(true);
     expect(again.retry_after).toBeGreaterThan(firstWait);
 
-    // The wait is capped at one hour however long somebody keeps guessing.
     let last = again.retry_after;
     for (let i = 0; i < 20; i++) {
       await begin(db, 'anna', at(100000 + i * 10000));
@@ -510,7 +485,6 @@ describe('auth migration: staff PIN attempts (server only)', () => {
     }
     expect(last).toBeLessThanOrEqual(3600);
 
-    // Another staff member is not affected, and a success clears the count.
     expect((await begin(db, 'carl', T0)).locked).toBe(false);
     await db.query(`SELECT staff_reset_attempts('carl')`);
     for (let i = 0; i < 5; i++) expect((await begin(db, 'carl', T0)).locked).toBe(false);
@@ -535,7 +509,6 @@ describe('auth migration: staff PIN attempts (server only)', () => {
     await db.exec(`UPDATE staff_credentials SET disabled_at = now() WHERE user_id = '${STAFF_A2}'`);
     expect((await begin(db, 'carl', T0)).disabled).toBe(true);
 
-    // Counting must be one atomic statement (insert-or-update returning), never read-then-write, so parallel guesses all count.
     const def = one<{ def: string }>(
       await db.query(`SELECT pg_get_functiondef('staff_begin_attempt(text, timestamptz)'::regprocedure) AS def`),
     ).def;

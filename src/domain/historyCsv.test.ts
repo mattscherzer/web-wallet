@@ -20,7 +20,6 @@ function tx(overrides: Partial<Transaction> & Pick<Transaction, 'type' | 'amount
   };
 }
 
-/** Pull out just the running-balance columns for readability. */
 const balances = (rows: string[][]) => rows.slice(1).map((r) => [r[4], r[5]]);
 
 describe('buildHistoryCsvRows', () => {
@@ -46,9 +45,6 @@ describe('buildHistoryCsvRows', () => {
       tx({ type: 'outflow', amount: 5, account_id: 'prudent_reserve', date: '2026-01-11' }),
     ]);
 
-    // Hand-checked:
-    //   main:    1000 → 1050.50 → 1030.25 → 730.25 → 805.25 → 805.25 → 805.25
-    //   reserve:    0 →       0 →       0 →    300 →    225 →    235 →    230
     expect(balances(rows)).toEqual([
       ['1000.00', '+0.00'],
       ['1050.50', '+0.00'],
@@ -73,8 +69,8 @@ describe('buildHistoryCsvRows', () => {
     expect(rows.slice(1).map((r) => [r[1], r[2]])).toEqual([
       ['100.00', ''],
       ['', '40.00'],
-      ['', '30.00'], // leaving main for reserve
-      ['10.00', ''], // entering main from reserve
+      ['', '30.00'],
+      ['10.00', ''],
       ['7.00', ''],
       ['', '3.00'],
     ]);

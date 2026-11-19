@@ -5,8 +5,7 @@ import { useWallet } from '../wallet/useWallet';
 import WalletsFailed from '../components/WalletsFailed';
 import { AppShellSkeleton } from '../components/LoadingSkeletons';
 
-/** Shows the app once a wallet is open; Welcome when there is none; an error with Retry if wallets could not be loaded. */
-export default function WalletGate({ children }: { children: ReactNode }) {
+export function WalletGate({ children }: { children: ReactNode }) {
   const { status, wallets, reload } = useWallet();
   const { pathname } = useLocation();
 

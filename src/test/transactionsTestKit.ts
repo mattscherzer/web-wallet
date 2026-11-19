@@ -1,7 +1,5 @@
-// Data for the Record / Entry / History screen tests. Imports nothing from app code.
 import { twoWalletRows } from './fakeSupabase';
 
-/** Wallet A with three live entries and one removed entry. */
 export function transactionRows() {
   const rows = twoWalletRows();
   return {

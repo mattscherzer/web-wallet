@@ -11,7 +11,6 @@ vi.mock('./supabase', () => ({
   ),
 }));
 
-// Loaded dynamically so missing exports fail the assertion instead of crashing the file.
 const db = await import('./transactions');
 const queries = await import('./queries');
 const api = db as unknown as {
@@ -47,11 +46,9 @@ describe('soft remove', () => {
     await expect(remove('t1', { walletId: 'wa', reason: 'Duplicate', actor: 'Anna' })).rejects.toThrow();
     expect(audit('t1').filter((a) => a.action === 'remove')).toHaveLength(1);
 
-    // Another wallet's entry can't be removed by id.
     await expect(remove('t4', { walletId: 'wa', reason: 'Duplicate', actor: 'Anna' })).rejects.toThrow();
     expect(row('t4').deleted).toBe(false);
 
-    // If the history can't be written, the entry is not left removed without a trace.
     ref.fake.failNext('audit_log:insert', { message: 'boom' });
     await expect(remove('t2', { walletId: 'wa', reason: 'Duplicate', actor: 'Anna' })).rejects.toThrow();
     expect(row('t2').deleted).toBe(false);
@@ -76,7 +73,6 @@ describe('soft remove', () => {
     });
     expect((await queries.fetchTransactions('wa')).map((t) => t.id)).not.toContain('t1');
     expect((await queries.fetchAccountBalances('wa')).bank).toBeCloseTo(-100.2);
-    // A removed entry can still be opened, and only in its own wallet.
     expect(await fetchOne!('wa', 't1')).toMatchObject({ id: 't1', deleted: true });
     expect(await fetchOne!('wb', 't1')).toBeNull();
 

@@ -33,7 +33,6 @@ afterEach(() => {
 describe('History page export', () => {
   it('exports the open wallet’s entries under its name', async () => {
     render(walletApp(<HistoryPage />, { current: 'wb' }));
-    // The button is clickable before the wallet has loaded; keep pressing until the export happens.
     await waitFor(() => {
       fireEvent.click(screen.getByRole('button', { name: /Export CSV/ }));
       expect(blobs.length).toBeGreaterThan(0);

@@ -10,7 +10,7 @@ export async function functionErrorMessage(error: unknown, fallback: string): Pr
       }
       if (body.error) return body.error;
     } catch {
-      // not JSON: fall through to the fallback
+      // Body is not JSON.
     }
   }
   return fallback;

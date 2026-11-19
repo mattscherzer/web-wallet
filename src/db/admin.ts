@@ -4,7 +4,6 @@ import { UserMessageError } from '../domain/userMessageError';
 import { couldnt } from '../utils/copy';
 import type { StaffMember } from '../domain/staff';
 
-/** One call to the staff-admin edge function (it checks that the caller owns the wallet involved). */
 async function staffAdmin<T>(body: Record<string, unknown>): Promise<T> {
   const { data, error } = await supabase.functions.invoke('staff-admin', { body });
   if (error) throw new UserMessageError(await functionErrorMessage(error, couldnt('do that')));

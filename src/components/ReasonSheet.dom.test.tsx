@@ -35,7 +35,6 @@ describe('ReasonSheet keyboard use', () => {
     const dialog = screen.getByRole('dialog', { name: 'Remove this entry?' });
     expect(dialog.contains(document.activeElement)).toBe(true);
 
-    // Tab from the last control wraps to the first one instead of leaving the dialog.
     const cancel = screen.getByRole('button', { name: 'Cancel' });
     cancel.focus();
     fireEvent.keyDown(cancel, { key: 'Tab' });

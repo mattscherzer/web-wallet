@@ -5,7 +5,6 @@ import { useUnlock } from '../auth/unlockContext';
 import { useOptionalWallet } from '../wallet/useWallet';
 import { walletInitials } from '../domain/wallet';
 
-// Loaded on first open: keeps the data layer out of the shell's initial code.
 const WalletSwitcher = lazy(() => import('./WalletSwitcher'));
 
 export default function AppBar() {

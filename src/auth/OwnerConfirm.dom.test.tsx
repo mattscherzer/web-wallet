@@ -19,7 +19,6 @@ const ref = vi.hoisted(() => ({ fake: null as unknown as FakeSupabase }));
 vi.mock('../db/supabase', () => ({
   supabase: new Proxy({}, { get: (_t, p) => (ref.fake.client as unknown as Record<string, unknown>)[p as string] }),
 }));
-// The password is checked on a separate client that never touches the app's own session.
 const check = vi.hoisted(() => vi.fn(async (_email: string, password: string) => password === 'owner-pw'));
 vi.mock('../db/ownerPassword', () => ({ checkOwnerPassword: check }));
 
@@ -111,13 +110,11 @@ describe('owner password confirmation', () => {
     expect(screen.queryByLabelText('Password')).toBeNull();
     expect(check).toHaveBeenLastCalledWith('olga@x.org', 'owner-pw');
 
-    // Within 15 minutes nothing is asked again.
     vi.setSystemTime(Date.now() + 14 * 60_000);
     fireEvent.click(screen.getByRole('button', { name: 'Do owner thing' }));
     await waitFor(() => expect(done()).toBe('2'));
     expect(screen.queryByLabelText('Password')).toBeNull();
 
-    // After 15 minutes it is.
     vi.setSystemTime(Date.now() + 16 * 60_000);
     fireEvent.click(screen.getByRole('button', { name: 'Do owner thing' }));
     expect(await screen.findByLabelText('Password')).toBeTruthy();

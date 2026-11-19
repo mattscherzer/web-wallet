@@ -1,5 +1,3 @@
-// Staff sign in with a username and a 6-digit PIN. Runs without a JWT check (nobody is logged in yet); the PIN is
-// verified here, on the server, and a real Supabase session is returned. Needs the service-role key.
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffLogin } from '../_shared/staffLogin.ts';
@@ -16,7 +14,6 @@ const serviceKey = env('SUPABASE_SERVICE_ROLE_KEY');
 const anonKey = env('SUPABASE_ANON_KEY');
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
-// Compared against when the username is unknown, so that unknown and known names take the same time.
 const DUMMY_HASH = bcrypt.hashSync('000000', 10);
 
 const sessionClient: StaffSessionClient = {
@@ -25,7 +22,6 @@ const sessionClient: StaffSessionClient = {
     return { data: data?.properties ? { properties: { email_otp: data.properties.email_otp } } : null, error };
   },
   verifyOtp: async ({ email, token }) => {
-    // A fresh client per login: the session is returned to the staff member, never kept here.
     const fresh = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data, error } = await fresh.auth.verifyOtp({ email, token, type: 'email' });
     return { data: { session: data.session as unknown as Record<string, unknown> | null }, error };

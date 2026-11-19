@@ -5,12 +5,9 @@ import { PIN_LENGTH } from '../domain/pin';
 
 interface PinPadProps {
   value: string;
-  /** Called with the new digits; at PIN_LENGTH digits the owner of this pad submits. */
   onChange: (next: string) => void;
   disabled?: boolean;
-  /** Dots turn red after a wrong PIN. */
   invalid?: boolean;
-  /** Shown in place of the keys while the PIN is being checked. */
   status?: string | null;
   children?: ReactNode;
 }

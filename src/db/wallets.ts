@@ -9,7 +9,6 @@ export async function fetchWallets(): Promise<Wallet[]> {
   return (data ?? []) as Wallet[];
 }
 
-/** Creates a wallet with the logged-in owner as its owner, in one step in the database. */
 export async function createWallet(rawName: string): Promise<Wallet> {
   const name = validateWalletName(rawName);
 

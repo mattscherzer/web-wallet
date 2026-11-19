@@ -37,7 +37,6 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-/** Open as staff anna, lock with the header lock, then tap the closed lock to get the Unlock sheet. */
 async function lockedAsStaff() {
   rememberStaff();
   ref.fake.signIn('u-anna');
@@ -219,7 +218,6 @@ describe('the idle lock banner', () => {
 });
 
 describe('unlock sheet edge cases', () => {
-  // staff whose phone forgot the username get a way out instead of a pad that never works
   it('T66', async () => {
     rememberStaff();
     ref.fake.signIn('u-anna');
@@ -234,7 +232,6 @@ describe('unlock sheet edge cases', () => {
     await waitFor(() => expect(ref.fake.signOutScopes).toEqual(['local']));
   });
 
-  // Tab inside the open sheet stays inside it
   it('T67', async () => {
     await lockedAsStaff();
     const buttons = within(sheet())

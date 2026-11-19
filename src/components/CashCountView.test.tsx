@@ -3,7 +3,6 @@ import { isValidElement, type ReactElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { CountState } from '../domain/cashCount';
 
-// Loaded dynamically so a missing module fails the assertion below instead of crashing the file.
 const view = await import('./CashCountView').catch(() => undefined);
 const logic = await import('../domain/cashCount').catch(() => undefined);
 
@@ -22,7 +21,6 @@ function render(state?: CountState) {
   );
 }
 
-/** The opening tag of the first element whose markup contains `needle`. */
 function tagWith(html: string, needle: string): string {
   const at = html.indexOf(needle);
   expect(at, `"${needle}" not found`).toBeGreaterThan(-1);
@@ -118,7 +116,6 @@ describe('CashCountView counted state', () => {
     const html = render(counted({ 0: 2, 8: 3, 11: 1 }));
     expect(html).toContain('€100.00');
     expect(html).toContain('€0.30');
-    // 2 x 50 + 3 x 0.10 + 1 x 0.01
     expect(html).toContain('€100.31');
     expect(html).toContain('2 notes · 4 coins');
     expect(html).toContain('Use €100.31 as amount');
@@ -142,7 +139,6 @@ describe('CashCountView actions', () => {
   });
 });
 
-/** Walk the element tree returned by calling the (hook-free) view as a function. */
 function findButton(node: ReactNode, label: string, tag = 'button'): ReactElement<Record<string, unknown>> | undefined {
   if (Array.isArray(node)) {
     for (const child of node) {
@@ -172,7 +168,6 @@ function press(label: string, state: CountState) {
   return { onApply, onClose, dispatch };
 }
 
-/** Fire a handler on a count field, as the browser would, with the text it holds. */
 function fireField(label: string, state: CountState, handler: 'onChange' | 'onBlur', text = '') {
   expect(view, 'src/components/CashCountView.tsx must exist').toBeDefined();
   const dispatch = vi.fn();
@@ -186,9 +181,9 @@ function fireField(label: string, state: CountState, handler: 'onChange' | 'onBl
 describe('CashCountView wiring', () => {
   it('hands the form the total in euros, not cents, when applying', () => {
     const counts = new Array(12).fill(0);
-    counts[8] = 3; // 3 x 10c
-    counts[9] = 1; // 1 x 5c
-    counts[11] = 2; // 2 x 1c
+    counts[8] = 3;
+    counts[9] = 1;
+    counts[11] = 2;
     const { onApply, onClose } = press('Use €0.37 as amount', { counts, mode: 'add', history: [] });
     expect(onApply).toHaveBeenCalledTimes(1);
     expect(onApply).toHaveBeenCalledWith(0.37);

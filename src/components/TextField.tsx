@@ -3,7 +3,6 @@ import { Eye, EyeOff } from 'lucide-react';
 
 interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label: string;
-  /** A password field gets a show/hide toggle. */
   password?: boolean;
   type?: string;
   hint?: string;

@@ -29,13 +29,11 @@ export function OwnerConfirmProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
-  // Locking ends the 15-minute window: after an unlock the next owner action asks for the password again.
   useEffect(() => {
     if (auth.locked) confirmedUntil.current = 0;
   }, [auth.locked]);
 
   const confirm = useCallback<Confirm>(async () => {
-    // An action can start a moment before the login has finished loading.
     while (latest.current.auth.status === 'loading') await wait(20);
     if (latest.current.auth.profile?.kind !== 'owner') return false;
     if (latest.current.auth.locked) {

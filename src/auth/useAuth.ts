@@ -7,7 +7,7 @@ const SIGNED_OUT: AuthValue = {
   profile: null,
   locked: false,
   lockedByIdle: false,
-  can: () => true, // outside a login (isolated component tests) nothing is hidden
+  can: () => true,
   signIn: async () => 'Not available',
   signInStaff: async () => ({ ok: false, kind: 'error', message: 'Not available' }),
   signOut: async () => {},
@@ -15,7 +15,6 @@ const SIGNED_OUT: AuthValue = {
   unlock: async () => ({ ok: false, kind: 'error', message: 'Not available' }),
 };
 
-/** The logged-in user. Outside an AuthProvider (e.g. isolated component tests) nobody is logged in. */
 export function useAuth(): AuthValue {
   return useContext(AuthContext) ?? SIGNED_OUT;
 }

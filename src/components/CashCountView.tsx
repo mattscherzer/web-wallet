@@ -36,7 +36,6 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
   const cents = totalCents(counts);
   const money = (amountCents: number) => formatCurrency(amountCents / 100, locale);
 
-  // A zero count is shown as an empty field with a "0" placeholder, so typing "1" gives 1, not "01".
   const fieldText = (n: number) => (n === 0 ? '' : String(n));
 
   const renderEntry = (index: number) => {
@@ -52,11 +51,9 @@ export function CashCountView({ state, dispatch, onApply, onClose, locale }: Cas
           aria-label={`Number of ${d.label} ${d.kind}`}
           placeholder="0"
           value={fieldText(counts[index])}
-          // Every keystroke counts, so the total is live and nothing is lost if a button is tapped next.
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             dispatch({ type: 'set', index, value: parseCount(e.currentTarget.value), typing: true })
           }
-          // Leaving the field ends the typing burst, so the next entry is its own undo step.
           onBlur={() => dispatch({ type: 'set', index, value: counts[index] })}
           onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
             if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;

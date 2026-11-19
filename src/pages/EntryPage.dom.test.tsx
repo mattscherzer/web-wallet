@@ -43,7 +43,6 @@ describe('Entry page', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
 
-    // A removal needs a reason.
     const sheet = await screen.findByRole('dialog', { name: /Remove this entry/ });
     fireEvent.click(within(sheet).getByRole('button', { name: 'Remove entry' }));
     expect(await within(sheet).findByText(/Choose a reason/)).toBeTruthy();
@@ -59,7 +58,6 @@ describe('Entry page', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Restore' }));
     expect(await within(history).findByText('Restored')).toBeTruthy();
-    // Nobody is named until sign-in exists.
     expect(screen.queryByText(/Anna/)).toBeNull();
     expect(screen.queryByText('Removed', { selector: '[data-status="removed"]' })).toBeNull();
     expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);

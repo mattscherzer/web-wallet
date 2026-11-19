@@ -125,7 +125,6 @@ describe('staff login', () => {
     expect(s.attempts).toEqual(['nobody', 'anna']);
   });
 
-  // a PIN check for unlocking answers who the PIN belongs to and starts no session
   it('T71', async () => {
     const s = setup();
     const ok = await body(await s.call({ username: 'anna', pin: '123456', verifyOnly: true }));

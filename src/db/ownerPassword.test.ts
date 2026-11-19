@@ -14,12 +14,10 @@ beforeEach(() => {
 });
 
 describe('checking the owner password', () => {
-  // the throwaway session this check opens is ended again
   it('T70', async () => {
     auth.signInWithPassword.mockResolvedValue({ error: null });
     expect(await checkOwnerPassword('olga@x.org', 'pw')).toBe(true);
     expect(auth.signOut).toHaveBeenCalledTimes(1);
-    // only the throwaway session: the owner's real session on this phone stays
     expect(auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
   });
 

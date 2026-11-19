@@ -3,7 +3,6 @@ import { formatSignedCurrency } from '../utils/formatCurrency';
 
 export type RecordType = 'inflow' | 'outflow' | 'transfer';
 
-/** The type names used in the address: /record?type=in */
 export const TYPE_PARAMS: Record<string, RecordType> = {
   in: 'inflow',
   out: 'outflow',
@@ -19,7 +18,6 @@ export interface Category {
   label: string;
 }
 
-/** Per type, "Other" always last. */
 export const CATEGORIES: Record<'inflow' | 'outflow', Category[]> = {
   inflow: [
     { id: '7th-tradition', label: '7th Tradition' },
@@ -34,7 +32,6 @@ export const CATEGORIES: Record<'inflow' | 'outflow', Category[]> = {
   ],
 };
 
-/** Name for a stored category, including older entries that used free text. */
 export function categoryLabel(id: string): string {
   const known = [...CATEGORIES.inflow, ...CATEGORIES.outflow].find((c) => c.id === id);
   if (known) return known.label;
@@ -44,16 +41,13 @@ export function categoryLabel(id: string): string {
 export interface RecordForm {
   type: RecordType;
   amount: string;
-  /** Money in: into; money out: from; transfer: to. */
   accountId: AccountId;
-  /** Transfer only: the source. */
   fromAccountId: AccountId;
   category: string;
   description: string;
   date: string;
 }
 
-/** A blank form for the type; the account and category defaults depend on it. */
 export function initialRecordForm(type: RecordType, today: string): RecordForm {
   return {
     type,
@@ -66,7 +60,6 @@ export function initialRecordForm(type: RecordType, today: string): RecordForm {
   };
 }
 
-/** Changing the type resets the category; a transfer's destination is moved off its source. */
 export function switchRecordType(form: RecordForm, type: RecordType): RecordForm {
   return {
     ...form,
@@ -81,7 +74,6 @@ export interface FieldError {
   message: string;
 }
 
-/** An amount typed with a point or a comma and up to two decimals; NaN when it isn't one. */
 export function parseAmount(text: string): number {
   const t = text.trim().replace(/\s/g, '');
   if (!/^\d+([.,]\d{1,2})?$/.test(t)) return NaN;
@@ -106,7 +98,6 @@ export function validateRecord(form: RecordForm): FieldError[] {
   return errors;
 }
 
-/** The description field's label; it is required for money out and for money in as "Other". */
 export function descriptionLabel(form: Pick<RecordForm, 'type' | 'category'>): string {
   if (form.type === 'outflow') return 'Paid to or what for';
   if (form.type === 'inflow' && form.category === 'other') return 'What was it for?';
@@ -115,7 +106,6 @@ export function descriptionLabel(form: Pick<RecordForm, 'type' | 'category'>): s
 
 const isReserve = (id: AccountId) => ACCOUNTS.find((a) => a.id === id)?.isReserve === true;
 
-/** How an entry changes the Available balance (operating accounts only). */
 export function availableDelta(entry: {
   type: RecordType;
   amount: number;
@@ -135,7 +125,6 @@ export interface RecordPreview {
   availableAfter: number;
 }
 
-/** Account and Available balances as they will be once the entry is saved. */
 export function recordPreview(form: RecordForm, balances: Record<AccountId, number>): RecordPreview {
   const parsed = parseAmount(form.amount);
   const amount = Number.isFinite(parsed) ? parsed : 0;
@@ -158,7 +147,6 @@ export function recordPreview(form: RecordForm, balances: Record<AccountId, numb
   return { lines, availableAfter: available + delta };
 }
 
-/** The primary button states the action: "Record −€60.00 from Bank Account". */
 export function recordActionLabel(form: RecordForm, locale?: string): string {
   const amount = parseAmount(form.amount);
   if (!(amount > 0)) return 'Record';

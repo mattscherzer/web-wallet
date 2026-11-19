@@ -1,5 +1,3 @@
-// Owners manage staff: create, reset a PIN, disable or enable, list. Needs the service-role key, so it only runs
-// server-side; every action first checks that the caller owns the wallet involved.
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import bcrypt from 'npm:bcryptjs@2.4.3';
 import { handleStaffAdmin } from '../_shared/staffAdmin.ts';
@@ -58,7 +56,6 @@ Deno.serve((req) =>
     async setPinHash(userId, pinHash) {
       const { error } = await admin.from('staff_credentials').update({ pin_hash: pinHash }).eq('user_id', userId);
       fail('pin', error);
-      // A new PIN also clears a lock caused by wrong guesses.
       const { data } = await admin.from('staff_credentials').select('username').eq('user_id', userId).single();
       if (data) await admin.rpc('staff_reset_attempts', { p_username: data.username });
     },

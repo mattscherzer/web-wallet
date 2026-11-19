@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const css = readCss().replace(/\/\*[\s\S]*?\*\//g, '');
 
-/** Every top-level `@media` block as [query, body], found by brace balancing. */
 function mediaBlocks(source: string): Array<[string, string]> {
   const blocks: Array<[string, string]> = [];
   const re = /@media[^{]*\{/g;
@@ -45,7 +44,6 @@ describe('count cash styles', () => {
   });
 });
 
-/** Body of the first rule whose selector list is exactly `selector`. */
 function rule(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
   const match = new RegExp(`(?:^|\\})\\s*${escaped}\\s*\\{([^}]*)\\}`).exec(css);
@@ -56,7 +54,6 @@ function rule(selector: string): string {
 const darkBlock = () => mediaBlocks(css).find(([query]) => query.includes('prefers-color-scheme: dark'))?.[1] ?? '';
 
 describe('count cash matches the design handoff', () => {
-  // docs/design/source/CashCount.dc.html: note tile = justify-content flex-end, gap 4px, label 22px
   it('stacks the note label and amount at the bottom of the tile, clear of the badge', () => {
     const tile = rule('.count-tile--note');
     expect(tile).toMatch(/align-items:\s*flex-start/);
@@ -73,7 +70,6 @@ describe('count cash matches the design handoff', () => {
     expect(face).toMatch(/line-height:\s*1;/);
   });
 
-  // design: apply button on the page background, grey band behind the toolbar only
   it('puts the grey band behind the toolbar only, and keeps the home-indicator inset inside it', () => {
     expect(rule('.count-footer')).not.toMatch(/background/);
     const toolbar = rule('.count-toolbar');
@@ -81,7 +77,6 @@ describe('count cash matches the design handoff', () => {
     expect(toolbar).toMatch(/env\(safe-area-inset-bottom/);
   });
 
-  // design: apply bottom 92px above a 80px toolbar (12px gap); toolbar padding 12/16/16, gap 12
   it('spaces the apply button and toolbar as designed', () => {
     const toolbar = rule('.count-toolbar');
     expect(toolbar).toMatch(/padding:\s*12px var\(--page-padding\)/);
@@ -96,7 +91,6 @@ describe('count cash matches the design handoff', () => {
     expect(css).toMatch(/--space-md:\s*16px/);
   });
 
-  // README: Count cash total corner 32; tiles 16 (inputs 12-16)
   it('takes the Counted card (32) and tile (16) corners from tokens', () => {
     expect(css).toMatch(/--radius-count-total:\s*32px/);
     expect(css).toMatch(/--radius-tile:\s*16px/);
@@ -104,7 +98,6 @@ describe('count cash matches the design handoff', () => {
     expect(rule('.count-tile,\n.count-entry')).toMatch(/border-radius:\s*var\(--radius-tile\)/);
   });
 
-  // README: dark tertiary container #5C4300 / on #FFDF9E; light unchanged
   it('uses the design dark colours for the Counted card and leaves light as it was', () => {
     expect(darkBlock()).toMatch(/--color-count-surface:\s*#5c4300/i);
     expect(darkBlock()).toMatch(/--color-on-count-surface:\s*#ffdf9e/i);
@@ -113,14 +106,12 @@ describe('count cash matches the design handoff', () => {
     expect(light).toMatch(/--color-on-count-surface:\s*#261a00/i);
   });
 
-  // README: outline #C4CAD4 (coin face ring). The design gives no dark value; it must still be defined.
   it('rings coin faces with the soft outline token, defined for light and dark', () => {
     expect(rule(':root')).toMatch(/--color-outline:\s*#c4cad4/i);
     expect(darkBlock()).toMatch(/--color-outline:\s*#(?!c4cad4)[0-9a-f]{6}/i);
     expect(rule('.count-tile--coin .count-tile__face')).toMatch(/border:\s*1\.5px solid var\(--color-outline\)/);
   });
 
-  // design: the card text is not stretched by the inherited 1.5 line height
   it('keeps the Counted card compact', () => {
     expect(rule('.count-total')).toMatch(/line-height:\s*normal/);
     expect(rule('.count-total__amount')).toMatch(/line-height:\s*1\.15/);

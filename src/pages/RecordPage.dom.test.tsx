@@ -16,7 +16,6 @@ vi.mock('../db/supabase', () => ({
   ),
 }));
 
-// Loaded dynamically so missing modules fail the assertion instead of crashing the file.
 const pageMod = await import('./RecordPage').catch(() => undefined);
 const recordedMod = await import('./RecordedPage').catch(() => undefined);
 
@@ -47,7 +46,6 @@ const submit = () => screen.getByRole('button', { name: /^Record/ });
 describe('Record screen', () => {
   it('saves the entry without asking for a PIN', async () => {
     app('/record?type=out');
-    // The type from the link is preselected.
     expect((group('Type of entry').getByRole('radio', { name: 'Money out' }) as HTMLInputElement).checked).toBe(true);
     fireEvent.change(await screen.findByRole('textbox', { name: 'Amount' }), { target: { value: '60' } });
     fireEvent.change(screen.getByRole('textbox', { name: 'Paid to or what for' }), { target: { value: 'Hall rent' } });

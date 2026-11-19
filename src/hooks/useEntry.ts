@@ -4,7 +4,6 @@ import { useWalletQuery } from './useWalletQuery';
 
 export type EntryStatus = 'loading' | 'ready' | 'missing' | 'error';
 
-/** An entry (removed or not) and its history. `refresh` re-reads both after a change. */
 export function useEntry(id: string) {
   const { data, loaded, failed, refresh } = useWalletQuery<{
     tx: Transaction | null;

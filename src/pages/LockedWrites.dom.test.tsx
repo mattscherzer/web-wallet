@@ -142,7 +142,6 @@ describe('the idle bar', () => {
       });
       expect(screen.queryByText('Locked after 30 minutes without use')).toBeNull();
 
-      // Idle again after the unlock: the bar comes back.
       await pass(31 * 60_000);
       expect(screen.getAllByText('Locked after 30 minutes without use')).toHaveLength(1);
     } finally {
@@ -185,7 +184,6 @@ describe('every other way to change something while locked', () => {
     expect(ref.fake.tables.transactions.find((t) => t.id === 't1')!.deleted).toBe(false);
   });
 
-  // an owner restore that waited at the password box while the app locked must not go through
   it('T65', async () => {
     ref.fake.signIn('u-owner');
     shell(null, '/history/t5');

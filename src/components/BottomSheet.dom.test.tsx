@@ -30,7 +30,7 @@ describe('BottomSheet', () => {
     expect(onClose).not.toHaveBeenCalled();
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole('dialog').parentElement!);
+    fireEvent.click(document.querySelector('.modal-scrim')!);
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 

@@ -9,14 +9,12 @@ import { readLastStaff } from '../auth/lastStaff';
 import { COULD_NOT_SIGN_IN } from '../auth/authContext';
 import { useAuth } from '../auth/useAuth';
 
-// If the app has not taken over the screen by then, show the keys again rather than wait forever.
 const HANDOVER_MS = 10_000;
 
 export default function LoginPage() {
   const { signIn, signInStaff } = useAuth();
   const [mode, setMode] = useState<'staff' | 'owner'>('staff');
   const [username, setUsername] = useState(readLastStaff);
-  // A phone that remembers the username goes straight to the PIN pad.
   const [step, setStep] = useState<'username' | 'pin'>(() => (readLastStaff() ? 'pin' : 'username'));
   const [pin, setPin] = useState('');
   const [email, setEmail] = useState('');
@@ -49,7 +47,6 @@ export default function LoginPage() {
     setError(null);
     setWrongPin(false);
     const result = await signInStaff(name, digits);
-    // Stays busy once signed in: the app takes over this screen, and the keys must not flash back before it does.
     if (result.ok) return holdBusyForHandover();
     setBusy(false);
     setPin('');
@@ -77,7 +74,6 @@ export default function LoginPage() {
     setBusy(false);
   };
 
-  // The wait is over: back to the PIN pad for the same person.
   const tryAgain = () => {
     setPaused(null);
     setPin('');
