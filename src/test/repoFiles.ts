@@ -27,6 +27,9 @@ const FIX: Record<string, string> = {
   '1.6':
     'Put the code in an existing layer (docs/coding-standards.md section 1). A new folder needs a docs/decisions record first.',
   '2.4': 'Import the type from domain/ with `import type`; delete the copy.',
+  '2.5': 'Build dates with Date.UTC or compare "YYYY-MM-DD" strings; do not hand a string to new Date().',
+  '2.6':
+    'A CSV builder in domain/ imports its cells from ./csvCells (csvText for user text) and never quotes text itself.',
   '3.3': 'Write audit rows only through recordHistory in db/transactions.ts.',
   '3.5': 'Browser code uses the anon key only. Move service-role work into a supabase/functions edge function.',
   '4.4':

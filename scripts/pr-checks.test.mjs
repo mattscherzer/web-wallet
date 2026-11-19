@@ -32,6 +32,13 @@ describe('PR rules', () => {
     expect(run({ assertions: a })).toEqual(['8.5']);
     expect(run({ assertions: a, body: `${body}Assertions removed: behaviour changed` })).toEqual([]);
   });
+  it('12.6 asks for a screenshot or video when the UI changes', () => {
+    const ui = { changed: [{ status: 'M', path: 'src/pages/ReportsPage.tsx' }] };
+    expect(run(ui)).toEqual(['12.6']);
+    expect(run({ ...ui, body: `${body}## UI evidence\n\nnone` })).toEqual(['12.6']);
+    expect(run({ ...ui, body: `${body}## UI evidence\n\n![after](https://x.test/a.png)` })).toEqual([]);
+    expect(run({ changed: [{ status: 'M', path: 'src/pages/ReportsPage.dom.test.tsx' }] })).toEqual([]);
+  });
   it('12.5 and 12.4 reject a raised limit without a record', () => {
     const raised = { limits: { ...limits, complexity: 20 } };
     expect(run(raised)).toEqual(['12.5', '12.4']);

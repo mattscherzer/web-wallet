@@ -56,6 +56,14 @@ describe('coding standards: source code', () => {
     must('2.4', 'domain type declared again outside domain/', bad);
   });
 
+  it('rule 2.6: CSV builders take their cells from csvCells', () => {
+    const csv = files('src/domain', /\.ts$/).filter((f) => !isTest(f) && f !== 'src/domain/csvCells.ts');
+    const bad = csv.filter(
+      (f) => /replace\(\/"\/g/.test(read(f)) || (/Csv\.ts$/.test(f) && !read(f).includes("from './csvCells'")),
+    );
+    must('2.6', 'CSV quoting outside csvCells.ts, or a CSV builder that does not use it', bad);
+  });
+
   it('rule 3.3: only db/transactions.ts writes to audit_log', () => {
     const bad = src().filter(
       (f) =>
