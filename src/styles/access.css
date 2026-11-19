@@ -306,9 +306,14 @@
   cursor: pointer;
 }
 
-/* Clears the nav and FAB when the layout has them; the loading and error screens before it do not */
+/* Clears the nav when the layout has it; the loading and error screens before it do not */
 body:has(.record-fab) .snackbar {
-  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md) * 2);
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-md));
+}
+
+/* The FAB and its menu ride up above the snackbar instead of the snackbar clearing them */
+body:has(.snackbar) {
+  --snackbar-lift: calc(var(--touch-primary) + var(--space-md) + var(--space-sm));
 }
 
 @media (min-width: 600px) {
@@ -321,7 +326,7 @@ body:has(.record-fab) .snackbar {
   }
 
   body:has(.record-fab) .snackbar {
-    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px) + var(--fab-size) + var(--space-md));
+    bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   }
 }
 
