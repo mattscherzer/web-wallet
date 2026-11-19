@@ -80,6 +80,10 @@ const noClock = [
     'Domain does not read the clock; pass `now` in (2.1).',
   ),
 ];
+const noDateParsing = syntax(
+  'NewExpression[callee.name="Date"][arguments.length=1]:not([arguments.0.type="Literal"]):not([arguments.0.callee.object.name="Date"]), CallExpression[callee.object.name="Date"][callee.property.name="parse"]',
+  'Domain does not parse date strings: timezone and two-digit years bite. Compare "YYYY-MM-DD" strings, or build with Date.UTC (2.5).',
+);
 const noClickableDivs = syntax(
   'JSXOpeningElement[name.name=/^(div|span|li|p|section)$/]:has(JSXAttribute[name.name="onClick"])',
   'Interactive elements are real buttons, links or inputs (5.6).',
@@ -170,7 +174,7 @@ export default defineConfig([
   },
   {
     files: ['src/domain/**'],
-    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport, ...noClock] },
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport, ...noClock, noDateParsing] },
   },
   {
     files: ['src/components/**', 'src/pages/**'],

@@ -1,7 +1,7 @@
 import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from './accounts';
 import type { Transaction } from './transaction';
 import { authorLabel } from './authorLabel';
-import { quoted, whatText } from './csvCells';
+import { csvText, whatText } from './csvCells';
 
 export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by'];
 
@@ -51,11 +51,8 @@ function moneyEffect(tx: Transaction): MoneyEffect | null {
 }
 
 function shortDate(date: string): string {
-  const d = new Date(date);
-  const day = String(d.getUTCDate()).padStart(2, '0');
-  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const year = String(d.getUTCFullYear()).slice(2);
-  return `${day}.${month}.${year}`;
+  const [year, month, day] = date.slice(0, 10).split('-');
+  return `${day}.${month}.${year.slice(2)}`;
 }
 
 /** Expects transactions in chronological order. */
@@ -77,10 +74,10 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
       shortDate(tx.date),
       effect.displayIn,
       effect.displayOut,
-      quoted(whatText(tx)),
+      csvText(whatText(tx)),
       mainBalance.toFixed(2),
       `+${reserveBalance.toFixed(2)}`,
-      quoted(authorLabel(tx)),
+      csvText(authorLabel(tx)),
     ]);
   }
 
@@ -89,6 +86,6 @@ export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
 
 export function buildHistoryCsv(transactions: Transaction[], walletName?: string): string {
   const lines = buildHistoryCsvRows(transactions).map((e) => e.join(','));
-  if (walletName) lines.unshift(`Wallet,"${walletName.replace(/"/g, '""')}"`);
+  if (walletName) lines.unshift(`Wallet,${csvText(walletName)}`);
   return lines.join('\n');
 }

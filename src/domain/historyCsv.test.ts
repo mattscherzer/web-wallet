@@ -121,6 +121,13 @@ describe('buildHistoryCsvRows', () => {
     ]);
   });
 
+  it('stops a note that starts with = from running as a spreadsheet formula', () => {
+    const rows = buildHistoryCsvRows([
+      tx({ type: 'inflow', amount: 5, account_id: 'cash', category: 'other', notes: '=HYPERLINK("x")' }),
+    ]);
+    expect(rows[1][3]).toBe('"\'=HYPERLINK(""x"")"');
+  });
+
   it('formats the date as DD.MM.YY', () => {
     const [, row] = buildHistoryCsvRows([tx({ type: 'inflow', amount: 1, account_id: 'cash', date: '2026-12-31' })]);
     expect(row[0]).toBe('31.12.26');

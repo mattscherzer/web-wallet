@@ -38,6 +38,8 @@ domain/  utils/           pure rules and helpers
 - **2.2** Every domain module with runtime exports has a test file next to it. `test`
 - **2.3** Money in the UI is formatted only by `review`
 - **2.4** Types for domain concepts (`Transaction`, `test`
+- **2.5** No date strings parsed in `domain/`: no `new Date(string)` or `Date.parse`. Compare `YYYY-MM-DD` strings or build with `Date.UTC`. `lint`
+- **2.6** CSV builders in `domain/` take their cells from `csvCells.ts`; user text goes through `csvText` so spreadsheets don't run it as a formula. `test`
 
 ## 3. Data access (`db/`)
 
@@ -65,6 +67,8 @@ domain/  utils/           pure rules and helpers
 - **5.4** Anything that changes data checks the view-only lock first (`requireUnlocked()`), and owner-only actions ask for confirmation (`useOwnerConfirm`). `test`
 - **5.5** Errors are shown in the page (an inline message with `role="alert"`). Never `alert()`, `confirm()` or `prompt()`. `lint`
 - **5.6** Interactive elements are real buttons, links or inputs with an accessible name; tests find them by role and name. `lint` (clickable `div`s), `review` (names)
+- **5.9** A handler that closes a sheet checks that sheet is still the open one, so a swap between sheets can't close the wrong one. `review`
+- **5.10** Amounts in lists and summaries don't wrap mid-number (`white-space: nowrap`); check new screens at 320px. `review`
 - **5.8** Pages and components contain no `useEffect`. An effect goes in a hook in `hooks/` named for what it does (`useCountdown`, `useMenuDismiss`). `lint`
 - **5.7** Every `test`, `CI` (new disables need a "Disables added:" line in the PR)
 
