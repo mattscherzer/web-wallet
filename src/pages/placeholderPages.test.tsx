@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
+
+vi.mock('../db/supabase', () => ({ supabase: {} }));
 
 const reports = await import('./ReportsPage').catch(() => undefined);
 
