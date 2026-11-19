@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { matchPath, useLocation } from 'react-router';
 import { HISTORY_PATH, NAV_ITEMS } from './navItems';
+import { useHoldLockNotice } from '../auth/unlockContext';
 
 const STAGGER_STEPS = 8;
 
@@ -55,6 +56,7 @@ function RowGroup({ rows, tall, next }: { rows: number; tall?: boolean; next: ()
 }
 
 export function OverviewSkeleton() {
+  useHoldLockNotice();
   const next = stagger();
   return (
     <div role="status" aria-busy="true" aria-label="Loading">
@@ -83,6 +85,7 @@ export function OverviewSkeleton() {
 }
 
 export function HistorySkeleton() {
+  useHoldLockNotice();
   const next = stagger();
   return (
     <div role="status" aria-busy="true" aria-label="Loading" className="skeleton-history">

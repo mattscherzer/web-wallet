@@ -3,9 +3,11 @@ import { useAuth } from './useAuth';
 
 export interface UnlockApi {
   openUnlock(): void;
+  /** Keeps the idle-lock notice away until the returned release is called. */
+  holdNotice(): () => void;
 }
 
-export const UnlockContext = createContext<UnlockApi>({ openUnlock: () => {} });
+export const UnlockContext = createContext<UnlockApi>({ openUnlock: () => {}, holdNotice: () => () => {} });
 
 /** `requireUnlocked()` reads the lock when called, so a gate reached after an await still sees a lock made meanwhile. */
 export function useUnlock() {
@@ -27,4 +29,10 @@ export function useUnlock() {
     }),
     [locked, openUnlock],
   );
+}
+
+/** A screen with nothing to change yet (loading, or failed to load) calls this so the idle-lock notice waits for real content. */
+export function useHoldLockNotice() {
+  const { holdNotice } = useContext(UnlockContext);
+  useEffect(() => holdNotice(), [holdNotice]);
 }

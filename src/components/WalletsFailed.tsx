@@ -1,9 +1,11 @@
 import { WifiOff } from 'lucide-react';
+import { useHoldLockNotice } from '../auth/unlockContext';
 import { useRetry } from '../hooks/useRetry';
 import { CHECK_CONNECTION } from '../utils/copy';
 import LoadingIndicator from './LoadingIndicator';
 
 export default function WalletsFailed({ reload }: { reload: () => Promise<void> }) {
+  useHoldLockNotice();
   const { retrying, retry } = useRetry(reload);
   return (
     <div className="wallet-error">
