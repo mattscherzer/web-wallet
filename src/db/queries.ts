@@ -48,6 +48,9 @@ export async function fetchTransactions(
   return (data ?? []) as Transaction[];
 }
 
+export const fetchReportTransactions = (walletId: string) =>
+  fetchTransactions(walletId, { removed: 'include', ascending: true });
+
 export async function fetchTransaction(walletId: string, id: string): Promise<Transaction | null> {
   const { data, error } = await supabase
     .from('transactions')

@@ -1,6 +1,7 @@
 import { MAIN_ACCOUNTS, RESERVE_ACCOUNTS } from './accounts';
 import type { Transaction } from './transaction';
 import { authorLabel } from './authorLabel';
+import { quoted, whatText } from './csvCells';
 
 export const HISTORY_CSV_HEADER = ['Date', 'In', 'Out', 'What', 'Balance', 'Prudent Reserve', 'Created by'];
 
@@ -49,16 +50,6 @@ function moneyEffect(tx: Transaction): MoneyEffect | null {
   };
 }
 
-function whatText(tx: Transaction): string {
-  let what = tx.category
-    ? tx.category.charAt(0).toUpperCase() + tx.category.slice(1).replace(/-/g, ' ')
-    : 'Transaction';
-  if (!tx.notes) return what;
-  if (tx.category && tx.category !== 'other' && tx.category !== 'transfer') what += ` - ${tx.notes}`;
-  else what = tx.notes;
-  return what;
-}
-
 function shortDate(date: string): string {
   const d = new Date(date);
   const day = String(d.getUTCDate()).padStart(2, '0');
@@ -66,8 +57,6 @@ function shortDate(date: string): string {
   const year = String(d.getUTCFullYear()).slice(2);
   return `${day}.${month}.${year}`;
 }
-
-const quoted = (text: string) => `"${text.replace(/"/g, '""')}"`;
 
 /** Expects transactions in chronological order. */
 export function buildHistoryCsvRows(transactions: Transaction[]): string[][] {
