@@ -5,6 +5,8 @@ import { pathToFileURL } from 'node:url';
 export const TITLE = /^(feat|fix|refactor|perf|test|docs|style|build|ci|chore)(\([a-z0-9-]+\))?!?: .+/;
 export const ENFORCERS =
   /^(eslint\.config\.js|scripts\/|src\/standards[^/]*\.test\.ts|src\/test\/repoFiles\.ts|\.github\/(workflows\/|pull_request_template\.md|CODEOWNERS)|\.claude\/(settings\.json|hooks\/))/;
+const UI_FILE = /^src\/(pages|components|styles)\/.*(?<!\.test)\.(tsx|css)$|^src\/index\.css$/;
+const EVIDENCE = /!\[[^\]]*\]\(\S+\)|<img\s|<video\s|user-attachments\/assets\/|\.(mp4|mov|webm)\b/i;
 const DATA_CHANGE =
   /\b(update\s+\S+\s+set|delete\s+from|drop\s+(column|table)|truncate|alter\s+column\s+\S+\s+(set\s+data\s+)?type)\b/i;
 const LIMITS = {
@@ -54,6 +56,10 @@ export function checkPr({
       out.push(
         `8.5: ${a.path} lost ${a.before - a.after} expect() call(s); explain with an "Assertions removed: <why>" line in the PR`,
       );
+  if (files.some((f) => UI_FILE.test(f)) && !EVIDENCE.test(sectionBody(body, 'UI evidence')))
+    out.push(
+      '12.6: the PR changes the UI; add screenshots or a video of the result under "## UI evidence" (gh pr edit --attach)',
+    );
   const raised = Object.keys(limits).filter((k) => limits[k] > baseLimits[k]);
   for (const k of raised) out.push(`12.5: lint limit ${k} raised from ${baseLimits[k]} to ${limits[k]}`);
   const needsRecord = [

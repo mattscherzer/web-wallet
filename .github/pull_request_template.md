@@ -4,6 +4,10 @@
 
 ## How it was checked
 
+## UI evidence
+
+<!-- Required when pages, components or styles change: screenshots or a video of the result (gh pr edit <n> --attach ./shot.png). Delete this section otherwise. -->
+
 ## Review checklist (rules in `docs/coding-standards.md`)
 
 - [ ] 1.5 New code sits in the lowest layer that can hold it

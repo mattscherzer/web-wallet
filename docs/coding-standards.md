@@ -131,6 +131,7 @@ domain/  utils/           pure rules and helpers
 - **12.3** The PR description says what changed, any behaviour change, and how it was checked. `CI`
 - **12.4** Architectural decisions (a new layer, a new dependency, a rule changing here) get a short record in `CI`
 - **12.5** The limits in 9.2 and 9.3 only go down. Raising one needs a decision record. `CI`, `test`
+- **12.6** A PR that changes pages, components or styles shows the result: screenshots or a video under `## UI evidence` in the description, so a reviewer can see it without running the app. Attach with `gh pr edit <n> --attach ./shot.png`. `CI`
 
 ## 13. Design principles
 
