@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import { useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import { X } from 'lucide-react';
+import { useElapsed } from '../hooks/useElapsed';
 
 const SNACKBAR_MS = 10_000;
 const SWIPE_DISMISS_PX = 80;
@@ -11,16 +12,12 @@ interface SnackbarProps {
 }
 
 export default function Snackbar({ message, actionLabel, onAction }: SnackbarProps) {
-  const [visible, setVisible] = useState(true);
+  const [dismissed, setDismissed] = useState(false);
   const [drag, setDrag] = useState(0);
   const startX = useRef<number | null>(null);
+  const timedOut = useElapsed(SNACKBAR_MS);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), SNACKBAR_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!visible) return null;
+  if (dismissed || timedOut) return null;
 
   const start = (e: PointerEvent<HTMLDivElement>) => {
     // Capturing on a button would swallow its click.
@@ -34,7 +31,7 @@ export default function Snackbar({ message, actionLabel, onAction }: SnackbarPro
   const end = () => {
     if (startX.current === null) return;
     startX.current = null;
-    if (Math.abs(drag) >= SWIPE_DISMISS_PX) setVisible(false);
+    if (Math.abs(drag) >= SWIPE_DISMISS_PX) setDismissed(true);
     else setDrag(0);
   };
 
@@ -52,7 +49,7 @@ export default function Snackbar({ message, actionLabel, onAction }: SnackbarPro
       <button type="button" className="snackbar__action" onClick={onAction}>
         {actionLabel}
       </button>
-      <button type="button" className="snackbar__dismiss" aria-label="Dismiss" onClick={() => setVisible(false)}>
+      <button type="button" className="snackbar__dismiss" aria-label="Dismiss" onClick={() => setDismissed(true)}>
         <X size={20} aria-hidden="true" />
       </button>
     </div>
