@@ -4,7 +4,7 @@ import Countdown from '../components/Countdown';
 import FormError from '../components/FormError';
 import PinPad from '../components/PinPad';
 import TextField from '../components/TextField';
-import { PIN_LENGTH } from '../domain/pin';
+import { PIN_LENGTH, isPinComplete } from '../domain/pin';
 import { readLastStaff } from '../auth/lastStaff';
 import { COULD_NOT_SIGN_IN } from '../auth/authContext';
 import { useAuth } from '../auth/useAuth';
@@ -60,7 +60,7 @@ export default function LoginPage() {
   };
   const onPin = (next: string) => {
     setPin(next);
-    if (next.length === PIN_LENGTH) void attempt(next);
+    if (isPinComplete(next)) void attempt(next);
   };
 
   const submitOwner = async (e: FormEvent) => {

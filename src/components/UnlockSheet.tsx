@@ -6,7 +6,7 @@ import Countdown from './Countdown';
 import PinPad from './PinPad';
 import TextField from './TextField';
 import { COULDNT_CHECK, type AccessResult } from '../auth/authContext';
-import { PIN_LENGTH } from '../domain/pin';
+import { PIN_LENGTH, isPinComplete } from '../domain/pin';
 import { readLastStaff } from '../auth/lastStaff';
 import { useAuth } from '../auth/useAuth';
 
@@ -37,7 +37,7 @@ export default function UnlockSheet({ onClose }: { onClose: () => void }) {
   };
   const onPin = (next: string) => {
     setPin(next);
-    if (next.length === PIN_LENGTH) void attempt(next);
+    if (isPinComplete(next)) void attempt(next);
   };
   const submitPassword = (e: FormEvent) => {
     e.preventDefault();

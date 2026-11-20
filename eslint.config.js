@@ -88,6 +88,10 @@ const noClickableDivs = syntax(
   'JSXOpeningElement[name.name=/^(div|span|li|p|section)$/]:has(JSXAttribute[name.name="onClick"])',
   'Interactive elements are real buttons, links or inputs (5.6).',
 );
+const noPinRulesInUI = syntax(
+  'BinaryExpression:has(> Identifier[name="PIN_LENGTH"]):has(> MemberExpression[property.name="length"])',
+  'PIN length rules live in domain/pin (isPinComplete, appendPinDigit); do not compare a length to PIN_LENGTH here (1.5).',
+);
 const noEffectsInUI = syntax(
   'CallExpression[callee.name=/^(useEffect|useLayoutEffect)$/], CallExpression[callee.property.name=/^(useEffect|useLayoutEffect)$/]',
   'Pages and components hold no effects. Move it into a hook in hooks/ named for what it does (5.8).',
@@ -169,8 +173,8 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/{app,auth,wallet,hooks,db,platform,domain,utils}/**'],
-    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport] },
+    files: ['src/{app,auth,wallet,hooks,db,platform,utils}/**'],
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noDefaultExport, noPinRulesInUI] },
   },
   {
     files: ['src/domain/**'],
@@ -178,7 +182,7 @@ export default defineConfig([
   },
   {
     files: ['src/components/**', 'src/pages/**'],
-    rules: { 'no-restricted-syntax': ['error', ...everywhere, noClickableDivs, noEffectsInUI] },
+    rules: { 'no-restricted-syntax': ['error', ...everywhere, noClickableDivs, noEffectsInUI, noPinRulesInUI] },
   },
   {
     files: ['src/{app,auth,wallet,hooks,platform,domain,utils,pages}/**'],
