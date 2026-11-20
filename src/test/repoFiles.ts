@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import ts from 'typescript';
 
 const root = process.cwd();
 
@@ -23,6 +24,29 @@ export const lineHits = (list: string[], test: (line: string, file: string) => b
       .flatMap((line, i) => (test(line, f) ? [`${f}:${i + 1}`] : [])),
   );
 
+/** Every it/test (it.each included) in a file with how many expect() calls its body makes. */
+export const expectsPerTest = (file: string): { at: string; n: number }[] => {
+  const sf = ts.createSourceFile(file, read(file), ts.ScriptTarget.Latest, true);
+  const out: { at: string; n: number }[] = [];
+  const countExpects = (node: ts.Node): number =>
+    (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'expect' ? 1 : 0) +
+    node.getChildren(sf).reduce((sum, child) => sum + countExpects(child), 0);
+  const visit = (node: ts.Node) => {
+    if (ts.isCallExpression(node)) {
+      const head = ts.isCallExpression(node.expression) ? node.expression.expression : node.expression;
+      const body = node.arguments.find((a) => ts.isArrowFunction(a) || ts.isFunctionExpression(a));
+      if (body && /^(it|test)(\.each)?$/.test(head.getText(sf)))
+        out.push({
+          at: `${file}:${sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1}`,
+          n: countExpects(body),
+        });
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return out;
+};
+
 const FIX: Record<string, string> = {
   '1.6':
     'Put the code in an existing layer (docs/coding-standards.md section 1). A new folder needs a docs/decisions record first.',
@@ -41,6 +65,12 @@ const FIX: Record<string, string> = {
   '8.1': 'vi.mock the Supabase client with src/test/fakeSupabase.ts; unit tests never reach a live database.',
   '8.4':
     "Name the test by the behaviour it checks, e.g. it('T66 staff who forgot the username get a way out'); an id alone says nothing.",
+  '5.11':
+    'Ignore held keys: skip the event when `e.repeat` is true before acting on a digit or letter, so auto-repeat cannot fill a field or submit.',
+  '8.7': 'Split the test: one behaviour per it(), or it.each over the cases. Do not add the file to the legacy list.',
+  '8.8': 'Add a test next to the hook (useX.dom.test.tsx) that fires the event and checks the effect and the cleanup.',
+  '9.12':
+    'Replace the comment with a rename, an extracted function or a tighter type. If the code is forced by something outside the repo, link it (a URL or an issue as (#123)). Never raise the baseline.',
   '9.4': 'Delete the comment, or cut it to one line that says why the code cannot.',
   '9.4/9.8': 'Delete the comment, or rewrite it to say why, not what changed.',
   '9.6': 'Pages and components use `export default`; anything else uses a named export.',

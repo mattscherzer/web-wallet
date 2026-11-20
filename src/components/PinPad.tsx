@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Delete } from 'lucide-react';
 import LoadingIndicator from './LoadingIndicator';
-import { PIN_LENGTH } from '../domain/pin';
+import { PIN_LENGTH, appendPinDigit, dropPinDigit } from '../domain/pin';
 import { usePinKeys } from '../hooks/usePinKeys';
 
 interface PinPadProps {
@@ -24,9 +24,10 @@ export default function PinPad({
   children,
 }: PinPadProps) {
   const add = (digit: string) => {
-    if (!disabled && value.length < PIN_LENGTH) onChange(value + digit);
+    const next = appendPinDigit(value, digit);
+    if (!disabled && next !== value) onChange(next);
   };
-  const remove = () => onChange(value.slice(0, -1));
+  const remove = () => onChange(dropPinDigit(value));
   usePinKeys(add, remove, disabled);
   return (
     <div className="pin-pad">

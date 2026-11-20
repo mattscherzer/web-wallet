@@ -29,7 +29,7 @@ domain/  utils/           pure rules and helpers
 - **1.2** `domain/` and `utils/` are pure: no React, React Router, Supabase or lucide, and no `window`, `document` or `localStorage`. `lint`
 - **1.3** `db/` and `platform/` contain no React. `lint`
 - **1.4** Pages and components never import `db/` or `platform/`. They read through hooks (`useWalletQuery` and the hooks built on it) and write through command hooks (`useTransactionCommands`, `useStaffAdmin`). `lint`
-- **1.5** New code goes in the lowest layer that can hold it. A rule that needs no React and no I/O goes in `domain/`, even if only one page uses it today. `review`
+- **1.5** New code goes in the lowest layer that can hold it. A rule that needs no React and no I/O goes in `domain/`, even if only one page uses it today. `lint` (comparing a length to `PIN_LENGTH` in UI), `review` (the rest)
 - **1.6** No folder outside this table (no `test`
 
 ## 2. Domain: business rules
@@ -69,6 +69,7 @@ domain/  utils/           pure rules and helpers
 - **5.6** Interactive elements are real buttons, links or inputs with an accessible name; tests find them by role and name. `lint` (clickable `div`s), `review` (names)
 - **5.9** A handler that closes a sheet checks that sheet is still the open one, so a swap between sheets can't close the wrong one. `review`
 - **5.10** Amounts in lists and summaries don't wrap mid-number (`white-space: nowrap`); check new screens at 320px. `review`
+- **5.11** A `keydown` handler that reads printable keys skips held keys (`e.repeat`), so auto-repeat cannot fill a field or submit. `test`
 - **5.8** Pages and components contain no `useEffect`. An effect goes in a hook in `hooks/` named for what it does (`useCountdown`, `useMenuDismiss`). `lint`
 - **5.7** Every `test`, `CI` (new disables need a "Disables added:" line in the PR)
 
@@ -95,6 +96,8 @@ domain/  utils/           pure rules and helpers
 - **8.4** Name tests by behaviour: "refuses to remove an entry without a reason", not "test removeTransaction". `lint` (titles starting with "test"), `test` (a name that is only an id)
 - **8.5** A change never weakens or deletes an assertion to make a test pass. If behaviour changes on purpose, update the assertion and say so in the PR. `CI`
 - **8.6** A bug fix comes with a test that fails without the fix. `CI`
+- **8.7** A test makes at most four `expect()` calls: one behaviour per `it`, or `it.each`. Files that predate the rule are listed in `src/standards.code.test.ts` and only leave the list. `test`
+- **8.8** A hook that adds a DOM event listener has a test next to it that fires the event and checks the cleanup. `test`
 
 ## 9. Style and size
 
@@ -109,6 +112,7 @@ domain/  utils/           pure rules and helpers
 - **9.9** Doc comments carry no `@param`, `@returns` or `@type` tags; the types already say it. `test`
 - **9.10** A TODO, FIXME, HACK or SEE points at an issue, as `TODO(#123)` or `SEE(#123)`. Without one, do it now or delete it. `test`
 - **9.11** A change that makes a comment wrong fixes or deletes the comment in the same commit. `review`
+- **9.12** Line comments only go down: each file has a baseline in `src/standards.code.test.ts`; a new comment fails unless it is a URL, an issue link, a `TODO(#n)` or a lint directive. `test`
 
 ## 10. Edge functions (`supabase/functions`)
 
@@ -155,3 +159,5 @@ domain/  utils/           pure rules and helpers
 
 - **14.1** The rules' own enforcement (`eslint.config.js`, `src/standards*.test.ts`, `scripts/`, CI and the commit hook in `.claude/`) is changed only by a PR that says so with a `Standards change:` line, so a person reviews it. When a check fails, fix the code it points at: never edit the check, its exception lists, or add an `eslint-disable` to get past it. Every failure message says what to do instead. `CI`
 - **14.2** `git commit` and `git push` by a coding agent are blocked until `npm run check` passes (`scripts/guard-commit.sh`). `hook`
+- **14.3** Source files are changed with the edit tools, not `sed -i`, `perl -i` or scripted writes, because those fail silently (`scripts/guard-edits.sh`). `hook`
+- **14.4** `npm run check` is lint, typecheck, format, tests and build; the commit hook runs all of it. `hook`
