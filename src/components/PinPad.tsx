@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Delete } from 'lucide-react';
 import LoadingIndicator from './LoadingIndicator';
 import { PIN_LENGTH } from '../domain/pin';
+import { usePinKeys } from '../hooks/usePinKeys';
 
 interface PinPadProps {
   value: string;
@@ -25,6 +26,8 @@ export default function PinPad({
   const add = (digit: string) => {
     if (!disabled && value.length < PIN_LENGTH) onChange(value + digit);
   };
+  const remove = () => onChange(value.slice(0, -1));
+  usePinKeys(add, remove, disabled);
   return (
     <div className="pin-pad">
       <div className="pin-pad__display">
@@ -60,7 +63,7 @@ export default function PinPad({
           className="pin-pad__key pin-pad__key--delete"
           aria-label="Delete last digit"
           disabled={disabled || value.length === 0}
-          onClick={() => onChange(value.slice(0, -1))}
+          onClick={remove}
         >
           <Delete size={24} aria-hidden="true" />
         </button>
